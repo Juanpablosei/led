@@ -2,11 +2,8 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ImageBackground, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { BuildingAcceptanceModal } from '../components/building-acceptance-modal/BuildingAcceptanceModal';
-import { CreateAccountModal } from '../components/create-account-modal/CreateAccountModal';
-import { CreateAccountStep2Modal } from '../components/create-account-modal/CreateAccountStep2Modal';
-import { CreateAccountData } from '../components/create-account-modal/CreateAccountStep2Modal.types';
-import { CreateAccountStep3Modal } from '../components/create-account-modal/CreateAccountStep3Modal';
-import { CreateAccountCompleteData } from '../components/create-account-modal/CreateAccountStep3Modal.types';
+import { CreateAccountUnifiedModal } from '../components/create-account-modal/CreateAccountUnifiedModal';
+import { CreateAccountCompleteData } from '../components/create-account-modal/CreateAccountUnifiedModal.types';
 import { Header } from '../components/header/Header';
 import { LoginCard } from '../components/login-card/LoginCard';
 import { LoginFormData } from '../components/login-card/LoginCard.types';
@@ -24,8 +21,6 @@ export const LoginScreen: React.FC = () => {
   const [showBuildingAcceptanceModal, setShowBuildingAcceptanceModal] = useState(false);
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
   const [createAccountStep, setCreateAccountStep] = useState(1);
-  const [userNifNie, setUserNifNie] = useState('');
-  const [userStep2Data, setUserStep2Data] = useState<CreateAccountData | null>(null);
   const [activeTab, setActiveTab] = useState('general');
 
   const handleLanguageChange = () => {
@@ -102,53 +97,22 @@ export const LoginScreen: React.FC = () => {
     // Aquí iría la lógica para manejar el rechazo
   };
 
-  const handleCreateAccountContinue = (nifNie: string) => {
-    console.log('Continuar con creación de cuenta para NIF/NIE:', nifNie);
-    setUserNifNie(nifNie);
-    setCreateAccountStep(2);
-  };
-
-  const handleCreateAccountExit = () => {
-    console.log('Salir del proceso de creación de cuenta');
-    setShowCreateAccountModal(false);
-    setCreateAccountStep(1);
-    setUserNifNie('');
-    setUserStep2Data(null);
-    // Aquí iría la lógica para manejar la salida
-  };
-
-  const handleCreateAccountStep2Back = () => {
-    console.log('Volver al paso 1');
-    setCreateAccountStep(1);
-  };
-
-  const handleCreateAccountStep2Finish = (data: CreateAccountData) => {
-    console.log('Continuar al paso 3 con datos:', data);
-    setUserStep2Data(data);
-    setCreateAccountStep(3);
-  };
-
-  const handleCreateAccountStep3Back = () => {
-    console.log('Volver al paso 2');
-    setCreateAccountStep(2);
-  };
-
-  const handleCreateAccountStep3Finish = (data: CreateAccountCompleteData) => {
-    console.log('Finalizar creación de cuenta con datos completos:', data);
-    setShowCreateAccountModal(false);
-    setCreateAccountStep(1);
-    setUserNifNie('');
-    setUserStep2Data(null);
-    // Aquí iría la lógica para finalizar el registro
-    // Por ahora navegamos a las tabs
-    router.replace('/(tabs)');
-  };
-
   const handleCreateAccountClose = () => {
     setShowCreateAccountModal(false);
     setCreateAccountStep(1);
-    setUserNifNie('');
-    setUserStep2Data(null);
+  };
+
+  const handleCreateAccountStepChange = (step: number) => {
+    setCreateAccountStep(step);
+  };
+
+  const handleCreateAccountFinish = (data: CreateAccountCompleteData) => {
+    console.log('Finalizar creación de cuenta con datos completos:', data);
+    setShowCreateAccountModal(false);
+    setCreateAccountStep(1);
+    // Aquí iría la lógica para finalizar el registro
+    // Por ahora volvemos al login
+    // El usuario ya está en la pantalla de login, solo cerramos el modal
   };
 
   return (
@@ -230,38 +194,13 @@ export const LoginScreen: React.FC = () => {
         />
 
         {/* Create Account Modal - Unificado */}
-        {showCreateAccountModal && (
-          <>
-            {createAccountStep === 1 && (
-              <CreateAccountModal
-                visible={true}
-                onClose={handleCreateAccountClose}
-                onContinue={handleCreateAccountContinue}
-                onExit={handleCreateAccountExit}
-              />
-            )}
-            
-            {createAccountStep === 2 && (
-              <CreateAccountStep2Modal
-                visible={true}
-                nifNie={userNifNie}
-                onClose={handleCreateAccountClose}
-                onBack={handleCreateAccountStep2Back}
-                onFinish={handleCreateAccountStep2Finish}
-              />
-            )}
-            
-            {createAccountStep === 3 && userStep2Data && (
-              <CreateAccountStep3Modal
-                visible={true}
-                userData={userStep2Data}
-                onClose={handleCreateAccountClose}
-                onBack={handleCreateAccountStep3Back}
-                onFinish={handleCreateAccountStep3Finish}
-              />
-            )}
-          </>
-        )}
+        <CreateAccountUnifiedModal
+          visible={showCreateAccountModal}
+          currentStep={createAccountStep}
+          onClose={handleCreateAccountClose}
+          onStepChange={handleCreateAccountStepChange}
+          onFinish={handleCreateAccountFinish}
+        />
       </View>
       </View>
     </TouchableWithoutFeedback>

@@ -80,14 +80,24 @@ export const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.red,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  stepCircleActive: {
+    backgroundColor: colors.red,
+  },
+  stepCircleInactive: {
+    backgroundColor: colors.lightGray,
+  },
   stepNumber: {
-    color: colors.white,
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  stepNumberActive: {
+    color: colors.white,
+  },
+  stepNumberInactive: {
+    color: colors.gray,
   },
   stepLine: {
     width: 40,
@@ -95,25 +105,30 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.borderGray,
     marginHorizontal: 10,
   },
-  stepCircleInactive: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: colors.lightGray,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stepNumberInactive: {
-    color: colors.gray,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
   stepInstruction: {
     fontSize: 16,
     fontWeight: 'bold',
     color: colors.black,
     textAlign: 'center',
     marginBottom: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  textInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderGray,
+    paddingVertical: 12,
+    paddingHorizontal: 0,
+    fontSize: 16,
+    color: colors.black,
+  },
+  infoText: {
+    fontSize: 14,
+    color: colors.darkGray,
+    lineHeight: 20,
+    marginBottom: 30,
+    textAlign: 'center',
   },
   formContainer: {
     marginBottom: 30,
@@ -136,21 +151,6 @@ export const styles = StyleSheet.create({
     color: colors.black,
     marginBottom: 8,
   },
-  textInput: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderGray,
-    paddingVertical: 12,
-    paddingHorizontal: 0,
-    fontSize: 16,
-    color: colors.black,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.black,
-    marginTop: 20,
-    marginBottom: 15,
-  },
   checkboxRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -158,8 +158,8 @@ export const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+    alignItems: 'flex-start',
+    marginBottom: 15,
   },
   checkbox: {
     width: 20,
@@ -189,42 +189,11 @@ export const styles = StyleSheet.create({
   checkboxText: {
     fontSize: 14,
     color: colors.black,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  backButton: {
     flex: 1,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.borderGray,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginRight: 10,
-    alignItems: 'center',
+    lineHeight: 20,
   },
-  backButtonText: {
-    color: colors.black,
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  finishButton: {
-    flex: 1,
-    backgroundColor: colors.red,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginLeft: 10,
-    alignItems: 'center',
-  },
-  finishButtonDisabled: {
-    backgroundColor: colors.gray,
-  },
-  finishButtonText: {
-    color: colors.white,
-    fontSize: 14,
+  redText: {
+    color: colors.red,
     fontWeight: 'bold',
   },
   selectButton: {
@@ -250,6 +219,76 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray,
     marginLeft: 10,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  backButton: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: colors.black,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  exitButton: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  exitButtonText: {
+    color: colors.black,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  continueButton: {
+    flex: 1,
+    backgroundColor: colors.red,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  continueButtonDisabled: {
+    backgroundColor: colors.gray,
+  },
+  continueButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  finishButton: {
+    flex: 1,
+    backgroundColor: colors.red,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  finishButtonDisabled: {
+    backgroundColor: colors.gray,
+  },
+  finishButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   selectionModal: {
     backgroundColor: colors.white,
