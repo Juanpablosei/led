@@ -35,3 +35,12 @@ export type { ResetCodeModalProps } from './reset-code-modal/ResetCodeModal.type
 export { BuildingAcceptanceModal } from './building-acceptance-modal/BuildingAcceptanceModal';
 export type { BuildingAcceptanceModalProps } from './building-acceptance-modal/BuildingAcceptanceModal.types';
 
+export { CreateAccountModal } from './create-account-modal/CreateAccountModal';
+export type { CreateAccountModalProps } from './create-account-modal/CreateAccountModal.types';
+
+export { CreateAccountStep2Modal } from './create-account-modal/CreateAccountStep2Modal';
+export type { CreateAccountData, CreateAccountStep2ModalProps } from './create-account-modal/CreateAccountStep2Modal.types';
+
+export { CreateAccountStep3Modal } from './create-account-modal/CreateAccountStep3Modal';
+export type { CreateAccountCompleteData, CreateAccountStep3ModalProps } from './create-account-modal/CreateAccountStep3Modal.types';
+
