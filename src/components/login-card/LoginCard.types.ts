@@ -14,5 +14,5 @@ export interface TabData {
 export interface LoginCardProps {
   onLogin: (data: LoginFormData) => void;
   onRegister: () => void;
-  onForgotPassword: () => void;
+  onForgotPassword: (activeTab: string) => void;
 }

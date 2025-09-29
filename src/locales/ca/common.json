@@ -22,5 +22,9 @@
   "error": "Error",
   "success": "Èxit",
   "warning": "Advertència",
-  "info": "Informació"
+  "info": "Informació",
+  "support": "Suport",
+  "faqs": "FAQs",
+  "legalNotice": "Avís legal i Política de privacitat",
+  "terms": "Condicions de contractació"
 }

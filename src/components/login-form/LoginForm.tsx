@@ -9,7 +9,7 @@ import { LoginFormData } from './LoginForm.types';
 
 export interface LoginFormProps {
   onLogin: (data: LoginFormData) => void;
-  onForgotPassword: () => void;
+  onForgotPassword: (activeTab: string) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -56,7 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   const handleForgotPassword = () => {
-    onForgotPassword();
+    onForgotPassword(activeTab);
   };
 
   return (
@@ -121,7 +121,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {/* Forgot Password Link */}
       <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.link}>{t('forgotPassword', 'common')}</Text>
+        <Text style={styles.link}>
+          {activeTab === 'building' 
+            ? t('forgotAccessCode', 'auth') 
+            : t('forgotPassword', 'auth')
+          }
+        </Text>
       </TouchableOpacity>
       </View>
       </View>

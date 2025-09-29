@@ -23,3 +23,15 @@ export type { RegistrationSectionProps } from './registration-section/Registrati
 export { LanguageSelector } from './language-selector/LanguageSelector';
 export type { LanguageSelectorProps } from './language-selector/LanguageSelector.types';
 
+export { SupportOptions } from './support-options/SupportOptions';
+export type { SupportOptionsProps } from './support-options/SupportOptions.types';
+
+export { ResetPasswordModal } from './reset-password-modal/ResetPasswordModal';
+export type { ResetPasswordModalProps } from './reset-password-modal/ResetPasswordModal.types';
+
+export { ResetCodeModal } from './reset-code-modal/ResetCodeModal';
+export type { ResetCodeModalProps } from './reset-code-modal/ResetCodeModal.types';
+
+export { BuildingAcceptanceModal } from './building-acceptance-modal/BuildingAcceptanceModal';
+export type { BuildingAcceptanceModalProps } from './building-acceptance-modal/BuildingAcceptanceModal.types';
+

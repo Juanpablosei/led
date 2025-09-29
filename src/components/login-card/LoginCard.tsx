@@ -18,8 +18,8 @@ export const LoginCard: React.FC<LoginCardProps> = ({
     onRegister();
   };
 
-  const handleForgotPassword = () => {
-    onForgotPassword();
+  const handleForgotPassword = (activeTab: string) => {
+    onForgotPassword(activeTab);
   };
 
   return (
