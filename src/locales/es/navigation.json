@@ -15,5 +15,14 @@
   "total": "Total",
   "elements": "Elementos",
   "ledMaintenance": "LED Gestión del mantenimiento",
-  "identification": "Identificación"
+  "identification": "Identificación",
+  "userList": "Listado de usuarios",
+  "allUsers": "Todos",
+  "activeUsers": "Activos",
+  "inactiveUsers": "Inactivos",
+  "pendingUsers": "Pendientes",
+  "searchUsers": "Buscar usuarios...",
+  "editUser": "Editar",
+  "deleteUser": "Eliminar",
+  "addUser": "Agregar usuario"
 }

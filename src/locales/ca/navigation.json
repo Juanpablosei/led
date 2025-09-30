@@ -15,5 +15,14 @@
   "total": "Total",
   "elements": "Elements",
   "ledMaintenance": "LED Gestió del manteniment",
-  "identification": "Identificació"
+  "identification": "Identificació",
+  "userList": "Llistat d'usuaris",
+  "allUsers": "Tots",
+  "activeUsers": "Actius",
+  "inactiveUsers": "Inactius",
+  "pendingUsers": "Pendents",
+  "searchUsers": "Cercar usuaris...",
+  "editUser": "Editar",
+  "deleteUser": "Eliminar",
+  "addUser": "Afegir usuari"
 }

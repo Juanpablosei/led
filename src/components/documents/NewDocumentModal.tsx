@@ -1,6 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as DocumentPicker from 'expo-document-picker';
 import React, { useState } from 'react';
 import {
+  Alert,
   Modal,
   Text,
   TextInput,
@@ -25,6 +28,8 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
     includeInBook: false,
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const documentTypes = [
     'Inspección Técnica de Edificios',
@@ -56,29 +61,62 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
     }
   };
 
-  const handleSelectFile = () => {
-    // Aquí implementarías la lógica de selección de archivos
-    console.log('Seleccionar archivo');
-    handleInputChange('file', 'documento_seleccionado.pdf');
+  const handleSelectFile = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/pdf',
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const file = result.assets[0];
+        const fileSizeMB = file.size ? file.size / (1024 * 1024) : 0;
+        
+        if (fileSizeMB > 10) {
+          Alert.alert('Error', 'El archivo es demasiado grande. Máximo 10 MB.');
+          return;
+        }
+
+        handleInputChange('file', file.name);
+      }
+    } catch (error) {
+      console.error('Error selecting file:', error);
+      Alert.alert('Error', 'No se pudo seleccionar el archivo');
+    }
   };
 
   const handleDatePicker = () => {
-    // Aquí implementarías la lógica del date picker
-    console.log('Abrir date picker');
-    handleInputChange('validUntil', '15/05/2027');
+    console.log('Opening date picker...');
+    setShowDatePicker(true);
+  };
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    console.log('Date picker event:', event, selectedDate);
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      console.log('Formatted date:', formattedDate);
+      handleInputChange('validUntil', formattedDate);
+    }
   };
 
   return (
-    <Modal
-      visible={isVisible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={() => {}}>
-            <View style={styles.modal}>
+    <>
+      <Modal
+        visible={isVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <TouchableWithoutFeedback onPress={onClose}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modal}>
               {/* Header */}
               <View style={styles.header}>
                 <Text style={styles.title}>Nuevo documento</Text>
@@ -142,13 +180,9 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                 <View style={styles.fieldContainer}>
                   <Text style={styles.label}>Válido hasta:</Text>
                   <TouchableOpacity style={styles.dateContainer} onPress={handleDatePicker}>
-                    <TextInput
-                      style={styles.dateInput}
-                      value={formData.validUntil}
-                      onChangeText={(value) => handleInputChange('validUntil', value)}
-                      placeholder="dd/mm/aaaa"
-                      editable={false}
-                    />
+                    <Text style={styles.dateInput}>
+                      {formData.validUntil || 'dd/mm/aaaa'}
+                    </Text>
                     <Ionicons 
                       name="calendar-outline" 
                       size={20} 
@@ -189,6 +223,18 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
-    </Modal>
+      </Modal>
+
+      {/* Date Picker Modal */}
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+          minimumDate={new Date()}
+        />
+      )}
+    </>
   );
 };

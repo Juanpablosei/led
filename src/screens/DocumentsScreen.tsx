@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { DocumentCard, NewDocumentModal } from '../components/documents';
+import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components/documents';
+import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
 import { useTranslation } from '../hooks/useTranslation';
@@ -69,6 +70,8 @@ export const DocumentsScreen: React.FC = () => {
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
   const [activeTab, setActiveTab] = useState('tecnica');
   const [isNewDocumentModalVisible, setIsNewDocumentModalVisible] = useState(false);
+  const [isEditDocumentModalVisible, setIsEditDocumentModalVisible] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<EditDocumentData | null>(null);
   
   // Buscar el edificio por ID
   const building = mockBuildings.find(b => b.id === buildingId);
@@ -97,11 +100,44 @@ export const DocumentsScreen: React.FC = () => {
     setIsNewDocumentModalVisible(false);
   };
 
+  const handleEditDocument = (document: any) => {
+    // Convertir el documento a EditDocumentData
+    const editDocument: EditDocumentData = {
+      id: document.id,
+      name: document.title,
+      type: document.type,
+      file: 'BDN103CIR0078CMH_signat.pdf', // Archivo de ejemplo
+      validUntil: document.validUntil,
+      includeInBook: document.isIncludedInBook,
+    };
+    setSelectedDocument(editDocument);
+    setIsEditDocumentModalVisible(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditDocumentModalVisible(false);
+    setSelectedDocument(null);
+  };
+
+  const handleSaveEditDocument = (documentData: EditDocumentData) => {
+    console.log('Guardar documento editado:', documentData);
+    // Aquí implementarías la lógica para guardar el documento editado
+    setIsEditDocumentModalVisible(false);
+    setSelectedDocument(null);
+  };
+
+  const handleDeleteDocument = (documentId: string) => {
+    console.log('Eliminar documento:', documentId);
+    // Aquí implementarías la lógica para eliminar el documento
+    setIsEditDocumentModalVisible(false);
+    setSelectedDocument(null);
+  };
+
   const renderDocumentCard = (document: any) => (
     <DocumentCard
       key={document.id}
       document={document}
-      onPress={() => console.log('Document pressed:', document.id)}
+      onPress={() => handleEditDocument(document)}
     />
   );
 
@@ -159,6 +195,15 @@ export const DocumentsScreen: React.FC = () => {
         isVisible={isNewDocumentModalVisible}
         onClose={handleCloseModal}
         onSave={handleSaveDocument}
+      />
+
+      {/* Modal Editar Documento */}
+      <EditDocumentModal
+        isVisible={isEditDocumentModalVisible}
+        document={selectedDocument}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveEditDocument}
+        onDelete={handleDeleteDocument}
       />
     </BuildingLayout>
   );
