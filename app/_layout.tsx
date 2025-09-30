@@ -6,10 +6,12 @@ import { TranslationProvider } from '../src/contexts/TranslationContext';
 export default function RootLayout() {
   return (
     <TranslationProvider>
-      <Stack>
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+              <Stack>
+                <Stack.Screen name="login" options={{ headerShown: false }} />
+                <Stack.Screen name="buildings" options={{ headerShown: false }} />
+                <Stack.Screen name="building-detail" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
       <StatusBar style="light" hidden={true} />
     </TranslationProvider>
   );

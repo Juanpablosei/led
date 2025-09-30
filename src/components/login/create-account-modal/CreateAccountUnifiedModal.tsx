@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Keyboard, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { styles } from './CreateAccountUnifiedModal.styles';
 import { CreateAccountUnifiedModalProps } from './CreateAccountUnifiedModal.types';
 

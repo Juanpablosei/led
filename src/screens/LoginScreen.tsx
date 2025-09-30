@@ -2,13 +2,13 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ImageBackground, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { BuildingAcceptanceModal } from '../components/building-acceptance-modal/BuildingAcceptanceModal';
-import { CreateAccountUnifiedModal } from '../components/create-account-modal/CreateAccountUnifiedModal';
-import { CreateAccountCompleteData } from '../components/create-account-modal/CreateAccountUnifiedModal.types';
 import { Header } from '../components/header/Header';
-import { LoginCard } from '../components/login-card/LoginCard';
-import { LoginFormData } from '../components/login-card/LoginCard.types';
-import { ResetCodeModal } from '../components/reset-code-modal/ResetCodeModal';
-import { ResetPasswordModal } from '../components/reset-password-modal/ResetPasswordModal';
+import { CreateAccountUnifiedModal } from '../components/login/create-account-modal/CreateAccountUnifiedModal';
+import { CreateAccountCompleteData } from '../components/login/create-account-modal/CreateAccountUnifiedModal.types';
+import { LoginCard } from '../components/login/login-card/LoginCard';
+import { LoginFormData } from '../components/login/login-card/LoginCard.types';
+import { ResetCodeModal } from '../components/login/reset-code-modal/ResetCodeModal';
+import { ResetPasswordModal } from '../components/login/reset-password-modal/ResetPasswordModal';
 import { SupportOptions } from '../components/support-options/SupportOptions';
 import { useTranslation } from '../hooks/useTranslation';
 import { styles } from './LoginScreen.styles';
@@ -87,8 +87,8 @@ export const LoginScreen: React.FC = () => {
   const handleBuildingAcceptance = () => {
     console.log('Aceptar condiciones del edificio');
     setShowBuildingAcceptanceModal(false);
-    // Aquí iría la navegación a las tabs después de aceptar
-    router.replace('/(tabs)');
+    // Navegar a la pantalla de edificios después de aceptar
+    router.replace('/buildings');
   };
 
   const handleBuildingRejection = () => {

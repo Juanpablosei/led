@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { styles } from './ResetPasswordModal.styles';
 import { ResetPasswordModalProps } from './ResetPasswordModal.types';
 

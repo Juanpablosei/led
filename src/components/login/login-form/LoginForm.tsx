@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { useTranslation } from '../../hooks/useTranslation';
-import { Button } from '../buttons/Button';
-import { Input } from '../inputs/Input';
-import { Tab } from '../tabs/Tab';
+import { useTranslation } from '../../../hooks/useTranslation';
+import { Button } from '../../buttons/Button';
+import { Input } from '../../inputs/Input';
+import { Tab } from '../../tabs/Tab';
 import { styles } from './LoginForm.styles';
 import { LoginFormData } from './LoginForm.types';
 

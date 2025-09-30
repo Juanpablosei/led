@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { useTranslation } from '../../hooks/useTranslation';
-import { Button } from '../buttons/Button';
+import { useTranslation } from '../../../hooks/useTranslation';
+import { Button } from '../../buttons/Button';
 import { styles } from './RegistrationSection.styles';
 import { RegistrationSectionProps } from './RegistrationSection.types';
 

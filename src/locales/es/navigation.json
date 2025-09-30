@@ -9,5 +9,11 @@
   "notifications": "Notificaciones",
   "messages": "Mensajes",
   "favorites": "Favoritos",
-  "history": "Historial"
+  "history": "Historial",
+  "myBuildings": "Mis edificios",
+  "searchPlaceholder": "Buscar por Nombre o Referencia catastral",
+  "total": "Total",
+  "elements": "Elementos",
+  "ledMaintenance": "LED Gestión del mantenimiento",
+  "identification": "Identificación"
 }
