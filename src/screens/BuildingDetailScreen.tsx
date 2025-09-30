@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { useTranslation } from '../hooks/useTranslation';
+import { BuildingLayout } from '../layouts/BuildingLayout';
 import { styles } from './BuildingDetailScreen.styles';
 
 // Datos de ejemplo para desarrollo (mismo que en BuildingsScreen)
@@ -14,7 +15,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8862',
     cadastralReference: '8931613DF2883B',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+1',
+    imageUrl: undefined,
   },
   {
     id: '2',
@@ -22,7 +23,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8863',
     cadastralReference: '8931613DF2883C',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+2',
+    imageUrl: undefined,
   },
   {
     id: '3',
@@ -30,7 +31,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8864',
     cadastralReference: '8931613DF2883D',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+3',
+    imageUrl: undefined,
   },
   {
     id: '4',
@@ -38,7 +39,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8865',
     cadastralReference: '8931613DF2883E',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+4',
+    imageUrl: undefined,
   },
   {
     id: '5',
@@ -46,7 +47,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8866',
     cadastralReference: '8931613DF2883F',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+5',
+    imageUrl: undefined,
   },
   {
     id: '6',
@@ -54,7 +55,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8867',
     cadastralReference: '8931613DF2883G',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+6',
+    imageUrl: undefined,
   },
   {
     id: '7',
@@ -62,7 +63,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8868',
     cadastralReference: '8931613DF2883H',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+7',
+    imageUrl: undefined,
   },
   {
     id: '8',
@@ -70,7 +71,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8869',
     cadastralReference: '8931613DF2883I',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+8',
+    imageUrl: undefined,
   },
   {
     id: '9',
@@ -78,7 +79,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8870',
     cadastralReference: '8931613DF2883J',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+9',
+    imageUrl: undefined,
   },
   {
     id: '10',
@@ -86,7 +87,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8871',
     cadastralReference: '8931613DF2883K',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+10',
+    imageUrl: undefined,
   },
   {
     id: '11',
@@ -94,7 +95,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8872',
     cadastralReference: '8931613DF2883L',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+11',
+    imageUrl: undefined,
   },
   {
     id: '12',
@@ -102,7 +103,7 @@ const mockBuildings: BuildingData[] = [
     type: 'Edificio residencial plurifamiliar (EXISTENTE)',
     buildingId: '8873',
     cadastralReference: '8931613DF2883M',
-    imageUrl: 'https://via.placeholder.com/400x300/cccccc/666666?text=Edificio+12',
+    imageUrl: undefined,
   },
 ];
 
@@ -114,20 +115,7 @@ export const BuildingDetailScreen: React.FC = () => {
   const building = mockBuildings.find(b => b.id === buildingId);
 
   if (!building) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>{t('myBuildings', 'navigation')}</Text>
-          <View style={styles.headerRight} />
-        </View>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Edificio no encontrado</Text>
-        </View>
-      </View>
-    );
+    return null;
   }
 
   const handleMaintenancePress = () => {
@@ -136,30 +124,13 @@ export const BuildingDetailScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header con navegación */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{t('myBuildings', 'navigation')}</Text>
-        <View style={styles.headerRight} />
-      </View>
-
-      {/* Título del edificio */}
-      <View style={styles.titleSection}>
-        <Text style={styles.buildingTitle}>{building.title}</Text>
-        <TouchableOpacity style={styles.menuButton}>
-          <Ionicons name="menu" size={24} color="#333333" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Contenido principal */}
+    <BuildingLayout building={building}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Sección de identificación */}
-        <View style={styles.identificationCard}>
-          <Text style={styles.identificationTitle}>{t('identification', 'navigation')}</Text>
-          
+        {/* Título "Identificación" FUERA de la card */}
+        <Text style={styles.identificationTitle}>{t('identification', 'navigation')}</Text>
+        
+        {/* Card principal con TODO el contenido */}
+        <View style={styles.mainCard}>
           <Text style={styles.buildingName}>{building.title}</Text>
           
           <View style={styles.buildingDetails}>
@@ -186,23 +157,17 @@ export const BuildingDetailScreen: React.FC = () => {
               {t('ledMaintenance', 'navigation')}
             </Text>
           </TouchableOpacity>
-        </View>
 
-        {/* Imagen del edificio */}
-        <View style={styles.imageContainer}>
-          {building.imageUrl ? (
+          {/* Imagen del edificio DENTRO de la card */}
+          <View style={styles.imageContainer}>
             <Image
-              source={{ uri: building.imageUrl }}
+              source={require('../../assets/images/edificio.png')}
               style={styles.buildingImage}
               resizeMode="cover"
             />
-          ) : (
-            <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>Sin imagen disponible</Text>
-            </View>
-          )}
+          </View>
         </View>
       </ScrollView>
-    </View>
+    </BuildingLayout>
   );
 };

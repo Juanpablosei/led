@@ -6,38 +6,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    backgroundColor: colors.primary,
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.white,
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 20,
-  },
-  headerRight: {
-    width: 24, // Para mantener el balance del header
-  },
   titleSection: {
     backgroundColor: colors.white,
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -56,9 +28,18 @@ export const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  identificationCard: {
+  identificationTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 16,
+  },
+  mainCard: {
     backgroundColor: colors.white,
-    margin: 20,
+    marginHorizontal: 20,
+    marginBottom: 20,
     padding: 20,
     borderRadius: 8,
     elevation: 2,
@@ -69,12 +50,6 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-  },
-  identificationTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 16,
   },
   buildingName: {
     fontSize: 18,
@@ -120,21 +95,13 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   imageContainer: {
-    margin: 20,
+    marginTop: 20,
     borderRadius: 8,
     overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
   },
   buildingImage: {
     width: '100%',
-    height: 250,
+    height: 400,
   },
   placeholderImage: {
     width: '100%',

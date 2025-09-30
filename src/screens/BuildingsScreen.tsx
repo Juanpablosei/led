@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Text, View } from 'react-native';
+import { GlobalHeader } from '../components/global/GlobalHeader';
 import { BuildingCard } from '../components/home/building-card/BuildingCard';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
-import { HomeHeader } from '../components/home/home-header/HomeHeader';
 import { Pagination } from '../components/home/pagination/Pagination';
 import { SearchBar } from '../components/home/search-bar/SearchBar';
 import { useTranslation } from '../hooks/useTranslation';
@@ -201,13 +201,14 @@ export const BuildingsScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Header fijo */}
-      <HomeHeader
-        notificationCount={notificationCount}
-        onNotificationPress={handleNotificationPress}
-        onProfilePress={handleProfilePress}
-      />
+            <View style={styles.container}>
+              {/* Header fijo */}
+              <GlobalHeader
+                variant="logo"
+                notificationCount={notificationCount}
+                onNotificationPress={handleNotificationPress}
+                onProfilePress={handleProfilePress}
+              />
 
       {/* Contenido principal */}
       <View style={styles.content}>
