@@ -95,11 +95,20 @@ export const styles = StyleSheet.create({
   footerText: {
     fontSize: 16,
     marginBottom:16,
-    marginHorizontal:20, // Más grande que el caption (14)
+    marginHorizontal:4, 
     fontWeight: 500,
     color: colors.black,
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+
+  supportContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chevronIcon: {
+    color: colors.black,
+    paddingBottom: 10,
   },
 });

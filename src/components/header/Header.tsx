@@ -30,13 +30,6 @@ export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
       {/* Logo */}
       <View style={styles.logo}>
         <Text style={styles.logoText}>LED</Text>
-        <Text style={styles.logoAccent}>^</Text>
-        <Ionicons 
-          name="flash-outline" 
-          size={24} 
-          color={colors.lightGray} 
-          style={{ marginLeft: 4 }}
-        />
       </View>
 
       {/* Language Selector */}

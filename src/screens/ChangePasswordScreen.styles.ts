@@ -5,11 +5,13 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primary,
-    paddingTop: 30,
+    paddingTop: 35,
   },
   content: {
     flex: 1,
     backgroundColor: colors.background,
+    paddingTop: 50,
+
   },
   header: {
     backgroundColor: colors.primary,

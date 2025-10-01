@@ -20,9 +20,6 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
           // Variante con logo LED
           <View style={styles.logoContainer}>
             <Text style={styles.logo}>LED</Text>
-            <View style={styles.logoIcon}>
-              <Text style={{ color: 'white', fontSize: 16 }}>⌄</Text>
-            </View>
           </View>
         ) : (
           // Variante con navegación
