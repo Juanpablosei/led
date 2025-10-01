@@ -1,19 +1,19 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { colors } from '../../constants/colors';
 
 export const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
-    top: 0,
+    top: Platform.OS === 'android' ? -10 : 40,
     left: 0,
-    right: 0,
+    right:-10,
     bottom: 0,
     zIndex: 9999,
   },
   menu: {
     position: 'absolute',
     backgroundColor: colors.white,
-    borderRadius: 8,
+    borderRadius: 2,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
