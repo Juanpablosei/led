@@ -13,36 +13,36 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
   const sidebarItems: SidebarItem[] = [
     {
       id: 'edificio',
-      title: 'Edificio',
+      title: t('building', 'sidebar'),
       icon: 'business-outline',
       isExpanded: true,
       children: [
-        { id: 'identificacion', title: 'Identificación', icon: 'information-circle-outline' },
+        { id: 'identificacion', title: t('identification', 'sidebar'), icon: 'information-circle-outline' },
       ],
     },
     {
       id: 'usuarios',
-      title: 'Usuarios',
+      title: t('users', 'sidebar'),
       icon: 'people-outline',
       children: [
-        { id: 'listado-usuarios', title: 'Listado de usuarios', icon: 'list-outline' },
-        { id: 'enviar-email', title: 'Enviar email', icon: 'mail-outline' },
+        { id: 'listado-usuarios', title: t('userList', 'sidebar'), icon: 'list-outline' },
+        { id: 'enviar-email', title: t('sendEmail', 'sidebar'), icon: 'mail-outline' },
       ],
     },
     {
       id: 'documentacion',
-      title: 'Documentación',
+      title: t('documentation', 'sidebar'),
       icon: 'document-text-outline',
       children: [
-        { id: 'biblioteca', title: 'Biblioteca de documentos', icon: 'library-outline' },
+        { id: 'biblioteca', title: t('documentLibrary', 'sidebar'), icon: 'library-outline' },
       ],
     },
     {
       id: 'comunicacion',
-      title: 'Comunicación',
+      title: t('communication', 'sidebar'),
       icon: 'mail-outline',
       children: [
-        { id: 'listado-comunicaciones', title: 'Listado de comunicaciones', icon: 'chatbubbles-outline' },
+        { id: 'listado-comunicaciones', title: t('communicationList', 'sidebar'), icon: 'chatbubbles-outline' },
       ],
     },
   ];

@@ -4,8 +4,12 @@ import { colors } from '../constants/colors';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.primary,
+    paddingTop: 30,
+  },
+  content: {
+    flex: 1,
     backgroundColor: colors.background,
-    marginTop: 0,
   },
   header: {
     backgroundColor: colors.primary,
@@ -26,14 +30,11 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginRight: 32,
   },
-  content: {
-    flex: 1,
-   
-  },
   formContainer: {
     backgroundColor: colors.white,
-    borderRadius: 8,
+    flex: 1,
     padding: 20,
+    minHeight: '100%', // ← Agregar esto
   },
   section: {
     marginBottom: 30,

@@ -11,6 +11,7 @@ const translations: Record<Language, Translations> = {
     email: require('../locales/es/email.json'),
     notifications: require('../locales/es/notifications.json'),
     user: require('../locales/es/user.json'),
+    sidebar: require('../locales/es/sidebar.json'),
   },
   ca: {
     common: require('../locales/ca/common.json'),
@@ -19,6 +20,7 @@ const translations: Record<Language, Translations> = {
     email: require('../locales/ca/email.json'),
     notifications: require('../locales/ca/notifications.json'),
     user: require('../locales/ca/user.json'),
+    sidebar: require('../locales/ca/sidebar.json'),
   },
 };
 

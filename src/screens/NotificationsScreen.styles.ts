@@ -4,10 +4,12 @@ import { colors } from '../constants/colors';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.primary,
+    paddingTop: 30,
   },
   content: {
     flex: 1,
+    backgroundColor: colors.background,
     paddingBottom: 70,
   },
   header: {

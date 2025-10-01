@@ -110,8 +110,10 @@ carrer`,
         <Text style={styles.title}>{t('title', 'notifications')}</Text>
       </View>
 
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
+      {/* Content */}
+      <View style={styles.content}>
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'communications' && styles.tabActive]}
           onPress={() => setActiveTab('communications')}
@@ -288,6 +290,7 @@ carrer`,
           </View>
         </View>
       )}
+      </View>
 
       {/* Modal de detalles */}
       <NotificationDetailModal

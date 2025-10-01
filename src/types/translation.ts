@@ -11,6 +11,7 @@ export interface Translations {
   email: TranslationData;
   notifications: TranslationData;
   user: TranslationData;
+  sidebar: TranslationData;
 }
 
 export interface TranslationContextType {

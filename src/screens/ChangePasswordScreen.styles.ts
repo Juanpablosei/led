@@ -4,6 +4,11 @@ import { colors } from '../constants/colors';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.primary,
+    paddingTop: 30,
+  },
+  content: {
+    flex: 1,
     backgroundColor: colors.background,
   },
   header: {
@@ -25,14 +30,12 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginRight: 32,
   },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
+
   formContainer: {
     backgroundColor: colors.white,
     borderRadius: 8,
     padding: 20,
+    minHeight: '100%', 
   },
   fieldContainer: {
     marginBottom: 20,

@@ -62,7 +62,9 @@ export const UserTypeScreen: React.FC = () => {
         <Text style={styles.title}>{t('userType.title', 'user')}</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {/* Content */}
+      <View style={styles.content}>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           {/* Tipo de usuario */}
           <View style={styles.fieldContainer}>
@@ -156,7 +158,8 @@ export const UserTypeScreen: React.FC = () => {
             <Text style={styles.saveButtonText}>{t('userType.save', 'user')}</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       {/* Toast notification */}
       <Toast

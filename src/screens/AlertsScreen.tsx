@@ -41,7 +41,9 @@ export const AlertsScreen: React.FC = () => {
         <Text style={styles.title}>{t('alerts.title', 'user')}</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {/* Content */}
+      <View style={styles.content}>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           {/* Edificios */}
           <View style={styles.section}>
@@ -126,7 +128,8 @@ export const AlertsScreen: React.FC = () => {
             <Text style={styles.saveButtonText}>{t('alerts.save', 'user')}</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       {/* Toast notification */}
       <Toast

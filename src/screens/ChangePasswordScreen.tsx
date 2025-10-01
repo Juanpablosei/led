@@ -64,7 +64,9 @@ export const ChangePasswordScreen: React.FC = () => {
         <Text style={styles.title}>{t('changePassword.title', 'user')}</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {/* Content */}
+      <View style={styles.content}>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           {/* Contraseña actual */}
           <View style={styles.fieldContainer}>
@@ -122,7 +124,8 @@ export const ChangePasswordScreen: React.FC = () => {
             <Text style={styles.saveButtonText}>{t('changePassword.save', 'user')}</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       {/* Toast notification */}
       <Toast
