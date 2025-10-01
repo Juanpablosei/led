@@ -1,0 +1,24 @@
+{
+  "title": "Notificacions",
+  "communications": "Comunicacions",
+  "buildings": "Edificis",
+  "total": "Total",
+  "elements": "Elements",
+  "noNotifications": "No hi ha notificacions",
+  "markAsRead": "Marcar com a llegida",
+  "markAllAsRead": "Marcar totes com a llegides",
+  "notificationTypes": {
+    "billingUpdate": "Actualització de Dades de Facturació de l'Edifici",
+    "maintenanceReminder": "Recordatori de Manteniment",
+    "documentExpiration": "Document proper a vèncer",
+    "generalCommunication": "Comunicació General"
+  },
+  "detail": {
+    "subject": "Assumpte",
+    "dateSent": "Data enviat",
+    "sender": "Remitent",
+    "message": "Missatge",
+    "close": "Tancar"
+  }
+}
+

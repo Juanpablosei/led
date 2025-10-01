@@ -1,0 +1,60 @@
+{
+  "menu": {
+    "myData": "Mis datos",
+    "userType": "Tipo de usuario",
+    "alerts": "Alertas",
+    "changePassword": "Cambiar contraseña"
+  },
+  "myData": {
+    "title": "Mis datos",
+    "name": "Nombre",
+    "surname": "Apellidos",
+    "nif": "NIF",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "save": "GUARDAR",
+    "successMessage": "Datos guardados correctamente",
+    "errorMessage": "Error al guardar los datos"
+  },
+  "userType": {
+    "title": "Tipo de usuario",
+    "userTypeLabel": "Tipo de usuario:",
+    "owner": "Propietario",
+    "professional": "Profesional",
+    "profession": "Profesión:",
+    "autonomousCommunity": "Comunidad autónoma:",
+    "collegiateNumber": "Número de colegiado/a:",
+    "professionalCollege": "Colegio profesional:",
+    "agreement": "Convenio:",
+    "save": "GUARDAR",
+    "required": "*",
+    "selectOption": "Seleccionar...",
+    "successMessage": "Tipo de usuario guardado correctamente",
+    "errorMessage": "Error al guardar el tipo de usuario"
+  },
+  "changePassword": {
+    "title": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Contraseña nueva",
+    "confirmPassword": "Confirmar contraseña",
+    "save": "GUARDAR",
+    "successMessage": "Contraseña cambiada correctamente",
+    "errorMessage": "Error al cambiar la contraseña",
+    "errorPasswordsNotMatch": "Las contraseñas no coinciden",
+    "errorEmptyFields": "Por favor completa todos los campos"
+  },
+  "alerts": {
+    "title": "Configurar alertas",
+    "buildings": "Edificios",
+    "buildingsDescription": "Las notificaciones de caducidad de los documentos se hacen con una antelación de:",
+    "homes": "Viviendas",
+    "homesDescription": "Las notificaciones de caducidad de los documentos se hacen con una antelación de:",
+    "activities": "Actividades",
+    "activitiesDescription": "Las notificaciones de inicio de una actividad programada se hacen con una antelación de:",
+    "days": "Días:",
+    "save": "GUARDAR",
+    "successMessage": "Alertas configuradas correctamente",
+    "errorMessage": "Error al configurar las alertas"
+  }
+}
+

@@ -6,6 +6,7 @@ import { BuildingCard } from '../components/home/building-card/BuildingCard';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
 import { SearchBar } from '../components/home/search-bar/SearchBar';
+import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
 import { styles } from './BuildingsScreen.styles';
 
@@ -118,6 +119,7 @@ export const BuildingsScreen: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [notificationCount] = useState(4);
+  const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
 
   const itemsPerPage = 3;
   const totalItems = filteredBuildings.length;
@@ -168,11 +170,28 @@ export const BuildingsScreen: React.FC = () => {
   };
 
   const handleNotificationPress = () => {
-    Alert.alert('Notificaciones', `Tienes ${notificationCount} notificaciones pendientes`);
+    router.push('/notifications');
   };
 
   const handleProfilePress = () => {
-    Alert.alert('Perfil', 'Acceder a configuración de perfil');
+    setIsUserMenuVisible(true);
+  };
+
+  const handleUserMenuOptionPress = (option: UserMenuOption) => {
+    switch (option) {
+      case 'myData':
+        router.push('/my-data');
+        break;
+      case 'userType':
+        router.push('/user-type');
+        break;
+      case 'alerts':
+        router.push('/alerts');
+        break;
+      case 'changePassword':
+        router.push('/change-password');
+        break;
+    }
   };
 
   const handleMaintenancePress = (buildingId: string) => {
@@ -242,6 +261,13 @@ export const BuildingsScreen: React.FC = () => {
           />
         )}
       </View>
+
+      {/* Menú de usuario */}
+      <UserMenu
+        visible={isUserMenuVisible}
+        onClose={() => setIsUserMenuVisible(false)}
+        onOptionPress={handleUserMenuOptionPress}
+      />
     </View>
   );
 };

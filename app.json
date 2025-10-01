@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "LEDAT",
-    "slug": "LEDAT",
+    "slug": "ledgestion",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,6 +43,19 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "da21058d-d19b-4eab-85da-39bb32e96140"
+      }
+    },
+    "owner": "pablosei",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/da21058d-d19b-4eab-85da-39bb32e96140"
     }
   }
 }

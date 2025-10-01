@@ -1,0 +1,24 @@
+{
+  "title": "Notificaciones",
+  "communications": "Comunicaciones",
+  "buildings": "Edificios",
+  "total": "Total",
+  "elements": "Elementos",
+  "noNotifications": "No hay notificaciones",
+  "markAsRead": "Marcar como leída",
+  "markAllAsRead": "Marcar todas como leídas",
+  "notificationTypes": {
+    "billingUpdate": "Actualización de Datos de Facturación del Edificio",
+    "maintenanceReminder": "Recordatorio de Mantenimiento",
+    "documentExpiration": "Documento próximo a vencer",
+    "generalCommunication": "Comunicación General"
+  },
+  "detail": {
+    "subject": "Asunto",
+    "dateSent": "Fecha enviado",
+    "sender": "Remitente",
+    "message": "Mensaje",
+    "close": "Cerrar"
+  }
+}
+

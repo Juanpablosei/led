@@ -1,0 +1,31 @@
+{
+  "title": "Enviar email",
+  "selectUsers": "Seleccioneu els usuaris",
+  "completeFields": "Completeu els camps",
+  "names": "Noms",
+  "profiles": "Perfils",
+  "verified": "Verificat",
+  "subject": "Assumpte",
+  "attachFiles": "Adjuntar fitxers",
+  "attachFilesPlaceholder": "Arrossega i deixa anar fitxers aquí, o fes clic per seleccionar fitxers",
+  "filesSelected": "fitxer(s) seleccionat(s)",
+  "message": "Missatge",
+  "messagePlaceholder": "Escriu el teu missatge aquí...",
+  "continue": "CONTINUAR",
+  "back": "TORNAR",
+  "sendEmail": "ENVIAR EMAIL",
+  "total": "Total",
+  "elements": "Elements",
+  "required": "*",
+  "maxFileSize": "(Màx. 10 MB)",
+  "errors": {
+    "noUsersSelected": "Si us plau, selecciona almenys un usuari",
+    "missingFields": "Si us plau, completa tots els camps obligatoris",
+    "fileSelectionError": "No s'han pogut seleccionar els fitxers"
+  },
+  "success": {
+    "emailSent": "Email enviat a {{count}} usuari(s)"
+  },
+  "step": "Pas {{current}} de {{total}}"
+}
+

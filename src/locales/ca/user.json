@@ -1,0 +1,60 @@
+{
+  "menu": {
+    "myData": "Les meves dades",
+    "userType": "Tipus d'usuari",
+    "alerts": "Alertes",
+    "changePassword": "Canviar contrasenya"
+  },
+  "myData": {
+    "title": "Les meves dades",
+    "name": "Nom",
+    "surname": "Cognoms",
+    "nif": "NIF",
+    "email": "Correu electrònic",
+    "phone": "Telèfon",
+    "save": "DESAR",
+    "successMessage": "Dades desades correctament",
+    "errorMessage": "Error en desar les dades"
+  },
+  "userType": {
+    "title": "Tipus d'usuari",
+    "userTypeLabel": "Tipus d'usuari:",
+    "owner": "Propietari",
+    "professional": "Professional",
+    "profession": "Professió:",
+    "autonomousCommunity": "Comunitat autònoma:",
+    "collegiateNumber": "Número de col·legiat/ada:",
+    "professionalCollege": "Col·legi professional:",
+    "agreement": "Conveni:",
+    "save": "DESAR",
+    "required": "*",
+    "selectOption": "Seleccionar...",
+    "successMessage": "Tipus d'usuari desat correctament",
+    "errorMessage": "Error en desar el tipus d'usuari"
+  },
+  "changePassword": {
+    "title": "Canviar contrasenya",
+    "currentPassword": "Contrasenya actual",
+    "newPassword": "Contrasenya nova",
+    "confirmPassword": "Confirmar contrasenya",
+    "save": "DESAR",
+    "successMessage": "Contrasenya canviada correctament",
+    "errorMessage": "Error en canviar la contrasenya",
+    "errorPasswordsNotMatch": "Les contrasenyes no coincideixen",
+    "errorEmptyFields": "Si us plau, completa tots els camps"
+  },
+  "alerts": {
+    "title": "Configurar alertes",
+    "buildings": "Edificis",
+    "buildingsDescription": "Les notificacions de caducitat dels documents es fan amb una antelació de:",
+    "homes": "Habitatges",
+    "homesDescription": "Les notificacions de caducitat dels documents es fan amb una antelació de:",
+    "activities": "Activitats",
+    "activitiesDescription": "Les notificacions d'inici d'una activitat programada es fan amb una antelació de:",
+    "days": "Dies:",
+    "save": "DESAR",
+    "successMessage": "Alertes configurades correctament",
+    "errorMessage": "Error en configurar les alertes"
+  }
+}
+

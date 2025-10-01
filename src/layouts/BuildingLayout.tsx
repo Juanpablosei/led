@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { Sidebar } from '../components/sidebar/Sidebar';
+import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
 import { styles } from './BuildingLayout.styles';
 import { BuildingLayoutProps } from './BuildingLayout.types';
@@ -11,6 +12,7 @@ import { BuildingLayoutProps } from './BuildingLayout.types';
 export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, children }) => {
   const { t } = useTranslation();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
 
   const handleMenuPress = () => {
     setIsSidebarVisible(true);
@@ -39,9 +41,35 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         router.push(`/documents?buildingId=${building.id}`);
         break;
       case 'listado-comunicaciones':
-        router.push(`/communications?buildingId=${building.id}`);
+        // router.push(`/communications?buildingId=${building.id}`);
+        console.log('Listado comunicaciones - pendiente de implementar');
         break;
       default:
+        break;
+    }
+  };
+
+  const handleNotificationPress = () => {
+    router.push('/notifications');
+  };
+
+  const handleProfilePress = () => {
+    setIsUserMenuVisible(true);
+  };
+
+  const handleUserMenuOptionPress = (option: UserMenuOption) => {
+    switch (option) {
+      case 'myData':
+        router.push('/my-data');
+        break;
+      case 'userType':
+        router.push('/user-type');
+        break;
+      case 'alerts':
+        router.push('/alerts');
+        break;
+      case 'changePassword':
+        router.push('/change-password');
         break;
     }
   };
@@ -53,6 +81,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         variant="navigation"
         title={t('myBuildings', 'navigation')}
         onBackPress={() => router.back()}
+        notificationCount={4}
+        onNotificationPress={handleNotificationPress}
+        onProfilePress={handleProfilePress}
       />
 
       {/* Título + Menú - SIEMPRE */}
@@ -73,6 +104,13 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         isVisible={isSidebarVisible}
         onClose={handleSidebarClose}
         onItemPress={handleSidebarItemPress}
+      />
+
+      {/* Menú de usuario */}
+      <UserMenu
+        visible={isUserMenuVisible}
+        onClose={() => setIsUserMenuVisible(false)}
+        onOptionPress={handleUserMenuOptionPress}
       />
     </View>
   );

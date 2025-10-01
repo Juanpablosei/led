@@ -8,11 +8,17 @@ const translations: Record<Language, Translations> = {
     common: require('../locales/es/common.json'),
     auth: require('../locales/es/auth.json'),
     navigation: require('../locales/es/navigation.json'),
+    email: require('../locales/es/email.json'),
+    notifications: require('../locales/es/notifications.json'),
+    user: require('../locales/es/user.json'),
   },
   ca: {
     common: require('../locales/ca/common.json'),
     auth: require('../locales/ca/auth.json'),
     navigation: require('../locales/ca/navigation.json'),
+    email: require('../locales/ca/email.json'),
+    notifications: require('../locales/ca/notifications.json'),
+    user: require('../locales/ca/user.json'),
   },
 };
 

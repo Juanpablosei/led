@@ -8,6 +8,9 @@ export interface Translations {
   common: TranslationData;
   auth: TranslationData;
   navigation: TranslationData;
+  email: TranslationData;
+  notifications: TranslationData;
+  user: TranslationData;
 }
 
 export interface TranslationContextType {

@@ -1,0 +1,31 @@
+{
+  "title": "Enviar email",
+  "selectUsers": "Seleccione los usuarios",
+  "completeFields": "Complete los campos",
+  "names": "Nombres",
+  "profiles": "Perfiles",
+  "verified": "Verificado",
+  "subject": "Asunto",
+  "attachFiles": "Adjuntar ficheros",
+  "attachFilesPlaceholder": "Arrastra y suelta ficheros aquí, o haz clic para seleccionar ficheros",
+  "filesSelected": "archivo(s) seleccionado(s)",
+  "message": "Mensaje",
+  "messagePlaceholder": "Escribe tu mensaje aquí...",
+  "continue": "CONTINUAR",
+  "back": "REGRESAR",
+  "sendEmail": "ENVIAR EMAIL",
+  "total": "Total",
+  "elements": "Elementos",
+  "required": "*",
+  "maxFileSize": "(Máx. 10 MB)",
+  "errors": {
+    "noUsersSelected": "Por favor selecciona al menos un usuario",
+    "missingFields": "Por favor completa todos los campos obligatorios",
+    "fileSelectionError": "No se pudieron seleccionar los archivos"
+  },
+  "success": {
+    "emailSent": "Email enviado a {{count}} usuario(s)"
+  },
+  "step": "Paso {{current}} de {{total}}"
+}
+
