@@ -158,7 +158,7 @@ export const styles = StyleSheet.create({
   },
   checkboxContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 15,
   },
   checkbox: {
@@ -191,6 +191,7 @@ export const styles = StyleSheet.create({
     color: colors.black,
     flex: 1,
     lineHeight: 20,
+    marginLeft: 8,
   },
   redText: {
     color: colors.red,

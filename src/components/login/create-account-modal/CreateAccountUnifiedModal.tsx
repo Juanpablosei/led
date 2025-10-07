@@ -385,7 +385,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.checkboxContainer}>
+        <View style={[styles.checkboxContainer, { marginTop: 10 }]}>
           <TouchableOpacity 
             style={styles.checkboxRow}
             onPress={() => handleInputChange(3, 'acceptDataProtection', !step3Data.acceptDataProtection)}
