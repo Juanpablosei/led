@@ -9,9 +9,11 @@ export const LoginCard: React.FC<LoginCardProps> = ({
   onLogin,
   onRegister,
   onForgotPassword,
+  isLoading = false,
+  rememberedNif = null,
 }) => {
-  const handleLogin = (data: LoginFormData) => {
-    onLogin(data);
+  const handleLogin = (data: LoginFormData, activeTab: string) => {
+    onLogin(data, activeTab);
   };
 
   const handleRegister = () => {
@@ -28,6 +30,8 @@ export const LoginCard: React.FC<LoginCardProps> = ({
       <LoginForm
         onLogin={handleLogin}
         onForgotPassword={handleForgotPassword}
+        isLoading={isLoading}
+        rememberedNif={rememberedNif}
       />
 
       {/* Registration Section Component */}

@@ -25,7 +25,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
       title: t('users', 'sidebar'),
       icon: 'people-outline',
       children: [
-        { id: 'listado-usuarios', title: t('userList', 'sidebar'), icon: 'list-outline' },
+        // Temporarily hidden
+        // { id: 'listado-usuarios', title: t('userList', 'sidebar'), icon: 'list-outline' },
         { id: 'enviar-email', title: t('sendEmail', 'sidebar'), icon: 'mail-outline' },
       ],
     },

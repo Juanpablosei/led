@@ -3,7 +3,8 @@
     "myData": "Mis datos",
     "userType": "Tipo de usuario",
     "alerts": "Alertas",
-    "changePassword": "Cambiar contraseña"
+    "changePassword": "Cambiar contraseña",
+    "logout": "Salir"
   },
   "myData": {
     "title": "Mis datos",

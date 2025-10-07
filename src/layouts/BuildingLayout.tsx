@@ -6,6 +6,7 @@ import { GlobalHeader } from '../components/global/GlobalHeader';
 import { Sidebar } from '../components/sidebar/Sidebar';
 import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
+import { storageService } from '../services/storageService';
 import { styles } from './BuildingLayout.styles';
 import { BuildingLayoutProps } from './BuildingLayout.types';
 
@@ -31,9 +32,10 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       case 'identificacion':
         // Ya estamos en la pantalla de identificación
         break;
-      case 'listado-usuarios':
-        router.push(`/users?buildingId=${building.id}`);
-        break;
+      // Temporarily hidden
+      // case 'listado-usuarios':
+      //   router.push(`/users?buildingId=${building.id}`);
+      //   break;
       case 'enviar-email':
         router.push(`/send-email?buildingId=${building.id}`);
         break;
@@ -62,15 +64,31 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       case 'myData':
         router.push('/my-data');
         break;
-      case 'userType':
-        router.push('/user-type');
-        break;
-      case 'alerts':
-        router.push('/alerts');
-        break;
+      // Temporarily hidden
+      // case 'alerts':
+      //   router.push('/alerts');
+      //   break;
       case 'changePassword':
         router.push('/change-password');
         break;
+      case 'logout':
+        handleLogout();
+        break;
+    }
+  };
+
+  const handleLogout = async () => {
+    // Cerrar el menú primero
+    setIsUserMenuVisible(false);
+    try {
+      // Limpiar todos los datos de autenticación
+      await storageService.clearAuthData();
+      // Navegar al login
+      router.replace('/login');
+    } catch (error) {
+      console.error('Error al hacer logout:', error);
+      // Navegar al login aunque haya error
+      router.replace('/login');
     }
   };
 

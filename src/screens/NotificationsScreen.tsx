@@ -24,13 +24,29 @@ const mockBuildings: NotificationData[] = Array.from({ length: 25 }, (_, i) => (
   isRead: i >= 8,
 }));
 
-type TabType = 'communications' | 'buildings';
+const mockHomes: NotificationData[] = Array.from({ length: 18 }, (_, i) => ({
+  id: `home-${i + 1}`,
+  title: 'Notificació de Caducitat de Documentació de la Vivienda',
+  date: '18/03/2026',
+  isRead: i >= 6,
+}));
+
+const mockActivities: NotificationData[] = Array.from({ length: 12 }, (_, i) => ({
+  id: `activity-${i + 1}`,
+  title: 'Recordatori d\'Activitat Programada',
+  date: '22/03/2026',
+  isRead: i >= 3,
+}));
+
+type TabType = 'communications' | 'buildings' | 'homes' | 'activities';
 
 export const NotificationsScreen: React.FC = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('communications');
   const [communicationsPage, setCommunicationsPage] = useState(1);
   const [buildingsPage, setBuildingsPage] = useState(1);
+  const [homesPage, setHomesPage] = useState(1);
+  const [activitiesPage, setActivitiesPage] = useState(1);
   const [selectedNotification, setSelectedNotification] = useState<NotificationDetailData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -50,6 +66,22 @@ export const NotificationsScreen: React.FC = () => {
     const startIndex = (buildingsPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return mockBuildings.slice(startIndex, endIndex);
+  };
+
+  // Paginación para viviendas
+  const homesTotalPages = Math.ceil(mockHomes.length / itemsPerPage);
+  const getCurrentHomes = () => {
+    const startIndex = (homesPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return mockHomes.slice(startIndex, endIndex);
+  };
+
+  // Paginación para actividades
+  const activitiesTotalPages = Math.ceil(mockActivities.length / itemsPerPage);
+  const getCurrentActivities = () => {
+    const startIndex = (activitiesPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return mockActivities.slice(startIndex, endIndex);
   };
 
   const handleNotificationPress = (id: string) => {
@@ -112,32 +144,90 @@ carrer`,
 
       {/* Content */}
       <View style={styles.content}>
-        {/* Tabs */}
-        <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'communications' && styles.tabActive]}
-          onPress={() => setActiveTab('communications')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'communications' && styles.tabTextActive,
-            ]}
-          >
-            {t('communications', 'notifications')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'buildings' && styles.tabActive]}
-          onPress={() => setActiveTab('buildings')}
-        >
-          <Text
-            style={[styles.tabText, activeTab === 'buildings' && styles.tabTextActive]}
-          >
-            {t('buildings', 'notifications')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Cards de notificaciones - Diseño moderno */}
+        <View style={styles.cardsContainer}>
+          {/* Fila 1: Comunicaciones | Edificios */}
+          <View style={styles.cardsRow}>
+            <TouchableOpacity
+              style={[styles.notificationCard, activeTab === 'communications' && styles.notificationCardActive]}
+              onPress={() => setActiveTab('communications')}
+            >
+              <View style={styles.cardIconContainer}>
+                <Ionicons 
+                  name="mail-outline" 
+                  size={18} 
+                  color={activeTab === 'communications' ? colors.white : colors.primary} 
+                />
+              </View>
+              <Text style={[styles.cardTitle, activeTab === 'communications' && styles.cardTitleActive]}>
+                {t('communications', 'notifications')}
+              </Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>{mockCommunications.length}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.notificationCard, activeTab === 'buildings' && styles.notificationCardActive]}
+              onPress={() => setActiveTab('buildings')}
+            >
+              <View style={styles.cardIconContainer}>
+                <Ionicons 
+                  name="business-outline" 
+                  size={18} 
+                  color={activeTab === 'buildings' ? colors.white : colors.primary} 
+                />
+              </View>
+              <Text style={[styles.cardTitle, activeTab === 'buildings' && styles.cardTitleActive]}>
+                {t('buildings', 'notifications')}
+              </Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>{mockBuildings.length}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Fila 2: Viviendas | Actividades */}
+          <View style={styles.cardsRow}>
+            <TouchableOpacity
+              style={[styles.notificationCard, activeTab === 'homes' && styles.notificationCardActive]}
+              onPress={() => setActiveTab('homes')}
+            >
+              <View style={styles.cardIconContainer}>
+                <Ionicons 
+                  name="home-outline" 
+                  size={18} 
+                  color={activeTab === 'homes' ? colors.white : colors.primary} 
+                />
+              </View>
+              <Text style={[styles.cardTitle, activeTab === 'homes' && styles.cardTitleActive]}>
+                {t('homes', 'notifications')}
+              </Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>{mockHomes.length}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.notificationCard, activeTab === 'activities' && styles.notificationCardActive]}
+              onPress={() => setActiveTab('activities')}
+            >
+              <View style={styles.cardIconContainer}>
+                <Ionicons 
+                  name="calendar-outline" 
+                  size={18} 
+                  color={activeTab === 'activities' ? colors.white : colors.primary} 
+                />
+              </View>
+              <Text style={[styles.cardTitle, activeTab === 'activities' && styles.cardTitleActive]}>
+                {t('activities', 'notifications')}
+              </Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>{mockActivities.length}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Sección Comunicaciones */}
@@ -172,6 +262,48 @@ carrer`,
 
             <View style={styles.notificationsList}>
               {getCurrentBuildings().map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onPress={handleNotificationPress}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Sección Viviendas */}
+        {activeTab === 'homes' && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                {t('homes', 'notifications')} ({mockHomes.length})
+              </Text>
+            </View>
+
+            <View style={styles.notificationsList}>
+              {getCurrentHomes().map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onPress={handleNotificationPress}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Sección Actividades */}
+        {activeTab === 'activities' && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                {t('activities', 'notifications')} ({mockActivities.length})
+              </Text>
+            </View>
+
+            <View style={styles.notificationsList}>
+              {getCurrentActivities().map((notification) => (
                 <NotificationItem
                   key={notification.id}
                   notification={notification}
@@ -284,6 +416,114 @@ carrer`,
                 setBuildingsPage((prev) => Math.min(buildingsTotalPages, prev + 1))
               }
               disabled={buildingsPage === buildingsTotalPages}
+            >
+              <Text style={styles.pageButtonText}>{'>'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Paginación fija abajo - Viviendas */}
+      {activeTab === 'homes' && mockHomes.length > 0 && (
+        <View style={styles.paginationFixed}>
+          <Text style={styles.totalText}>
+            {t('total', 'notifications')}: {mockHomes.length} {t('elements', 'notifications')}
+          </Text>
+          <View style={styles.paginationButtons}>
+            <TouchableOpacity
+              style={[
+                styles.pageButton,
+                homesPage === 1 && styles.pageButtonDisabled,
+              ]}
+              onPress={() => setHomesPage((prev) => Math.max(1, prev - 1))}
+              disabled={homesPage === 1}
+            >
+              <Text style={styles.pageButtonText}>{'<'}</Text>
+            </TouchableOpacity>
+
+            {Array.from({ length: homesTotalPages }, (_, i) => i + 1).map((page) => (
+              <TouchableOpacity
+                key={page}
+                style={[
+                  styles.pageButton,
+                  homesPage === page && styles.pageButtonActive,
+                ]}
+                onPress={() => setHomesPage(page)}
+              >
+                <Text
+                  style={[
+                    styles.pageButtonText,
+                    homesPage === page && styles.pageButtonTextActive,
+                  ]}
+                >
+                  {page}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              style={[
+                styles.pageButton,
+                homesPage === homesTotalPages && styles.pageButtonDisabled,
+              ]}
+              onPress={() =>
+                setHomesPage((prev) => Math.min(homesTotalPages, prev + 1))
+              }
+              disabled={homesPage === homesTotalPages}
+            >
+              <Text style={styles.pageButtonText}>{'>'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Paginación fija abajo - Actividades */}
+      {activeTab === 'activities' && mockActivities.length > 0 && (
+        <View style={styles.paginationFixed}>
+          <Text style={styles.totalText}>
+            {t('total', 'notifications')}: {mockActivities.length} {t('elements', 'notifications')}
+          </Text>
+          <View style={styles.paginationButtons}>
+            <TouchableOpacity
+              style={[
+                styles.pageButton,
+                activitiesPage === 1 && styles.pageButtonDisabled,
+              ]}
+              onPress={() => setActivitiesPage((prev) => Math.max(1, prev - 1))}
+              disabled={activitiesPage === 1}
+            >
+              <Text style={styles.pageButtonText}>{'<'}</Text>
+            </TouchableOpacity>
+
+            {Array.from({ length: activitiesTotalPages }, (_, i) => i + 1).map((page) => (
+              <TouchableOpacity
+                key={page}
+                style={[
+                  styles.pageButton,
+                  activitiesPage === page && styles.pageButtonActive,
+                ]}
+                onPress={() => setActivitiesPage(page)}
+              >
+                <Text
+                  style={[
+                    styles.pageButtonText,
+                    activitiesPage === page && styles.pageButtonTextActive,
+                  ]}
+                >
+                  {page}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
+            <TouchableOpacity
+              style={[
+                styles.pageButton,
+                activitiesPage === activitiesTotalPages && styles.pageButtonDisabled,
+              ]}
+              onPress={() =>
+                setActivitiesPage((prev) => Math.min(activitiesTotalPages, prev + 1))
+              }
+              disabled={activitiesPage === activitiesTotalPages}
             >
               <Text style={styles.pageButtonText}>{'>'}</Text>
             </TouchableOpacity>

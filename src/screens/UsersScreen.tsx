@@ -161,11 +161,6 @@ export const UsersScreen: React.FC = () => {
           ListEmptyComponent={renderEmptyState}
           showsVerticalScrollIndicator={false}
         />
-
-        {/* Botón flotante para agregar usuario */}
-        <TouchableOpacity style={styles.addButton} onPress={handleAddUser}>
-          <Ionicons name="add" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
       </View>
     </BuildingLayout>
   );

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from '../../hooks/useTranslation';
 import { colors, styles } from './Header.styles';
 import { HeaderProps } from './Header.types';
@@ -29,7 +29,11 @@ export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
     <View style={styles.header}>
       {/* Logo */}
       <View style={styles.logo}>
-        <Text style={styles.logoText}>LED</Text>
+        <Image 
+          source={require('../../../assets/images/logo.png')} 
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
       </View>
 
       {/* Language Selector */}

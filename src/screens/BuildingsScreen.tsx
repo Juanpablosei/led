@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Text, View } from 'react-native';
+import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { BuildingCard } from '../components/home/building-card/BuildingCard';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
@@ -220,7 +221,8 @@ export const BuildingsScreen: React.FC = () => {
   );
 
   return (
-            <View style={styles.container}>
+    <ProtectedRoute>
+      <View style={styles.container}>
               {/* Header fijo */}
               <GlobalHeader
                 variant="logo"
@@ -268,6 +270,7 @@ export const BuildingsScreen: React.FC = () => {
         onClose={() => setIsUserMenuVisible(false)}
         onOptionPress={handleUserMenuOptionPress}
       />
-    </View>
+      </View>
+    </ProtectedRoute>
   );
 };

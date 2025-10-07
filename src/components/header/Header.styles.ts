@@ -42,6 +42,10 @@ export const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold' as const,
   },
+  logoImage: {
+    width: 60,
+    height: 30,
+  },
   logoAccent: {
     position: 'absolute',
     top: -8,

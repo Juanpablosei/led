@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './GlobalHeader.styles';
 import { GlobalHeaderProps } from './GlobalHeader.types';
 
@@ -19,7 +19,11 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
         {variant === 'logo' ? (
           // Variante con logo LED
           <View style={styles.logoContainer}>
-            <Text style={styles.logo}>LED</Text>
+            <Image 
+              source={require('../../../assets/images/logo.png')} 
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </View>
         ) : (
           // Variante con navegación

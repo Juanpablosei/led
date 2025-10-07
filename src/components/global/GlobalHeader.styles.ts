@@ -28,10 +28,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.white,
-    letterSpacing: 1,
+    width: 60,
+    height: 30,
   },
   logoIcon: {
     marginLeft: 8,

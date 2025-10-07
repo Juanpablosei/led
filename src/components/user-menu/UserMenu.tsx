@@ -1,6 +1,8 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useTranslation } from '../../hooks/useTranslation';
+import { storageService } from '../../services/storageService';
 import { styles } from './UserMenu.styles';
 import { UserMenuProps } from './UserMenu.types';
 
@@ -12,9 +14,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleOptionPress = (option: 'myData' | 'userType' | 'alerts' | 'changePassword') => {
+  const handleOptionPress = (option: 'myData' | 'alerts' | 'changePassword' | 'logout') => {
     onOptionPress(option);
-    onClose();
+    // No cerrar automáticamente para logout, que se cierre desde el componente padre
+    if (option !== 'logout') {
+      onClose();
+    }
   };
 
   if (!visible) return null;
@@ -37,14 +42,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({
               <Text style={styles.menuItemText}>{t('menu.myData', 'user')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => handleOptionPress('userType')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.menuItemText}>{t('menu.userType', 'user')}</Text>
-            </TouchableOpacity>
 
+            {/* Temporarily hidden
             <TouchableOpacity
               style={styles.menuItem}
               onPress={() => handleOptionPress('alerts')}
@@ -52,13 +51,34 @@ export const UserMenu: React.FC<UserMenuProps> = ({
             >
               <Text style={styles.menuItemText}>{t('menu.alerts', 'user')}</Text>
             </TouchableOpacity>
+            */}
 
             <TouchableOpacity
-              style={[styles.menuItem, styles.menuItemLast]}
+              style={styles.menuItem}
               onPress={() => handleOptionPress('changePassword')}
               activeOpacity={0.7}
             >
               <Text style={styles.menuItemText}>{t('menu.changePassword', 'user')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.menuItem, styles.menuItemLast]}
+              onPress={async () => {
+                try {
+                  // Cerrar el menú primero
+                  onClose();
+                  // Limpiar datos de autenticación
+                  await storageService.clearAuthData();
+                  // Navegar al login
+                  router.replace('/login');
+                } catch (error) {
+                  console.error('Error al hacer logout:', error);
+                  router.replace('/login');
+                }
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.menuItemText, styles.logoutText]}>{t('menu.logout', 'user')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -31,33 +31,82 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginRight: 32,
   },
-  tabsContainer: {
-    flexDirection: 'row',
+  // Cards modernas para notificaciones
+  cardsContainer: {
     backgroundColor: colors.white,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGray,
   },
-  tab: {
+  cardsRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  notificationCard: {
     flex: 1,
-    paddingVertical: 16,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    padding: 12,
+    marginHorizontal: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomWidth: 3,
-    borderBottomColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
+    position: 'relative',
   },
-  tabActive: {
-    borderBottomColor: colors.primary,
+  notificationCardActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+    shadowOpacity: 0.2,
+    elevation: 5,
   },
-  tabText: {
-    fontSize: 16,
+  cardIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.lightGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  cardTitle: {
+    fontSize: 10,
     fontWeight: '600',
-    color: '#999999',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 4,
   },
-  tabTextActive: {
-    color: colors.primary,
+  cardTitleActive: {
+    color: colors.white,
+  },
+  cardBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  cardBadgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   section: {
-    marginTop: 16,
+    marginTop: 0,
   },
   sectionHeader: {
     backgroundColor: colors.white,

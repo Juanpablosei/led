@@ -3,7 +3,8 @@
     "myData": "Les meves dades",
     "userType": "Tipus d'usuari",
     "alerts": "Alertes",
-    "changePassword": "Canviar contrasenya"
+    "changePassword": "Canviar contrasenya",
+    "logout": "Sortir"
   },
   "myData": {
     "title": "Les meves dades",

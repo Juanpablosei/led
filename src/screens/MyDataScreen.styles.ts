@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 50,
+    paddingTop: 5,
   },
   header: {
     backgroundColor: colors.primary,
@@ -41,6 +41,14 @@ export const styles = StyleSheet.create({
   fieldContainer: {
     marginBottom: 20,
   },
+  rowContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 20,
+  },
+  halfFieldContainer: {
+    flex: 1,
+  },
   label: {
     fontSize: 12,
     fontWeight: '400',
@@ -67,6 +75,74 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: colors.lightGray,
+    marginVertical: 20,
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    gap: 20,
+  },
+  radioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  radioButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: colors.lightGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioButtonSelected: {
+    borderColor: colors.primary,
+  },
+  radioButtonInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
+  },
+  radioText: {
+    fontSize: 16,
+    color: colors.text,
+  },
+  dropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: colors.text,
+  },
+  dropdownPlaceholder: {
+    fontSize: 16,
+    color: '#999999',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: colors.text,
+    backgroundColor: colors.white,
+  },
+  required: {
+    color: colors.primary,
   },
 });
 

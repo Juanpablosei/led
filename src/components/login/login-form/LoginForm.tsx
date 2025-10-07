@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { Button } from '../../buttons/Button';
@@ -8,22 +8,38 @@ import { styles } from './LoginForm.styles';
 import { LoginFormData } from './LoginForm.types';
 
 export interface LoginFormProps {
-  onLogin: (data: LoginFormData) => void;
+  onLogin: (data: LoginFormData, activeTab: string) => void;
   onForgotPassword: (activeTab: string) => void;
+  isLoading?: boolean;
+  rememberedNif?: string | null;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   onForgotPassword,
+  isLoading = false,
+  rememberedNif = null,
 }) => {
-  const { t, currentLanguage } = useTranslation();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<LoginFormData>({
     nif: '',
     password: '',
+    code: '',
     rememberNif: false,
   });
 
   const [activeTab, setActiveTab] = useState('general');
+
+  // Cargar NIF recordado cuando el componente se monta
+  useEffect(() => {
+    if (rememberedNif) {
+      setFormData(prev => ({
+        ...prev,
+        nif: rememberedNif,
+        rememberNif: true
+      }));
+    }
+  }, [rememberedNif]);
 
   const tabs = [
     {
@@ -52,7 +68,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   const handleLogin = () => {
-    onLogin(formData);
+    onLogin(formData, activeTab);
   };
 
   const handleForgotPassword = () => {
@@ -93,9 +109,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       <Input
         label={activeTab === 'building' ? t('accessCode', 'auth') : t('password', 'common')}
-        value={formData.password}
-        onChangeText={(text) => handleInputChange('password', text)}
-        secureTextEntry={true}
+        value={activeTab === 'building' ? formData.code : formData.password}
+        onChangeText={(text) => handleInputChange(activeTab === 'building' ? 'code' : 'password', text)}
+        secureTextEntry={activeTab === 'general'}
         placeholder={activeTab === 'building' ? t('accessCodePlaceholder', 'auth') : t('passwordPlaceholder', 'auth')}
       />
 
@@ -114,9 +130,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {/* Login Button */}
       <Button
-        title={t('loginButton', 'auth')}
+        title={isLoading ? 'Iniciando sesión...' : t('loginButton', 'auth')}
         onPress={handleLogin}
         variant="primary"
+        disabled={isLoading}
       />
 
       {/* Forgot Password Link */}
