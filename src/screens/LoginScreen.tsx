@@ -18,6 +18,8 @@ import { LoginCard } from "../components/login/login-card/LoginCard";
 import { LoginFormData } from "../components/login/login-card/LoginCard.types";
 import { ResetCodeModal } from "../components/login/reset-code-modal/ResetCodeModal";
 import { ResetPasswordModal } from "../components/login/reset-password-modal/ResetPasswordModal";
+import ProfessionalDataModal from "../components/modals/ProfessionalDataModal";
+import { ProfessionalDataFormData } from "../components/modals/ProfessionalDataModal.types";
 import { SupportOptions } from "../components/support-options/SupportOptions";
 import { colors } from "../constants/colors";
 import { useTranslation } from "../hooks/useTranslation";
@@ -37,6 +39,7 @@ export const LoginScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState("general");
   const [isLoading, setIsLoading] = useState(false);
   const [rememberedNif, setRememberedNif] = useState<string | null>(null);
+  const [showProfessionalDataModal, setShowProfessionalDataModal] = useState(false);
 
   // Cargar NIF recordado al iniciar
   useEffect(() => {
@@ -137,8 +140,13 @@ export const LoginScreen: React.FC = () => {
             setRememberedNif(data.nif);
           }
           
-          // Navegar directamente para login general (sin modal de edificio)
-          router.replace("/buildings");
+          // Verificar si necesita completar datos profesionales
+          if ('datos_profesionales' in response && response.datos_profesionales === false) {
+            setShowProfessionalDataModal(true);
+          } else {
+            // Navegar directamente si ya tiene datos profesionales completos
+            router.replace("/buildings");
+          }
         } else {
           // Error en el login - mostrar el mensaje exacto de la respuesta
           if ('errors' in response) {
@@ -288,6 +296,20 @@ export const LoginScreen: React.FC = () => {
     // El usuario ya está en la pantalla de login, solo cerramos el modal
   };
 
+  const handleProfessionalDataClose = () => {
+    setShowProfessionalDataModal(false);
+    // Navegar a buildings al cerrar el modal
+    router.replace("/buildings");
+  };
+
+  const handleProfessionalDataFinish = (data: ProfessionalDataFormData) => {
+    console.log("Finalizar datos profesionales:", data);
+    setShowProfessionalDataModal(false);
+    // Aquí iría la lógica para guardar los datos profesionales
+    // Por ahora navegamos a buildings
+    router.replace("/buildings");
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -383,6 +405,13 @@ export const LoginScreen: React.FC = () => {
             onClose={handleCreateAccountClose}
             onStepChange={handleCreateAccountStepChange}
             onFinish={handleCreateAccountFinish}
+          />
+
+          {/* Professional Data Modal */}
+          <ProfessionalDataModal
+            visible={showProfessionalDataModal}
+            onClose={handleProfessionalDataClose}
+            onFinish={handleProfessionalDataFinish}
           />
         </View>
       </View>
