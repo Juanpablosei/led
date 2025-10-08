@@ -18,6 +18,7 @@ import { LoginCard } from "../components/login/login-card/LoginCard";
 import { LoginFormData } from "../components/login/login-card/LoginCard.types";
 import { ResetCodeModal } from "../components/login/reset-code-modal/ResetCodeModal";
 import { ResetPasswordModal } from "../components/login/reset-password-modal/ResetPasswordModal";
+import BuildingRejectedModal from "../components/modals/BuildingRejectedModal";
 import ProfessionalDataModal from "../components/modals/ProfessionalDataModal";
 import { ProfessionalDataFormData } from "../components/modals/ProfessionalDataModal.types";
 import { SupportOptions } from "../components/support-options/SupportOptions";
@@ -34,6 +35,7 @@ export const LoginScreen: React.FC = () => {
   const [showResetCodeModal, setShowResetCodeModal] = useState(false);
   const [showBuildingAcceptanceModal, setShowBuildingAcceptanceModal] =
     useState(false);
+  const [showBuildingRejectedModal, setShowBuildingRejectedModal] = useState(false);
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
   const [createAccountStep, setCreateAccountStep] = useState(1);
   const [activeTab, setActiveTab] = useState("general");
@@ -94,8 +96,17 @@ export const LoginScreen: React.FC = () => {
             setRememberedNif(data.nif);
           }
           
-          // Por ahora mostramos el modal de aceptación
-          setShowBuildingAcceptanceModal(true);
+          // Verificar el campo activ para determinar el flujo
+          if (response.activ === null) {
+            // Mostrar modal de confirmación
+            setShowBuildingAcceptanceModal(true);
+          } else if (response.activ === true) {
+            // Login normal, navegar directamente
+            router.replace("/buildings");
+          } else if (response.activ === false) {
+            // Mostrar modal de error
+            setShowBuildingRejectedModal(true);
+          }
         } else {
           // Error en el login - mostrar el mensaje exacto de la respuesta
           if ('errors' in response) {
@@ -265,17 +276,74 @@ export const LoginScreen: React.FC = () => {
     // Aquí iría la lógica para restablecer el código
   };
 
-  const handleBuildingAcceptance = () => {
+  const handleBuildingAcceptance = async () => {
     console.log("Aceptar condiciones del edificio");
-    setShowBuildingAcceptanceModal(false);
-    // Navegar a la pantalla de edificios después de aceptar
-    router.replace("/buildings");
+    setIsLoading(true);
+    
+    try {
+      // Obtener token y edificio_id
+      const token = await storageService.getAuthToken();
+      const buildingData = await storageService.getBuildingData();
+      
+      if (token && buildingData?.id) {
+        const response = await authService.approveBuilding(buildingData.id, token);
+        
+        if ('success' in response && response.success) {
+          console.log("Edificio aprobado exitosamente");
+          setShowBuildingAcceptanceModal(false);
+          router.replace("/buildings");
+        } else {
+          console.error("Error al aprobar edificio:", response.message);
+          Alert.alert('', response.message || 'Error al aprobar el edificio');
+        }
+      } else {
+        console.error("Token o edificio_id no disponibles");
+        Alert.alert('', 'Error: datos de autenticación no disponibles');
+      }
+    } catch (error) {
+      console.error("Error en aprobación de edificio:", error);
+      Alert.alert('', 'Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleBuildingRejection = () => {
+  const handleBuildingRejection = async () => {
     console.log("Rechazar condiciones del edificio");
-    setShowBuildingAcceptanceModal(false);
-    // Aquí iría la lógica para manejar el rechazo
+    setIsLoading(true);
+    
+    try {
+      // Obtener token y edificio_id
+      const token = await storageService.getAuthToken();
+      const buildingData = await storageService.getBuildingData();
+      
+      if (token && buildingData?.id) {
+        const response = await authService.rejectBuilding(buildingData.id, token);
+        
+        if ('success' in response && response.success) {
+          console.log("Edificio rechazado exitosamente");
+          setShowBuildingAcceptanceModal(false);
+          // Limpiar datos de autenticación y volver al login
+          await storageService.clearAuthData();
+        } else {
+          console.error("Error al rechazar edificio:", response.message);
+          Alert.alert('', response.message || 'Error al rechazar el edificio');
+        }
+      } else {
+        console.error("Token o edificio_id no disponibles");
+        Alert.alert('', 'Error: datos de autenticación no disponibles');
+      }
+    } catch (error) {
+      console.error("Error en rechazo de edificio:", error);
+      Alert.alert('', 'Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBuildingRejectedClose = () => {
+    setShowBuildingRejectedModal(false);
+    // No navegar, el usuario debe volver al login
   };
 
   const handleCreateAccountClose = () => {
@@ -396,6 +464,12 @@ export const LoginScreen: React.FC = () => {
             onClose={() => setShowBuildingAcceptanceModal(false)}
             onAccept={handleBuildingAcceptance}
             onReject={handleBuildingRejection}
+          />
+
+          {/* Building Rejected Modal */}
+          <BuildingRejectedModal
+            visible={showBuildingRejectedModal}
+            onClose={handleBuildingRejectedClose}
           />
 
           {/* Create Account Modal - Unificado */}

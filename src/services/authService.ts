@@ -143,6 +143,25 @@ export type BuildingLoginApiResponse = BuildingLoginResponse | BuildingLoginErro
 export type GeneralLoginApiResponse = GeneralLoginResponse | GeneralLoginError | GeneralLoginValidationError;
 export type ForgotPasswordApiResponse = ForgotPasswordResponse | ForgotPasswordError | ForgotPasswordValidationError;
 
+// Interfaces para aprobar/rechazar edificio
+export interface BuildingApprovalRequest {
+  edificio_id: number;
+}
+
+export interface BuildingApprovalResponse {
+  success: boolean;
+  message: string;
+  code: number;
+}
+
+export interface BuildingApprovalError {
+  success: false;
+  message: string;
+  code: number;
+}
+
+export type BuildingApprovalApiResponse = BuildingApprovalResponse | BuildingApprovalError;
+
 const API_BASE_URL = 'https://librodigitalws.arescoop.es/api';
 
 export const authService = {
@@ -205,6 +224,44 @@ export const authService = {
       return data;
     } catch (error) {
       console.error('Error en olvidé contraseña:', error);
+      throw error;
+    }
+  },
+
+  async approveBuilding(edificio_id: number, token: string): Promise<BuildingApprovalApiResponse> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/edificio_usuarios/comprobacion/aprobar/id:${edificio_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error al aprobar edificio:', error);
+      throw error;
+    }
+  },
+
+  async rejectBuilding(edificio_id: number, token: string): Promise<BuildingApprovalApiResponse> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/edificio_usuarios/comprobacion/rechazar/id:${edificio_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error al rechazar edificio:', error);
       throw error;
     }
   }
