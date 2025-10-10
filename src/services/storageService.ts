@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
+  NOTIFICATION_TOKEN: 'notification_token',
   BUILDING_DATA: 'building_data',
   USER_ROLES: 'user_roles',
   USER_DATA: 'user_data',
@@ -100,6 +101,34 @@ export const storageService = {
     }
   },
 
+  // Notification Token management
+  async setNotificationToken(token: string): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_TOKEN, token);
+    } catch (error) {
+      console.error('Error saving notification token:', error);
+      throw error;
+    }
+  },
+
+  async getNotificationToken(): Promise<string | null> {
+    try {
+      return await AsyncStorage.getItem(STORAGE_KEYS.NOTIFICATION_TOKEN);
+    } catch (error) {
+      console.error('Error getting notification token:', error);
+      return null;
+    }
+  },
+
+  async removeNotificationToken(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.NOTIFICATION_TOKEN);
+    } catch (error) {
+      console.error('Error removing notification token:', error);
+      throw error;
+    }
+  },
+
   // Building data management
   async setBuildingData(buildingData: StoredBuildingData): Promise<void> {
     try {
@@ -193,6 +222,7 @@ export const storageService = {
     try {
       await Promise.all([
         AsyncStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN),
+        AsyncStorage.removeItem(STORAGE_KEYS.NOTIFICATION_TOKEN),
         AsyncStorage.removeItem(STORAGE_KEYS.BUILDING_DATA),
         AsyncStorage.removeItem(STORAGE_KEYS.USER_ROLES),
         AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA),

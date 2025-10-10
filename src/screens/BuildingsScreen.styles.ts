@@ -34,4 +34,15 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.md,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: colors.gray,
+  },
 });

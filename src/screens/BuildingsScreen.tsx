@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { BuildingCard } from '../components/home/building-card/BuildingCard';
@@ -9,165 +9,85 @@ import { Pagination } from '../components/home/pagination/Pagination';
 import { SearchBar } from '../components/home/search-bar/SearchBar';
 import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
+import { buildingService } from '../services/buildingService';
 import { styles } from './BuildingsScreen.styles';
-
-// Datos de ejemplo para desarrollo
-const mockBuildings: BuildingData[] = [
-  {
-    id: '1',
-    title: 'TEST: Edifici fictici per presentacions',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8862',
-    cadastralReference: '8931613DF2883B',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '2',
-    title: 'Edificio Residencial Plaza Mayor',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8863',
-    cadastralReference: '8931613DF2884C',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '3',
-    title: 'Complejo Residencial Los Pinos',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8864',
-    cadastralReference: '8931613DF2885D',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '4',
-    title: 'Torres del Mar',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8865',
-    cadastralReference: '8931613DF2886E',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '5',
-    title: 'Residencial San Juan',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8866',
-    cadastralReference: '8931613DF2887F',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '6',
-    title: 'Complejo Vista Hermosa',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8867',
-    cadastralReference: '8931613DF2888G',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '7',
-    title: 'Edificio Central Park',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8868',
-    cadastralReference: '8931613DF2889H',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '8',
-    title: 'Residencial Los Laureles',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8869',
-    cadastralReference: '8931613DF2890I',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '9',
-    title: 'Torre del Sol',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8870',
-    cadastralReference: '8931613DF2891J',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '10',
-    title: 'Complejo Las Flores',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8871',
-    cadastralReference: '8931613DF2892K',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '11',
-    title: 'Edificio Montecarlo',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8872',
-    cadastralReference: '8931613DF2893L',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-  {
-    id: '12',
-    title: 'Residencial El Mirador',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8873',
-    cadastralReference: '8931613DF2894M',
-    imageUrl: 'https://via.placeholder.com/80x80',
-  },
-];
 
 export const BuildingsScreen: React.FC = () => {
   const { t } = useTranslation();
-  console.log('Mock buildings length:', mockBuildings.length);
-  console.log('Mock buildings:', mockBuildings.map(b => b.id));
-  const [buildings, setBuildings] = useState<BuildingData[]>(mockBuildings);
-  const [filteredBuildings, setFilteredBuildings] = useState<BuildingData[]>(mockBuildings);
+  const [buildings, setBuildings] = useState<BuildingData[]>([]);
+  const [filteredBuildings, setFilteredBuildings] = useState<BuildingData[]>([]);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
   const [notificationCount] = useState(4);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
 
-  const itemsPerPage = 3;
-  const totalItems = filteredBuildings.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  // Debug logs
-  console.log('Buildings state length:', buildings.length);
-  console.log('Filtered buildings length:', filteredBuildings.length);
-  console.log('Total items:', totalItems);
-  console.log('Total pages:', totalPages);
-  console.log('Current page:', currentPage);
-
-  // Forzar actualización del estado con todos los edificios
+  // Cargar edificios desde el API
   useEffect(() => {
-    console.log('Setting buildings to mockBuildings');
-    setBuildings(mockBuildings);
-    setFilteredBuildings(mockBuildings);
+    loadBuildings(1, '');
   }, []);
 
-  // Filtrar edificios basado en la búsqueda
-  useEffect(() => {
-    if (searchText.trim() === '') {
-      setFilteredBuildings(buildings);
-    } else {
-      const filtered = buildings.filter(building =>
-        building.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        building.cadastralReference.toLowerCase().includes(searchText.toLowerCase()) ||
-        building.buildingId.toLowerCase().includes(searchText.toLowerCase())
-      );
-      setFilteredBuildings(filtered);
+  const loadBuildings = async (page: number, search: string = '') => {
+    setIsLoadingBuildings(true);
+    try {
+      const response = await buildingService.getBuildings(page, search);
+      
+      if (response.status && response.data) {
+        console.log('Edificios cargados:', response.data.total);
+        console.log('Búsqueda:', search || 'sin filtro');
+        console.log('Página:', response.data.current_page, 'de', response.data.last_page);
+        
+        // Transformar los datos del API al formato BuildingData
+        const buildingsData: BuildingData[] = response.data.data.map((building) => ({
+          id: String(building.id),
+          title: building.nom,
+          type: building.tipus_edifici,
+          buildingId: String(building.id),
+          cadastralReference: building.ref_cadastral,
+          imageUrl: building.imagen || 'https://via.placeholder.com/80x80',
+        }));
+        
+        setBuildings(buildingsData);
+        setFilteredBuildings(buildingsData);
+        setCurrentPage(response.data.current_page);
+        setTotalPages(response.data.last_page);
+        setTotalItems(response.data.total);
+      } else {
+        console.error('Error al cargar edificios:', response.message);
+        setBuildings([]);
+        setFilteredBuildings([]);
+        setTotalPages(1);
+        setTotalItems(0);
+      }
+    } catch (error) {
+      console.error('Error al cargar edificios:', error);
+      Alert.alert('', 'Error de conexión al cargar edificios');
+    } finally {
+      setIsLoadingBuildings(false);
     }
-    setCurrentPage(1); // Reset a la primera página cuando se busca
-  }, [searchText, buildings]);
-
-  // Obtener edificios para la página actual
-  const getCurrentPageBuildings = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredBuildings.slice(startIndex, endIndex);
   };
+
+  // Buscar en el servidor con debounce
+  useEffect(() => {
+    // Debounce de 500ms para evitar demasiadas peticiones
+    const timeoutId = setTimeout(() => {
+      if (searchText !== undefined) {
+        loadBuildings(1, searchText);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchText]);
 
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    // Cargar edificios de la página seleccionada con el texto de búsqueda actual
+    loadBuildings(page, searchText);
   };
 
   const handleNotificationPress = () => {
@@ -244,14 +164,21 @@ export const BuildingsScreen: React.FC = () => {
         />
 
         {/* Lista de edificios */}
-        <FlatList
-          style={styles.buildingsList}
-          data={getCurrentPageBuildings()}
-          renderItem={renderBuildingCard}
-          keyExtractor={(item) => item.id}
-          ListEmptyComponent={renderEmptyState}
-          showsVerticalScrollIndicator={false}
-        />
+        {isLoadingBuildings ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#E53E3E" />
+            <Text style={styles.loadingText}>Cargando edificios...</Text>
+          </View>
+        ) : (
+          <FlatList
+            style={styles.buildingsList}
+            data={filteredBuildings}
+            renderItem={renderBuildingCard}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={renderEmptyState}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
 
         {/* Paginación */}
         {totalPages > 1 && (

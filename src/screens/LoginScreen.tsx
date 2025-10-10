@@ -25,6 +25,7 @@ import { SupportOptions } from "../components/support-options/SupportOptions";
 import { colors } from "../constants/colors";
 import { useTranslation } from "../hooks/useTranslation";
 import { authService } from "../services/authService";
+import { buildingService } from "../services/buildingService";
 import { storageService } from "../services/storageService";
 import { styles } from "./LoginScreen.styles";
 
@@ -145,6 +146,11 @@ export const LoginScreen: React.FC = () => {
             await storageService.setAuthToken(response.token);
           }
           
+          // Almacenar token de notificaciones
+          if ('token_user_notification' in response && response.token_user_notification) {
+            await storageService.setNotificationToken(response.token_user_notification);
+          }
+          
           // Guardar NIF si está marcado para recordar
           if (data.rememberNif && data.nif) {
             await storageService.setRememberedNif(data.nif);
@@ -155,7 +161,23 @@ export const LoginScreen: React.FC = () => {
           if ('datos_profesionales' in response && response.datos_profesionales === false) {
             setShowProfessionalDataModal(true);
           } else {
-            // Navegar directamente si ya tiene datos profesionales completos
+            // Cargar edificios antes de navegar
+            try {
+              const buildingsResponse = await buildingService.getBuildings(1);
+              
+              if (buildingsResponse.status && buildingsResponse.data) {
+                console.log('Edificios cargados:', buildingsResponse.data.total);
+                console.log('Página actual:', buildingsResponse.data.current_page);
+                console.log('Total páginas:', buildingsResponse.data.last_page);
+                
+                // Aquí puedes guardar los edificios en el estado si lo necesitas
+                // O simplemente navegar y que la pantalla de buildings los cargue
+              }
+            } catch (error) {
+              console.error('Error al cargar edificios:', error);
+            }
+            
+            // Navegar a la pantalla de edificios
             router.replace("/buildings");
           }
         } else {
