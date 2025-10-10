@@ -33,6 +33,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 8,
+    overflow: 'hidden',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -65,7 +66,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalContent: {
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  modalContentContainer: {
     padding: 20,
+    flexGrow: 0,
   },
   stepIndicator: {
     marginBottom: 20,
@@ -151,6 +157,12 @@ export const styles = StyleSheet.create({
     color: colors.black,
     marginBottom: 8,
   },
+  optionalLabel: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.gray,
+    fontStyle: 'italic',
+  },
   checkboxRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -219,6 +231,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.gray,
     marginLeft: 10,
+  },
+  selectButtonDisabled: {
+    backgroundColor: colors.lightGray,
+    opacity: 0.6,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -294,7 +310,8 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 8,
     padding: 20,
-    marginHorizontal: 40,
+    width: '90%',
+    maxWidth: 500,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -310,6 +327,9 @@ export const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'center',
     marginBottom: 20,
+  },
+  selectionScrollView: {
+    maxHeight: 440, // Altura para aproximadamente 8 elementos (55px cada uno)
   },
   selectionOption: {
     paddingVertical: 15,
@@ -398,6 +418,51 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   accountFoundButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  registrationSuccessModal: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    width: '100%',
+    maxWidth: 400,
+    padding: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 10,
+    zIndex: 9999,
+  },
+  registrationSuccessTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#10B981',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  registrationSuccessContent: {
+    marginBottom: 30,
+  },
+  registrationSuccessText: {
+    fontSize: 15,
+    color: colors.darkGray,
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  registrationSuccessButton: {
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  registrationSuccessButtonText: {
     color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',

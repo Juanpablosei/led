@@ -23,6 +23,10 @@ const PUBLIC_ROUTES = [
   '/auth/forgo_code_edificio',
   '/auth/send_code_edificio',
   '/auth/comprobar_nif',
+  '/maestros/parametros-publicos',
+  '/auth/register',
+  '/maestros/colegio-profesionales-publicos/comunidades-autonomas',
+  '/maestros/colegio-profesionales-publicos',
 ];
 
 // ==========================================

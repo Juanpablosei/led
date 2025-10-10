@@ -60,6 +60,63 @@ export interface CheckNifResponse {
   code: number;
 }
 
+export interface PublicParametersRequest {
+  parametroPadre: string;
+}
+
+export interface PublicParametersResponse {
+  profesion?: {
+    [key: string]: string;
+  };
+  entidadconvenio?: {
+    [key: string]: string;
+  };
+  comunidadautonoma?: {
+    [key: string]: string;
+  };
+}
+
+export interface RegisterRequest {
+  email: string;
+  nif: string;
+  password: string;
+  password_confirmation: string;
+  first_name: string;
+  last_name: string;
+  comunitat_autonoma: string;
+  professio: number;
+  otra_profesion?: string;
+  colegiado_externo_num_colegiado?: string;
+  collegi_professional?: string;
+  entitat_conveni_id?: string;
+  politica_privacitat_acceptada_en: boolean;
+  tipo_usuario: 'propietario' | 'profesional';
+}
+
+export interface RegisterResponse {
+  status: boolean;
+  message: string;
+  code: number;
+  token?: string;
+}
+
+export interface RegisterError {
+  status: false;
+  message: string;
+  code: number;
+  errors?: {
+    [key: string]: string[];
+  };
+}
+
+export interface ComunidadAutonomaResponse {
+  [key: string]: string | { nombre: string; [key: string]: any };
+}
+
+export interface ColegioProfesionalResponse {
+  [key: string]: string;
+}
+
 export interface BuildingLoginResponse {
   success: boolean;
   message: string;
@@ -192,6 +249,10 @@ export type ForgotPasswordApiResponse = ForgotPasswordResponse | ForgotPasswordE
 export type ForgotCodeApiResponse = ForgotCodeResponse | ForgotCodeError;
 export type SendCodeToBuildingApiResponse = SendCodeToBuildingResponse | SendCodeToBuildingError;
 export type CheckNifApiResponse = CheckNifResponse;
+export type PublicParametersApiResponse = PublicParametersResponse;
+export type RegisterApiResponse = RegisterResponse | RegisterError;
+export type ComunidadAutonomaApiResponse = ComunidadAutonomaResponse;
+export type ColegioProfesionalApiResponse = ColegioProfesionalResponse;
 
 // Interfaces para aprobar/rechazar edificio
 export interface BuildingApprovalRequest {
@@ -306,6 +367,77 @@ export const authService = {
       // Siempre devolver la respuesta
       return response.data;
     } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getPublicParameters(parameters: PublicParametersRequest[]): Promise<PublicParametersApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/maestros/parametros-publicos', parameters);
+      
+      // Devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al obtener parámetros públicos:', error);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async register(credentials: RegisterRequest): Promise<RegisterApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/register', credentials);
+      
+      // Siempre devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getComunidadesAutonomas(tipo: number): Promise<ComunidadAutonomaApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.get(`/maestros/colegio-profesionales-publicos/comunidades-autonomas?tipo=${tipo}`);
+      
+      // Devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al obtener comunidades autónomas:', error);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getColegiosProfesionales(comunitat: string, tipo: number): Promise<ColegioProfesionalApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.get(`/maestros/colegio-profesionales-publicos?comunitat=${comunitat}&tipo=${tipo}`);
+      
+      // Devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      console.error('Error al obtener colegios profesionales:', error);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
