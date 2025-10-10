@@ -1,26 +1,14 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components/documents';
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
+import { BuildingDetailData, buildingService } from '../services/buildingService';
 import { styles } from './DocumentsScreen.styles';
-
-// Datos de ejemplo para desarrollo
-const mockBuildings: BuildingData[] = [
-  {
-    id: '1',
-    title: 'TEST: Edifici fictici per presentacions',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8862',
-    cadastralReference: '8931613DF2883B',
-    imageUrl: undefined,
-  },
-  // ... otros edificios
-];
 
 const mockDocuments = [
   {
@@ -68,17 +56,61 @@ const mockDocuments = [
 export const DocumentsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
+  const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
+  const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
   const [activeTab, setActiveTab] = useState('tecnica');
   const [isNewDocumentModalVisible, setIsNewDocumentModalVisible] = useState(false);
   const [isEditDocumentModalVisible, setIsEditDocumentModalVisible] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<EditDocumentData | null>(null);
   
-  // Buscar el edificio por ID
-  const building = mockBuildings.find(b => b.id === buildingId);
+  // Cargar edificio desde el API
+  useEffect(() => {
+    loadBuilding();
+  }, [buildingId]);
 
-  if (!building) {
-    return null;
+  const loadBuilding = async () => {
+    if (!buildingId) return;
+    
+    setIsLoadingBuilding(true);
+    try {
+      const response = await buildingService.getBuildingById(Number(buildingId));
+      
+      if (response.status && response.data) {
+        console.log('✅ Edificio cargado para biblioteca:', response.data.nom);
+        setBuildingDetail(response.data);
+      } else {
+        console.error('❌ Error al cargar edificio:', response.message);
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar edificio:', error);
+    } finally {
+      setIsLoadingBuilding(false);
+    }
+  };
+
+  // Mostrar loading mientras carga el edificio
+  if (isLoadingBuilding || !buildingDetail) {
+    return (
+      <BuildingLayout building={null}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <ActivityIndicator size="large" color="#E53E3E" />
+          <Text style={{ marginTop: 12, fontSize: 16, color: '#666' }}>
+            Cargando edificio...
+          </Text>
+        </View>
+      </BuildingLayout>
+    );
   }
+
+  // Transformar a formato BuildingData para el Layout
+  const building: BuildingData = {
+    id: String(buildingDetail.id),
+    title: buildingDetail.nom,
+    type: buildingDetail.tipus_edifici,
+    buildingId: String(buildingDetail.id),
+    cadastralReference: buildingDetail.ref_cadastral,
+    imageUrl: buildingDetail.imagen || undefined,
+  };
 
   const tabs = [
     { id: 'tecnica', label: 'Doc. Técnica' },

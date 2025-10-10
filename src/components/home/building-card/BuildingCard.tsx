@@ -5,6 +5,9 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { styles } from './BuildingCard.styles';
 import { BuildingCardProps } from './BuildingCard.types';
 
+// Imagen por defecto para edificios sin imagen
+const DEFAULT_IMAGE = require('../../../../assets/images/sinImagen.jpeg');
+
 export const BuildingCard: React.FC<BuildingCardProps> = ({
   building,
   onMaintenancePress,
@@ -28,14 +31,14 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
           <Image
             source={{ uri: building.imageUrl }}
             style={styles.buildingImage}
+            resizeMode="cover"
           />
         ) : (
-          <View style={styles.buildingImage}>
-            {/* Placeholder para imagen */}
-            <Text style={{ color: '#999', textAlign: 'center', marginTop: 20 }}>
-              Sin imagen
-            </Text>
-          </View>
+          <Image
+            source={DEFAULT_IMAGE}
+            style={styles.buildingImage}
+            resizeMode="cover"
+          />
         )}
       </View>
 

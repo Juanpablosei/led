@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { EmailForm, StepIndicator, UserSelectItem } from '../components/email';
 import { EmailFormData } from '../components/email/EmailForm.types';
 import { UserSelectData } from '../components/email/UserSelectItem.types';
@@ -9,19 +9,8 @@ import { BuildingData } from '../components/home/building-card/BuildingCard.type
 import { Toast, ToastType } from '../components/ui';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
+import { BuildingDetailData, buildingService } from '../services/buildingService';
 import { styles } from './SendEmailScreen.styles';
-
-// Datos de ejemplo para desarrollo
-const mockBuildings: BuildingData[] = [
-  {
-    id: '1',
-    title: 'TEST: Edifici fictici per presentacions',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8862',
-    cadastralReference: '8931613DF2883B',
-    imageUrl: undefined,
-  },
-];
 
 const mockUsers: UserSelectData[] = Array.from({ length: 12 }, (_, index) => ({
   id: `${index + 1}`,
@@ -33,6 +22,8 @@ const mockUsers: UserSelectData[] = Array.from({ length: 12 }, (_, index) => ({
 export const SendEmailScreen: React.FC = () => {
   const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
+  const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
+  const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [users, setUsers] = useState<UserSelectData[]>(mockUsers);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,12 +34,54 @@ export const SendEmailScreen: React.FC = () => {
   const itemsPerPage = 8;
   const totalPages = Math.ceil(users.length / itemsPerPage);
 
-  // Buscar el edificio por ID
-  const building = mockBuildings.find(b => b.id === buildingId);
+  // Cargar edificio desde el API
+  useEffect(() => {
+    loadBuilding();
+  }, [buildingId]);
 
-  if (!building) {
-    return null;
+  const loadBuilding = async () => {
+    if (!buildingId) return;
+    
+    setIsLoadingBuilding(true);
+    try {
+      const response = await buildingService.getBuildingById(Number(buildingId));
+      
+      if (response.status && response.data) {
+        console.log('✅ Edificio cargado para enviar email:', response.data.nom);
+        setBuildingDetail(response.data);
+      } else {
+        console.error('❌ Error al cargar edificio:', response.message);
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar edificio:', error);
+    } finally {
+      setIsLoadingBuilding(false);
+    }
+  };
+
+  // Mostrar loading mientras carga el edificio
+  if (isLoadingBuilding || !buildingDetail) {
+    return (
+      <BuildingLayout building={null}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <ActivityIndicator size="large" color="#E53E3E" />
+          <Text style={{ marginTop: 12, fontSize: 16, color: '#666' }}>
+            Cargando edificio...
+          </Text>
+        </View>
+      </BuildingLayout>
+    );
   }
+
+  // Transformar a formato BuildingData para el Layout
+  const building: BuildingData = {
+    id: String(buildingDetail.id),
+    title: buildingDetail.nom,
+    type: buildingDetail.tipus_edifici,
+    buildingId: String(buildingDetail.id),
+    cadastralReference: buildingDetail.ref_cadastral,
+    imageUrl: buildingDetail.imagen || undefined,
+  };
 
   const getCurrentPageUsers = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;

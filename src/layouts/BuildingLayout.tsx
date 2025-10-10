@@ -27,6 +27,11 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
     console.log('Sidebar item pressed:', itemId);
     setIsSidebarVisible(false);
     
+    if (!building) {
+      console.log('No hay building disponible');
+      return;
+    }
+    
     // Navegación según el item presionado
     switch (itemId) {
       case 'identificacion':
@@ -106,9 +111,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
 
       {/* Título + Menú - SIEMPRE */}
       <View style={styles.titleSection}>
-        <Text style={styles.buildingTitle}>{building.title}</Text>
-        <TouchableOpacity style={styles.menuButton} onPress={handleMenuPress}>
-          <Ionicons name="menu" size={32} color="#333333" />
+        <Text style={styles.buildingTitle}>{building?.title || 'Cargando...'}</Text>
+        <TouchableOpacity style={styles.menuButton} onPress={handleMenuPress} disabled={!building}>
+          <Ionicons name="menu" size={32} color={building ? "#333333" : "#CCCCCC"} />
         </TouchableOpacity>
       </View>
 

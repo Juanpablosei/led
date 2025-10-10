@@ -1,122 +1,86 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
+import { BuildingDetailData, buildingService } from '../services/buildingService';
 import { styles } from './BuildingDetailScreen.styles';
 
-// Datos de ejemplo para desarrollo (mismo que en BuildingsScreen)
-const mockBuildings: BuildingData[] = [
-  {
-    id: '1',
-    title: 'TEST: Edifici fictici per presentacions',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8862',
-    cadastralReference: '8931613DF2883B',
-    imageUrl: undefined,
-  },
-  {
-    id: '2',
-    title: 'Edificio Residencial Plaza Mayor',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8863',
-    cadastralReference: '8931613DF2883C',
-    imageUrl: undefined,
-  },
-  {
-    id: '3',
-    title: 'Complejo Residencial Los Pinos',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8864',
-    cadastralReference: '8931613DF2883D',
-    imageUrl: undefined,
-  },
-  {
-    id: '4',
-    title: 'Torre Residencial Central',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8865',
-    cadastralReference: '8931613DF2883E',
-    imageUrl: undefined,
-  },
-  {
-    id: '5',
-    title: 'Complejo Habitacional Norte',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8866',
-    cadastralReference: '8931613DF2883F',
-    imageUrl: undefined,
-  },
-  {
-    id: '6',
-    title: 'Residencia Los Laureles',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8867',
-    cadastralReference: '8931613DF2883G',
-    imageUrl: undefined,
-  },
-  {
-    id: '7',
-    title: 'Edificio Residencial Sur',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8868',
-    cadastralReference: '8931613DF2883H',
-    imageUrl: undefined,
-  },
-  {
-    id: '8',
-    title: 'Complejo Residencial Este',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8869',
-    cadastralReference: '8931613DF2883I',
-    imageUrl: undefined,
-  },
-  {
-    id: '9',
-    title: 'Torre Habitacional Oeste',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8870',
-    cadastralReference: '8931613DF2883J',
-    imageUrl: undefined,
-  },
-  {
-    id: '10',
-    title: 'Residencia Los Olivos',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8871',
-    cadastralReference: '8931613DF2883K',
-    imageUrl: undefined,
-  },
-  {
-    id: '11',
-    title: 'Edificio Residencial Centro',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8872',
-    cadastralReference: '8931613DF2883L',
-    imageUrl: undefined,
-  },
-  {
-    id: '12',
-    title: 'Complejo Habitacional Vista',
-    type: 'Edificio residencial plurifamiliar (EXISTENTE)',
-    buildingId: '8873',
-    cadastralReference: '8931613DF2883M',
-    imageUrl: undefined,
-  },
-];
+// Imagen por defecto para edificios sin imagen
+const DEFAULT_IMAGE = require('../../assets/images/sinImagen.jpeg');
 
 export const BuildingDetailScreen: React.FC = () => {
   const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
-  
-  // Buscar el edificio por ID
-  const building = mockBuildings.find(b => b.id === buildingId);
+  const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!building) {
-    return null;
+  // Cargar detalles del edificio desde el API
+  useEffect(() => {
+    loadBuildingDetail();
+  }, [buildingId]);
+
+  const loadBuildingDetail = async () => {
+    if (!buildingId) {
+      console.log('❌ No hay buildingId en los parámetros');
+      return;
+    }
+    
+    console.log('🏢 Cargando edificio con ID:', buildingId);
+    setIsLoading(true);
+    try {
+      const response = await buildingService.getBuildingById(Number(buildingId));
+      
+      if (response.status && response.data) {
+        console.log('✅ Detalle de edificio cargado:', response.data.nom);
+        console.log('📊 ID del edificio:', response.data.id);
+        setBuildingDetail(response.data);
+      } else {
+        console.error('❌ Error al cargar detalle:', response.message);
+        Alert.alert('', response.message || 'Error al cargar el edificio');
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar detalle del edificio:', error);
+      Alert.alert('', 'Error de conexión al cargar el edificio');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mostrar loading mientras carga
+  if (isLoading) {
+    return (
+      <BuildingLayout building={null}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#E53E3E" />
+          <Text style={styles.loadingText}>Cargando edificio...</Text>
+        </View>
+      </BuildingLayout>
+    );
   }
+
+  // Si no hay datos, mostrar mensaje
+  if (!buildingDetail) {
+    return (
+      <BuildingLayout building={null}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>No se pudo cargar el edificio</Text>
+        </View>
+      </BuildingLayout>
+    );
+  }
+
+  // Transformar a formato BuildingData para el Layout
+  const building: BuildingData = {
+    id: String(buildingDetail.id),
+    title: buildingDetail.nom,
+    type: buildingDetail.tipus_edifici,
+    buildingId: String(buildingDetail.id),
+    cadastralReference: buildingDetail.ref_cadastral,
+    imageUrl: buildingDetail.imagen || undefined,
+  };
 
   const handleMaintenancePress = () => {
     // Aquí puedes implementar la navegación a la gestión de mantenimiento
@@ -131,20 +95,20 @@ export const BuildingDetailScreen: React.FC = () => {
         
         {/* Card principal con TODO el contenido */}
         <View style={styles.mainCard}>
-          <Text style={styles.buildingName}>{building.title}</Text>
+          <Text style={styles.buildingName}>{buildingDetail.nom}</Text>
           
           <View style={styles.buildingDetails}>
             <Text style={styles.detailRow}>
               <Text style={styles.detailLabel}>ID Edificio: </Text>
-              <Text style={styles.detailValue}>{building.buildingId}</Text>
+              <Text style={styles.detailValue}>{buildingDetail.id}</Text>
             </Text>
             
             <Text style={styles.detailRow}>
               <Text style={styles.detailLabel}>Ref. Catastral: </Text>
-              <Text style={styles.detailValue}>{building.cadastralReference}</Text>
+              <Text style={styles.detailValue}>{buildingDetail.ref_cadastral}</Text>
             </Text>
             
-            <Text style={styles.buildingType}>{building.type}</Text>
+            <Text style={styles.buildingType}>{buildingDetail.tipus_edifici}</Text>
           </View>
 
           {/* Enlace a gestión de mantenimiento */}
@@ -160,11 +124,19 @@ export const BuildingDetailScreen: React.FC = () => {
 
           {/* Imagen del edificio DENTRO de la card */}
           <View style={styles.imageContainer}>
-            <Image
-              source={require('../../assets/images/edificio.png')}
-              style={styles.buildingImage}
-              resizeMode="cover"
-            />
+            {buildingDetail.imagen ? (
+              <Image
+                source={{ uri: buildingDetail.imagen }}
+                style={styles.buildingImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <Image
+                source={DEFAULT_IMAGE}
+                style={styles.buildingImage}
+                resizeMode="cover"
+              />
+            )}
           </View>
         </View>
       </ScrollView>

@@ -91,6 +91,52 @@ export interface BuildingsError {
 
 export type BuildingsApiResponse = BuildingsResponse | BuildingsError;
 
+export interface BuildingDetailData extends Building {
+  tipus_producte: {
+    id: number;
+    producte: string;
+  };
+  usuario: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    nif: string;
+    collegi_professional: string | null;
+  };
+  inmuebles: Array<{
+    id: number;
+    edifici_id: number;
+    ref_cadastral: string;
+    localitzacio: string;
+    us: string;
+    superficie: string;
+    any_construccio: number;
+    coeficient: string;
+    created_at: string;
+    updated_at: string;
+    no_existeix_cadastre: boolean;
+    habitatge_actiu: boolean;
+    es_manual: string | null;
+  }>;
+  data_anulacio: string | null;
+  data_confirmacio: string | null;
+  usuario_estado_edificio: boolean;
+}
+
+export interface BuildingDetailResponse {
+  status: boolean;
+  message: string;
+  data: BuildingDetailData;
+}
+
+export interface BuildingDetailError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type BuildingDetailApiResponse = BuildingDetailResponse | BuildingDetailError;
+
 export const buildingService = {
   async getBuildings(page: number = 1, searchText: string = ''): Promise<BuildingsApiResponse> {
     try {
@@ -106,6 +152,25 @@ export const buildingService = {
       
       return response.data;
     } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getBuildingById(id: number): Promise<BuildingDetailApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /edificio/${id}`);
+      const response = await httpClient.get(`/edificio/${id}`);
+      
+      console.log('📦 Respuesta recibida para edificio:', id);
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error en GET /edificio/${id}:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;

@@ -126,4 +126,66 @@ export const styles = StyleSheet.create({
     color: colors.text,
     textAlign: 'center',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666',
+  },
+  addressSection: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  addressText: {
+    fontSize: 14,
+    color: colors.text,
+    marginBottom: 4,
+  },
+  addressDetail: {
+    fontSize: 13,
+    color: colors.gray,
+    marginBottom: 2,
+  },
+  inmueblesSection: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  inmuebleItem: {
+    marginBottom: 12,
+  },
+  inmuebleText: {
+    fontSize: 14,
+    color: colors.text,
+    marginBottom: 2,
+  },
+  inmuebleDetail: {
+    fontSize: 12,
+    color: colors.gray,
+  },
+  rolesSection: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+  },
+  roleText: {
+    fontSize: 14,
+    color: colors.text,
+    marginBottom: 4,
+  },
 });

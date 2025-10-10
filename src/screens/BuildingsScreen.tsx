@@ -10,6 +10,7 @@ import { SearchBar } from '../components/home/search-bar/SearchBar';
 import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
 import { buildingService } from '../services/buildingService';
+import { storageService } from '../services/storageService';
 import { styles } from './BuildingsScreen.styles';
 
 export const BuildingsScreen: React.FC = () => {
@@ -46,7 +47,7 @@ export const BuildingsScreen: React.FC = () => {
           type: building.tipus_edifici,
           buildingId: String(building.id),
           cadastralReference: building.ref_cadastral,
-          imageUrl: building.imagen || 'https://via.placeholder.com/80x80',
+          imageUrl: building.imagen || undefined,
         }));
         
         setBuildings(buildingsData);
@@ -98,19 +99,27 @@ export const BuildingsScreen: React.FC = () => {
     setIsUserMenuVisible(true);
   };
 
+  const handleLogout = async () => {
+    setIsUserMenuVisible(false);
+    try {
+      await storageService.clearAuthData();
+      router.replace('/login');
+    } catch (error) {
+      console.error('Error al hacer logout:', error);
+      router.replace('/login');
+    }
+  };
+
   const handleUserMenuOptionPress = (option: UserMenuOption) => {
     switch (option) {
       case 'myData':
         router.push('/my-data');
         break;
-      case 'userType':
-        router.push('/user-type');
-        break;
-      case 'alerts':
-        router.push('/alerts');
-        break;
       case 'changePassword':
         router.push('/change-password');
+        break;
+      case 'logout':
+        handleLogout();
         break;
     }
   };
