@@ -147,14 +147,14 @@ export const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: colors.black,
     marginBottom: 8,
   },
   checkboxRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 5,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -189,7 +189,6 @@ export const styles = StyleSheet.create({
   checkboxText: {
     fontSize: 14,
     color: colors.black,
-    flex: 1,
     lineHeight: 20,
     marginLeft: 8,
   },
@@ -335,5 +334,73 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.black,
     fontWeight: '500',
+  },
+  textInputError: {
+    borderBottomColor: colors.red,
+    borderBottomWidth: 2,
+  },
+  errorText: {
+    fontSize: 12,
+    color: colors.red,
+    marginTop: 6,
+    fontWeight: '500',
+  },
+  successText: {
+    fontSize: 12,
+    color: '#10B981',
+    marginTop: 6,
+    fontWeight: '500',
+  },
+  accountFoundModal: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    width: '100%',
+    maxWidth: 400,
+    padding: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  accountFoundTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: colors.black,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  accountFoundSubtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.red,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  accountFoundContent: {
+    marginBottom: 30,
+  },
+  accountFoundText: {
+    fontSize: 14,
+    color: colors.darkGray,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  accountFoundButton: {
+    backgroundColor: colors.red,
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  accountFoundButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
 });

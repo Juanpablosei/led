@@ -1,4 +1,6 @@
 // Servicio de autenticación para ambos tipos de login
+import { httpClient } from './httpClient';
+
 export interface BuildingLoginRequest {
   nif: string;
   code: string;
@@ -11,6 +13,51 @@ export interface GeneralLoginRequest {
 
 export interface ForgotPasswordRequest {
   nif: string;
+}
+
+export interface ForgotCodeRequest {
+  nif: string;
+}
+
+export interface Building {
+  id: number;
+  nom: string;
+  ref_cadastral: string;
+}
+
+export interface ForgotCodeResponse {
+  success: boolean;
+  message: string;
+  data: Building[];
+  code: number;
+}
+
+export interface ForgotCodeError {
+  success: false;
+  message: string;
+  code: number;
+}
+
+export interface SendCodeToBuildingResponse {
+  success: boolean;
+  message: string;
+  code: number;
+}
+
+export interface SendCodeToBuildingError {
+  success: false;
+  message: string;
+  code: number;
+}
+
+export interface CheckNifRequest {
+  nif: string;
+}
+
+export interface CheckNifResponse {
+  success: boolean;
+  message: string;
+  code: number;
 }
 
 export interface BuildingLoginResponse {
@@ -142,6 +189,9 @@ export interface ForgotPasswordValidationError {
 export type BuildingLoginApiResponse = BuildingLoginResponse | BuildingLoginError | BuildingLoginValidationError;
 export type GeneralLoginApiResponse = GeneralLoginResponse | GeneralLoginError | GeneralLoginValidationError;
 export type ForgotPasswordApiResponse = ForgotPasswordResponse | ForgotPasswordError | ForgotPasswordValidationError;
+export type ForgotCodeApiResponse = ForgotCodeResponse | ForgotCodeError;
+export type SendCodeToBuildingApiResponse = SendCodeToBuildingResponse | SendCodeToBuildingError;
+export type CheckNifApiResponse = CheckNifResponse;
 
 // Interfaces para aprobar/rechazar edificio
 export interface BuildingApprovalRequest {
@@ -162,106 +212,137 @@ export interface BuildingApprovalError {
 
 export type BuildingApprovalApiResponse = BuildingApprovalResponse | BuildingApprovalError;
 
-const API_BASE_URL = 'https://librodigitalws.arescoop.es/api';
-
 export const authService = {
   async loginBuilding(credentials: BuildingLoginRequest): Promise<BuildingLoginApiResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login_usuario_edificio`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/login_usuario_edificio', credentials);
+      
       // Siempre devolver la respuesta, incluso si no es exitosa
-      return data;
-    } catch (error) {
-      console.error('Error en login de edificio:', error);
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
       throw error;
     }
   },
 
   async loginGeneral(credentials: GeneralLoginRequest): Promise<GeneralLoginApiResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/login', credentials);
+      
       // Siempre devolver la respuesta, incluso si no es exitosa
-      return data;
-    } catch (error) {
-      console.error('Error en login general:', error);
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
       throw error;
     }
   },
 
   async forgotPassword(credentials: ForgotPasswordRequest): Promise<ForgotPasswordApiResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/forgo_password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/forgo_password', credentials);
+      
       // Siempre devolver la respuesta, incluso si no es exitosa
-      return data;
-    } catch (error) {
-      console.error('Error en olvidé contraseña:', error);
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
       throw error;
     }
   },
 
-  async approveBuilding(edificio_id: number, token: string): Promise<BuildingApprovalApiResponse> {
+  async forgotCode(credentials: ForgotCodeRequest): Promise<ForgotCodeApiResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/edificio_usuarios/comprobacion/aprobar/id:${edificio_id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error al aprobar edificio:', error);
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/forgo_code_edificio', credentials);
+      
+      // Siempre devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
       throw error;
     }
   },
 
-  async rejectBuilding(edificio_id: number, token: string): Promise<BuildingApprovalApiResponse> {
+  async sendCodeToBuilding(edificioId: number): Promise<SendCodeToBuildingApiResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/edificio_usuarios/comprobacion/rechazar/id:${edificio_id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.get(`/auth/send_code_edificio/${edificioId}`);
+      
+      // Siempre devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
 
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error al rechazar edificio:', error);
+  async checkNif(credentials: CheckNifRequest): Promise<CheckNifApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el idioma
+      const response = await httpClient.post('/auth/comprobar_nif', credentials);
+      
+      // Siempre devolver la respuesta
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async approveBuilding(edificio_id: number): Promise<BuildingApprovalApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      // Ya no necesitas pasar el token como parámetro
+      const response = await httpClient.post(`/edificio_usuarios/comprobacion/aprobar/id:${edificio_id}`);
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async rejectBuilding(edificio_id: number): Promise<BuildingApprovalApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      // Ya no necesitas pasar el token como parámetro
+      const response = await httpClient.post(`/edificio_usuarios/comprobacion/rechazar/id:${edificio_id}`);
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
       throw error;
     }
   }

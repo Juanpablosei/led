@@ -1,8 +1,46 @@
 import React, { useState } from 'react';
-import { Keyboard, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Modal, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { authService } from '../../../services/authService';
 import { styles } from './CreateAccountUnifiedModal.styles';
 import { CreateAccountUnifiedModalProps } from './CreateAccountUnifiedModal.types';
+
+// Función para validar DNI/NIE español
+const validateSpanishDNI = (dni: string): boolean => {
+  // Eliminar espacios y convertir a mayúsculas
+  const cleanDNI = dni.trim().toUpperCase();
+  
+  // Patrón: X, Y, Z opcional + 7-8 dígitos + letra
+  const dniPattern = /^[XYZ]?\d{7,8}[A-Z]$/;
+  
+  if (!dniPattern.test(cleanDNI)) {
+    return false;
+  }
+  
+  // Validar letra del DNI con el algoritmo del módulo 23
+  const letters = 'TRWAGMYFPDXBNJZSQVHLCKE';
+  let number: number;
+  let letter: string;
+  
+  // NIE (empieza con X, Y o Z)
+  if (/^[XYZ]/.test(cleanDNI)) {
+    const niePrefix = cleanDNI.charAt(0);
+    const nieNumber = cleanDNI.slice(1, -1);
+    letter = cleanDNI.slice(-1);
+    
+    // Reemplazar X=0, Y=1, Z=2
+    const prefixMap: { [key: string]: string } = { 'X': '0', 'Y': '1', 'Z': '2' };
+    number = parseInt(prefixMap[niePrefix] + nieNumber, 10);
+  } else {
+    // DNI normal
+    number = parseInt(cleanDNI.slice(0, -1), 10);
+    letter = cleanDNI.slice(-1);
+  }
+  
+  // Verificar que la letra sea correcta
+  const calculatedLetter = letters.charAt(number % 23);
+  return letter === calculatedLetter;
+};
 
 export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps> = ({
   visible,
@@ -17,6 +55,11 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   const [step1Data, setStep1Data] = useState({
     nifNie: '',
   });
+  
+  // Estado para errores de validación
+  const [nifError, setNifError] = useState('');
+  const [isCheckingNif, setIsCheckingNif] = useState(false);
+  const [showAccountFoundModal, setShowAccountFoundModal] = useState(false);
 
   // Estado para el paso 2
   const [step2Data, setStep2Data] = useState({
@@ -66,11 +109,69 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
     }
   };
 
-  const handleStep1Continue = () => {
-    if (step1Data.nifNie.trim()) {
-      // Actualizar el NIF en el paso 2
+  const handleNifChange = (value: string) => {
+    // Limitar a 9 caracteres
+    const cleanValue = value.toUpperCase().slice(0, 9);
+    handleInputChange(1, 'nifNie', cleanValue);
+    
+    // Validar cuando tiene 9 caracteres
+    if (cleanValue.length === 9) {
+      if (!validateSpanishDNI(cleanValue)) {
+        setNifError('NIF/NIE no válido. Ejemplo: 12345678Z o X1234567L');
+      } else {
+        setNifError('');
+      }
+    } else if (cleanValue.length > 0 && cleanValue.length < 9) {
+      setNifError('El NIF/NIE debe tener 9 caracteres');
+    } else {
+      setNifError('');
+    }
+  };
+
+  const handleStep1Continue = async () => {
+    const cleanNif = step1Data.nifNie.trim();
+    
+    if (!cleanNif) {
+      setNifError('El NIF/NIE es obligatorio');
+      return;
+    }
+    
+    if (cleanNif.length !== 9) {
+      setNifError('El NIF/NIE debe tener 9 caracteres');
+      return;
+    }
+    
+    if (!validateSpanishDNI(cleanNif)) {
+      setNifError('NIF/NIE no válido. Ejemplo: 12345678Z o X1234567L');
+      return;
+    }
+    
+    // Verificar si el NIF ya existe en el servidor
+    setIsCheckingNif(true);
+    setNifError('');
+    
+    try {
+      const response = await authService.checkNif({ nif: cleanNif });
+      
+      if (response.success && response.code === 200) {
+        // NIF encontrado - mostrar modal personalizado y NO continuar
+        setIsCheckingNif(false);
+        setShowAccountFoundModal(true);
+        return;
+      }
+      
+      // NIF no encontrado (404) o cualquier otro caso - continuar al paso 2
+      setNifError('');
       setStep2Data(prev => ({ ...prev, nif: step1Data.nifNie }));
       onStepChange(2);
+      
+    } catch (error) {
+      console.error('Error al verificar NIF:', error);
+      // En caso de error de red, permitir continuar
+      setStep2Data(prev => ({ ...prev, nif: step1Data.nifNie }));
+      onStepChange(2);
+    } finally {
+      setIsCheckingNif(false);
     }
   };
 
@@ -102,6 +203,8 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   const handleClose = () => {
     // Reset all data
     setStep1Data({ nifNie: '' });
+    setNifError('');
+    setShowAccountFoundModal(false);
     setStep2Data({
       firstName: '',
       lastName: '',
@@ -118,6 +221,11 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       acceptDataProtection: false,
     });
     onClose();
+  };
+
+  const handleAccountFoundClose = () => {
+    setShowAccountFoundModal(false);
+    handleClose(); // Cerrar todo el modal de registro y volver al login
   };
 
   const handleProfessionSelect = (profession: string) => {
@@ -154,14 +262,24 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.textInput}
+          style={[
+            styles.textInput,
+            nifError ? styles.textInputError : null
+          ]}
           value={step1Data.nifNie}
-          onChangeText={(value) => handleInputChange(1, 'nifNie', value)}
+          onChangeText={handleNifChange}
           placeholder={t('nifNiePlaceholder', 'auth')}
           placeholderTextColor="#999"
           autoCapitalize="characters"
           autoCorrect={false}
+          maxLength={9}
         />
+        {nifError ? (
+          <Text style={styles.errorText}>{nifError}</Text>
+        ) : null}
+        {step1Data.nifNie.length > 0 && !nifError && step1Data.nifNie.length === 9 ? (
+          <Text style={styles.successText}>✓ NIF/NIE válido</Text>
+        ) : null}
       </View>
 
       <Text style={styles.infoText}>
@@ -181,14 +299,18 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
         <TouchableOpacity 
           style={[
             styles.continueButton,
-            !step1Data.nifNie.trim() && styles.continueButtonDisabled
+            (!step1Data.nifNie.trim() || nifError || step1Data.nifNie.length !== 9 || isCheckingNif) && styles.continueButtonDisabled
           ]}
           onPress={handleStep1Continue}
-          disabled={!step1Data.nifNie.trim()}
+          disabled={!step1Data.nifNie.trim() || !!nifError || step1Data.nifNie.length !== 9 || isCheckingNif}
         >
-          <Text style={styles.continueButtonText}>
-            {t('continueButton', 'auth')}
-          </Text>
+          {isCheckingNif ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.continueButtonText}>
+              {t('continueButton', 'auth')}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </>
@@ -246,6 +368,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
           <Text style={styles.inputLabel}>{t('userType', 'auth')}</Text>
           <View style={styles.checkboxRow}>
             <TouchableOpacity 
+            
               style={styles.checkboxContainer}
               onPress={() => handleInputChange(2, 'userType', 'propertyOwner')}
             >
@@ -520,6 +643,41 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               onPress={() => setShowAgreementModal(false)}
             >
               <Text style={styles.selectionCancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Cuenta Encontrada */}
+      <Modal
+        visible={showAccountFoundModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleAccountFoundClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.accountFoundModal}>
+            <Text style={styles.accountFoundTitle}>Cuenta encontrada</Text>
+            
+            <Text style={styles.accountFoundSubtitle}>
+              Este NIF ya se encuentra asociado a una cuenta
+            </Text>
+            
+            <View style={styles.accountFoundContent}>
+              <Text style={styles.accountFoundText}>
+                En caso de ser un usuario ya registrado y haber olvidado la contraseña, es necesario restablecerla.
+              </Text>
+              
+              <Text style={styles.accountFoundText}>
+                En caso de tener acceso a un edificio con código, puede terminar el registro mediante el proceso de restablecer contraseña.
+              </Text>
+            </View>
+            
+            <TouchableOpacity
+              style={styles.accountFoundButton}
+              onPress={handleAccountFoundClose}
+            >
+              <Text style={styles.accountFoundButtonText}>SALIR</Text>
             </TouchableOpacity>
           </View>
         </View>

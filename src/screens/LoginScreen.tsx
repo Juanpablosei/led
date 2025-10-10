@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  ImageBackground,
-  Keyboard,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    Alert,
+    ImageBackground,
+    Keyboard,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
 import { BuildingAcceptanceModal } from "../components/building-acceptance-modal/BuildingAcceptanceModal";
 import { Header } from "../components/header/Header";
@@ -265,15 +265,25 @@ export const LoginScreen: React.FC = () => {
     // Aquí iría la navegación al enlace de Cateb
   };
 
-  const handleResetCode = (nif: string, buildingNumber: string) => {
-    console.log(
-      "Restablecer código para NIF:",
-      nif,
-      "Edificio:",
-      buildingNumber
-    );
-    setShowResetCodeModal(false);
-    // Aquí iría la lógica para restablecer el código
+  const handleResetCode = async (edificioId: number) => {
+    console.log("Enviar código para edificio ID:", edificioId);
+    setIsLoading(true);
+    
+    try {
+      const response = await authService.sendCodeToBuilding(edificioId);
+      
+      if ('success' in response && response.success) {
+        Alert.alert('', response.message || 'Código enviado exitosamente');
+        setShowResetCodeModal(false);
+      } else {
+        Alert.alert('', response.message || 'Error al enviar el código');
+      }
+    } catch (error) {
+      console.error("Error al enviar código:", error);
+      Alert.alert('', 'Error de conexión. Inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBuildingAcceptance = async () => {
@@ -281,12 +291,11 @@ export const LoginScreen: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Obtener token y edificio_id
-      const token = await storageService.getAuthToken();
+      // Obtener edificio_id (el token se agrega automáticamente por el interceptor)
       const buildingData = await storageService.getBuildingData();
       
-      if (token && buildingData?.id) {
-        const response = await authService.approveBuilding(buildingData.id, token);
+      if (buildingData?.id) {
+        const response = await authService.approveBuilding(buildingData.id);
         
         if ('success' in response && response.success) {
           console.log("Edificio aprobado exitosamente");
@@ -297,7 +306,7 @@ export const LoginScreen: React.FC = () => {
           Alert.alert('', response.message || 'Error al aprobar el edificio');
         }
       } else {
-        console.error("Token o edificio_id no disponibles");
+        console.error("edificio_id no disponible");
         Alert.alert('', 'Error: datos de autenticación no disponibles');
       }
     } catch (error) {
@@ -313,12 +322,11 @@ export const LoginScreen: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Obtener token y edificio_id
-      const token = await storageService.getAuthToken();
+      // Obtener edificio_id (el token se agrega automáticamente por el interceptor)
       const buildingData = await storageService.getBuildingData();
       
-      if (token && buildingData?.id) {
-        const response = await authService.rejectBuilding(buildingData.id, token);
+      if (buildingData?.id) {
+        const response = await authService.rejectBuilding(buildingData.id);
         
         if ('success' in response && response.success) {
           console.log("Edificio rechazado exitosamente");
@@ -330,7 +338,7 @@ export const LoginScreen: React.FC = () => {
           Alert.alert('', response.message || 'Error al rechazar el edificio');
         }
       } else {
-        console.error("Token o edificio_id no disponibles");
+        console.error("edificio_id no disponible");
         Alert.alert('', 'Error: datos de autenticación no disponibles');
       }
     } catch (error) {

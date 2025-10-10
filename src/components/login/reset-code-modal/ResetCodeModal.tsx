@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { authService, Building } from '../../../services/authService';
 import { styles } from './ResetCodeModal.styles';
 import { ResetCodeModalProps } from './ResetCodeModal.types';
 
@@ -11,19 +12,60 @@ export const ResetCodeModal: React.FC<ResetCodeModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [nif, setNif] = useState('');
-  const [buildingNumber, setBuildingNumber] = useState('');
+  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<number | null>(null);
+  const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
+  const [buildingsError, setBuildingsError] = useState('');
+
+  // Detectar cuando el NIF tiene 8+ caracteres y hacer la petición automática
+  useEffect(() => {
+    const fetchBuildings = async () => {
+      if (nif.length >= 8) {
+        setIsLoadingBuildings(true);
+        setBuildingsError('');
+        setBuildings([]);
+        setSelectedBuildingId(null);
+
+        try {
+          const response = await authService.forgotCode({ nif: nif.trim() });
+          
+          if ('success' in response && response.success && response.data) {
+            setBuildings(response.data);
+            setBuildingsError('');
+          } else {
+            setBuildingsError(response.message || 'No se encontraron edificios');
+            setBuildings([]);
+          }
+        } catch (error) {
+          setBuildingsError('Error al buscar edificios');
+          setBuildings([]);
+        } finally {
+          setIsLoadingBuildings(false);
+        }
+      } else {
+        setBuildings([]);
+        setSelectedBuildingId(null);
+        setBuildingsError('');
+      }
+    };
+
+    // Debounce de 500ms para evitar demasiadas peticiones
+    const timeoutId = setTimeout(fetchBuildings, 500);
+    return () => clearTimeout(timeoutId);
+  }, [nif]);
 
   const handleResetCode = () => {
-    if (nif.trim() && buildingNumber.trim()) {
-      onResetCode(nif.trim(), buildingNumber.trim());
-      setNif('');
-      setBuildingNumber('');
+    if (nif.trim() && selectedBuildingId !== null) {
+      onResetCode(selectedBuildingId);
+      handleClose();
     }
   };
 
   const handleClose = () => {
     setNif('');
-    setBuildingNumber('');
+    setBuildings([]);
+    setSelectedBuildingId(null);
+    setBuildingsError('');
     onClose();
   };
 
@@ -65,23 +107,65 @@ export const ResetCodeModal: React.FC<ResetCodeModalProps> = ({
 
             <View style={styles.inputContainer}>
               <Text style={styles.inputLabel}>{t('buildingNumber', 'auth')} *</Text>
-              <View style={styles.selectContainer}>
-                <TextInput
-                  style={styles.selectInput}
-                  value={buildingNumber}
-                  onChangeText={setBuildingNumber}
-                  placeholder={t('buildingNumberPlaceholder', 'auth')}
-                  placeholderTextColor="#999"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <Text style={styles.dropdownIcon}>⌄</Text>
-              </View>
+              
+              {isLoadingBuildings && (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" color="#E53E3E" />
+                  <Text style={styles.loadingText}>Buscando edificios...</Text>
+                </View>
+              )}
+
+              {buildingsError && !isLoadingBuildings && (
+                <Text style={styles.errorText}>{buildingsError}</Text>
+              )}
+
+              {buildings.length > 0 && !isLoadingBuildings && (
+                <View style={styles.buildingsListContainer}>
+                  <Text style={styles.buildingsCountText}>
+                    {buildings.length} {buildings.length === 1 ? 'edificio encontrado' : 'edificios encontrados'}
+                  </Text>
+                  <ScrollView 
+                    style={styles.buildingsList}
+                    nestedScrollEnabled={true}
+                  >
+                    {buildings.map((building) => (
+                      <TouchableOpacity
+                        key={building.id}
+                        style={[
+                          styles.buildingItem,
+                          selectedBuildingId === building.id && styles.buildingItemSelected
+                        ]}
+                        onPress={() => setSelectedBuildingId(building.id)}
+                      >
+                        <View style={styles.radioCircle}>
+                          {selectedBuildingId === building.id && (
+                            <View style={styles.radioCircleInner} />
+                          )}
+                        </View>
+                        <View style={styles.buildingInfo}>
+                          <Text style={styles.buildingName}>{building.nom}</Text>
+                          <Text style={styles.buildingRef}>{building.ref_cadastral}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+
+              {nif.length > 0 && nif.length < 8 && (
+                <Text style={styles.hintText}>
+                  Ingrese al menos 8 caracteres del NIF
+                </Text>
+              )}
             </View>
 
             <TouchableOpacity 
-              style={styles.resetButton}
+              style={[
+                styles.resetButton, 
+                (selectedBuildingId === null || !nif.trim()) && styles.resetButtonDisabled
+              ]}
               onPress={handleResetCode}
+              disabled={selectedBuildingId === null || !nif.trim()}
             >
               <Text style={styles.resetButtonText}>
                 {t('resetCodeButton', 'auth')}

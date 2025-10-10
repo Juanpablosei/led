@@ -119,4 +119,85 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.5,
   },
+  resetButtonDisabled: {
+    backgroundColor: colors.gray,
+    opacity: 0.6,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    gap: 10,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.gray,
+    marginLeft: 10,
+  },
+  errorText: {
+    fontSize: 14,
+    color: colors.red,
+    paddingVertical: 12,
+  },
+  hintText: {
+    fontSize: 12,
+    color: colors.gray,
+    paddingTop: 8,
+    fontStyle: 'italic',
+  },
+  buildingsListContainer: {
+    marginTop: 8,
+  },
+  buildingsCountText: {
+    fontSize: 12,
+    color: colors.gray,
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  buildingsList: {
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    borderRadius: 5,
+  },
+  buildingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderGray,
+    backgroundColor: colors.white,
+  },
+  buildingItemSelected: {
+    backgroundColor: '#FFF5F5',
+  },
+  radioCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: colors.red,
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioCircleInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.red,
+  },
+  buildingInfo: {
+    flex: 1,
+  },
+  buildingName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.black,
+    marginBottom: 4,
+  },
+  buildingRef: {
+    fontSize: 12,
+    color: colors.gray,
+  },
 });
