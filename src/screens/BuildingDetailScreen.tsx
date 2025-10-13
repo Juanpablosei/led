@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, BackHandler, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
 import { BuildingDetailData, buildingService } from '../services/buildingService';
+import { storageService } from '../services/storageService';
 import { styles } from './BuildingDetailScreen.styles';
 
 // Imagen por defecto para edificios sin imagen
@@ -16,6 +17,35 @@ export const BuildingDetailScreen: React.FC = () => {
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
   const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Bloquear botón de atrás del hardware SOLO cuando esta pantalla está en foco
+  useFocusEffect(
+    useCallback(() => {
+      let backHandler: any = null;
+      
+      const setupBackHandler = async () => {
+        const isBuildingUser = await storageService.isBuildingLogin();
+        
+        if (isBuildingUser) {
+          console.log('🚫 Bloqueando botón de atrás para usuario de edificio');
+          backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            console.log('🚫 Intento de volver atrás bloqueado');
+            return true; // Bloquear
+          });
+        }
+      };
+      
+      setupBackHandler();
+      
+      // Cleanup cuando la pantalla pierde el foco
+      return () => {
+        if (backHandler) {
+          console.log('✅ Desbloqueando botón de atrás');
+          backHandler.remove();
+        }
+      };
+    }, [])
+  );
 
   // Cargar detalles del edificio desde el API
   useEffect(() => {

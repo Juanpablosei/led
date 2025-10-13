@@ -11,6 +11,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
   notificationCount = 0,
   onNotificationPress,
   onProfilePress,
+  hideBackButton = false,
 }) => {
   return (
     <View style={styles.container}>
@@ -28,9 +29,11 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
         ) : (
           // Variante con navegación
           <>
-            <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
-              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
+            {!hideBackButton && (
+              <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
+                <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            )}
             {title && <Text style={styles.title}>{title}</Text>}
           </>
         )}

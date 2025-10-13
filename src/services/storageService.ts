@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   USER_ROLES: 'user_roles',
   USER_DATA: 'user_data',
   REMEMBERED_NIF: 'remembered_nif',
+  LOGIN_TYPE: 'login_type',
 } as const;
 
 export interface StoredBuildingData {
@@ -243,6 +244,7 @@ export const storageService = {
         AsyncStorage.removeItem(STORAGE_KEYS.USER_ROLES),
         AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA),
         AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_NIF),
+        AsyncStorage.removeItem(STORAGE_KEYS.LOGIN_TYPE),
       ]);
     } catch (error) {
       console.error('Error clearing auth data:', error);
@@ -257,6 +259,35 @@ export const storageService = {
       return token !== null;
     } catch (error) {
       console.error('Error checking authentication:', error);
+      return false;
+    }
+  },
+
+  // Login type management (building or general)
+  async setLoginType(type: 'building' | 'general'): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.LOGIN_TYPE, type);
+    } catch (error) {
+      console.error('Error saving login type:', error);
+      throw error;
+    }
+  },
+
+  async getLoginType(): Promise<'building' | 'general' | null> {
+    try {
+      return await AsyncStorage.getItem(STORAGE_KEYS.LOGIN_TYPE) as 'building' | 'general' | null;
+    } catch (error) {
+      console.error('Error getting login type:', error);
+      return null;
+    }
+  },
+
+  async isBuildingLogin(): Promise<boolean> {
+    try {
+      const loginType = await this.getLoginType();
+      return loginType === 'building';
+    } catch (error) {
+      console.error('Error checking login type:', error);
       return false;
     }
   }

@@ -5,4 +5,5 @@ export interface GlobalHeaderProps {
   notificationCount?: number;
   onNotificationPress?: () => void;
   onProfilePress?: () => void;
+  hideBackButton?: boolean;
 }

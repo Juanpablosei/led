@@ -81,6 +81,9 @@ export const LoginScreen: React.FC = () => {
           // Login exitoso
           console.log("Login exitoso:", response);
           
+          // Almacenar tipo de login
+          await storageService.setLoginType('building');
+          
           // Almacenar datos del login
           if (response.token) {
             await storageService.setAuthToken(response.token);
@@ -105,8 +108,12 @@ export const LoginScreen: React.FC = () => {
             // Mostrar modal de confirmación
             setShowBuildingAcceptanceModal(true);
           } else if (response.activ === true) {
-            // Login normal, navegar directamente
-            router.replace("/buildings");
+            // Login de edificio: ir directo al detalle del edificio (no a la lista)
+            if (response.edificio?.id) {
+              router.replace(`/building-detail?buildingId=${response.edificio.id}`);
+            } else {
+              router.replace("/buildings");
+            }
           } else if (response.activ === false) {
             // Mostrar modal de error
             setShowBuildingRejectedModal(true);
@@ -143,6 +150,9 @@ export const LoginScreen: React.FC = () => {
         if ('status' in response && response.status) {
           // Login exitoso
           console.log("✅ ==================== LOGIN EXITOSO ====================");
+          
+          // Almacenar tipo de login
+          await storageService.setLoginType('general');
           
           // Almacenar tokens primero
           if ('token' in response && response.token) {
@@ -376,7 +386,8 @@ export const LoginScreen: React.FC = () => {
         if ('success' in response && response.success) {
           console.log("Edificio aprobado exitosamente");
           setShowBuildingAcceptanceModal(false);
-          router.replace("/buildings");
+          // Login de edificio: ir directo al detalle del edificio (no a la lista)
+          router.replace(`/building-detail?buildingId=${buildingData.id}`);
         } else {
           console.error("Error al aprobar edificio:", response.message);
           Alert.alert('', response.message || 'Error al aprobar el edificio');

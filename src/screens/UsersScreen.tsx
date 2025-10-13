@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Text, TextInput, View } from 'react-native';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { UserCard } from '../components/users';
 import { UserData } from '../components/users/UserCard.types';

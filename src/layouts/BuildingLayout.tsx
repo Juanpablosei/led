@@ -16,6 +16,17 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [isBuildingLogin, setIsBuildingLogin] = useState(false);
+
+  // Verificar tipo de login
+  useEffect(() => {
+    checkLoginType();
+  }, []);
+
+  const checkLoginType = async () => {
+    const isBuildingUser = await storageService.isBuildingLogin();
+    setIsBuildingLogin(isBuildingUser);
+  };
 
   // Cargar notificaciones para actualizar el badge
   useEffect(() => {
@@ -61,7 +72,10 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
     // Navegación según el item presionado
     switch (itemId) {
       case 'identificacion':
-        // Ya estamos en la pantalla de identificación
+        // Navegar al detalle del edificio
+        if (building?.id) {
+          router.push(`/building-detail?buildingId=${building.id}`);
+        }
         break;
       // Temporarily hidden
       // case 'listado-usuarios':
@@ -133,6 +147,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         notificationCount={notificationCount}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress}
+        hideBackButton={isBuildingLogin}
       />
 
       {/* Título + Menú - SIEMPRE */}
