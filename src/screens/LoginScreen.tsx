@@ -139,22 +139,61 @@ export const LoginScreen: React.FC = () => {
         
         if ('status' in response && response.status) {
           // Login exitoso
-          console.log("Login general exitoso:", response);
+          console.log("✅ ==================== LOGIN EXITOSO ====================");
           
-          // Almacenar datos del login
+          // Almacenar tokens primero
           if ('token' in response && response.token) {
             await storageService.setAuthToken(response.token);
+            console.log("🔑 Token guardado");
           }
           
-          // Almacenar token de notificaciones
           if ('token_user_notification' in response && response.token_user_notification) {
             await storageService.setNotificationToken(response.token_user_notification);
+            console.log("🔔 Token de notificaciones guardado");
           }
           
           // Guardar NIF si está marcado para recordar
           if (data.rememberNif && data.nif) {
             await storageService.setRememberedNif(data.nif);
             setRememberedNif(data.nif);
+          }
+          
+          // Obtener datos completos del usuario desde /mis-datos
+          try {
+            const myDataResponse = await authService.getMyData();
+            
+            if (myDataResponse.status && myDataResponse.data) {
+              const userData = myDataResponse.data;
+              
+              console.log("👤 ==================== DATOS DEL USUARIO ====================");
+              console.log("📦 RESPUESTA COMPLETA DE /mis-datos:");
+              console.log(JSON.stringify(myDataResponse, null, 2));
+              console.log("============================================================");
+              console.log("Nombre:", userData.first_name || 'N/A');
+              console.log("Apellido:", userData.last_name || 'N/A');
+              console.log("NIF:", userData.nif || 'N/A');
+              console.log("Email:", userData.email || 'N/A');
+              console.log("Teléfono:", userData.telefon || 'N/A');
+              console.log("Tipo Usuario:", userData.tipo_usuario || 'N/A');
+              console.log("Profesión:", userData.professio || 'N/A');
+              console.log("Otra Profesión:", userData.otra_profesion || 'N/A');
+              console.log("Comunidad Autónoma:", userData.comunitat_autonoma || 'N/A');
+              console.log("Número Colegiado:", userData.colegiado_externo_num_colegiado || 'N/A');
+              console.log("Colegio Profesional:", userData.collegi_professional || 'N/A');
+              console.log("Entidad Convenio:", userData.entidad_convenio || 'N/A');
+              console.log("============================================================");
+              
+              // Guardar TODOS los datos del usuario en storage
+              await storageService.setUserData(userData);
+              
+              console.log("💾 ==================== DATOS GUARDADOS EN STORAGE ====================");
+              console.log(JSON.stringify(userData, null, 2));
+              console.log("====================================================================");
+            } else {
+              console.warn("⚠️ No se pudieron obtener los datos del usuario desde /mis-datos");
+            }
+          } catch (error) {
+            console.error("❌ Error al obtener datos del usuario:", error);
           }
           
           // Verificar si necesita completar datos profesionales

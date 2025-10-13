@@ -65,11 +65,27 @@ export interface StoredUserRole {
 }
 
 export interface StoredUserData {
-  nombre: string;
-  role: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  nif: string;
+  email: string;
+  telefon?: string;
+  tipo_usuario: 'propietario' | 'profesional';
+  professio?: number | string;
+  otra_profesion?: string;
+  colegiado_externo_num_colegiado?: string;
+  collegi_professional?: string;
+  comunitat_autonoma?: string;
+  entidad_convenio?: string | null;
+  entitat_conveni_id?: number | null;
+  role_altres?: string | null;
   locale?: string;
-  salesforce?: string;
-  user_id: number;
+  colegiat?: string | null;
+  politica_privacitat_acceptada_en?: string;
+  colegiado_externo?: boolean;
+  dades_professionals?: boolean;
+  [key: string]: any; // Para cualquier campo adicional
 }
 
 export const storageService = {

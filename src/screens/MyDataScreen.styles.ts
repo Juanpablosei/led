@@ -144,5 +144,42 @@ export const styles = StyleSheet.create({
   required: {
     color: colors.primary,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectionModal: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxHeight: '70%',
+  },
+  selectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  selectionScrollView: {
+    maxHeight: 440,
+  },
+  selectionItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  selectionItemText: {
+    fontSize: 16,
+    color: colors.text,
+    flex: 1,
+  },
 });
 

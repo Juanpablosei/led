@@ -254,6 +254,40 @@ export type RegisterApiResponse = RegisterResponse | RegisterError;
 export type ComunidadAutonomaApiResponse = ComunidadAutonomaResponse;
 export type ColegioProfesionalApiResponse = ColegioProfesionalResponse;
 
+// Interfaces para obtener datos del usuario
+export interface MyDataUserResponse {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  nif: string;
+  telefon?: string;
+  tipo_usuario: 'propietario' | 'profesional';
+  professio?: number;
+  otra_profesion?: string;
+  colegiado_externo_num_colegiado?: string;
+  collegi_professional?: string;
+  comunitat_autonoma?: string;
+  entitat_conveni_id?: number | null;
+  role_altres?: string | null;
+  locale?: string;
+  colegiat?: string | null;
+  politica_privacitat_acceptada_en?: string;
+  colegiado_externo?: boolean;
+  dades_professionals?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
+export interface MyDataResponse {
+  status: boolean;
+  data: MyDataUserResponse;
+  message?: string;
+}
+
+export type MyDataApiResponse = MyDataResponse;
+
 // Interfaces para aprobar/rechazar edificio
 export interface BuildingApprovalRequest {
   edificio_id: number;
@@ -475,6 +509,50 @@ export const authService = {
         return error.response.data;
       }
       // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getMyData(): Promise<MyDataApiResponse> {
+    try {
+      console.log('🔍 Obteniendo datos del usuario desde /mis-datos');
+      const response = await httpClient.get('/mis-datos');
+      console.log('✅ Datos del usuario obtenidos:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error al obtener datos del usuario:', error);
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      throw error;
+    }
+  },
+
+  async updateMyData(data: {
+    professio: string;
+    colegiado_externo_num_colegiado: string;
+    collegi_professional: string;
+    role_altres: string;
+    telefon: string;
+    email: string;
+    comunitat_autonoma: string;
+    entidad_convenio: string | null;
+    tipo_usuario: 'propietario' | 'profesional';
+    otra_profesion?: string;
+  }): Promise<any> {
+    try {
+      console.log('📤 Actualizando datos del usuario en /mis-datos');
+      console.log('Datos a enviar:', JSON.stringify(data, null, 2));
+      
+      const response = await httpClient.patch('/mis-datos', data);
+      
+      console.log('✅ Datos del usuario actualizados:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error al actualizar datos del usuario:', error);
+      if (error.response?.data) {
+        return error.response.data;
+      }
       throw error;
     }
   }
