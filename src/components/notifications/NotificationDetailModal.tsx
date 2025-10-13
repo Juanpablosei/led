@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native';
+import RenderHTML from 'react-native-render-html';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './NotificationDetailModal.styles';
@@ -12,6 +13,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
   onClose,
 }) => {
   const { t } = useTranslation();
+  const { width } = useWindowDimensions();
 
   if (!notification) return null;
 
@@ -44,24 +46,36 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
                   <Text style={styles.value}>{notification.subject}</Text>
                 </View>
 
-                {/* Fecha enviado */}
-                <View style={styles.fieldContainer}>
-                  <Text style={styles.label}>{t('detail.dateSent', 'notifications')}:</Text>
-                  <Text style={styles.value}>{notification.dateSent}</Text>
-                </View>
+                {/* Fecha enviado - Solo mostrar si existe */}
+                {notification.dateSent && (
+                  <View style={styles.fieldContainer}>
+                    <Text style={styles.label}>{t('detail.dateSent', 'notifications')}:</Text>
+                    <Text style={styles.value}>{notification.dateSent}</Text>
+                  </View>
+                )}
 
-                {/* Remitente */}
-                <View style={styles.fieldContainer}>
-                  <Text style={styles.label}>{t('detail.sender', 'notifications')}:</Text>
-                  <Text style={styles.value}>{notification.sender}</Text>
-                </View>
+                {/* Remitente - Solo mostrar si existe */}
+                {notification.sender && (
+                  <View style={styles.fieldContainer}>
+                    <Text style={styles.label}>{t('detail.sender', 'notifications')}:</Text>
+                    <Text style={styles.value}>{notification.sender}</Text>
+                  </View>
+                )}
 
                 <View style={styles.divider} />
 
-                {/* Mensaje */}
+                {/* Mensaje - Renderizar como HTML */}
                 <View style={styles.fieldContainer}>
                   <Text style={styles.label}>{t('detail.message', 'notifications')}:</Text>
-                  <Text style={styles.messageValue}>{notification.message}</Text>
+                  <RenderHTML
+                    contentWidth={width - 80}
+                    source={{ html: notification.message }}
+                    tagsStyles={{
+                      body: { color: colors.text, fontSize: 14, lineHeight: 20 },
+                      p: { marginTop: 0, marginBottom: 8 },
+                      a: { color: colors.primary, textDecorationLine: 'underline' },
+                    }}
+                  />
                 </View>
               </ScrollView>
             </View>

@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { Sidebar } from '../components/sidebar/Sidebar';
 import { UserMenu, UserMenuOption } from '../components/user-menu';
 import { useTranslation } from '../hooks/useTranslation';
+import { buildingService } from '../services/buildingService';
 import { storageService } from '../services/storageService';
 import { styles } from './BuildingLayout.styles';
 import { BuildingLayoutProps } from './BuildingLayout.types';
@@ -14,6 +15,31 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   const { t } = useTranslation();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  // Cargar notificaciones para actualizar el badge
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = async () => {
+    try {
+      const response = await buildingService.getNotifications(100, true);
+      
+      if (response.status && 'data' in response) {
+        // Calcular total de notificaciones
+        const total = 
+          response.data.comunicaciones_no_leidas.cantidad +
+          response.data.documentos_edificio_caducados.cantidad +
+          response.data.documentos_inmueble_caducados.cantidad +
+          response.data.actividades_proximas.cantidad;
+        
+        setNotificationCount(total);
+      }
+    } catch (error) {
+      console.error('Error al cargar notificaciones:', error);
+    }
+  };
 
   const handleMenuPress = () => {
     setIsSidebarVisible(true);
@@ -104,7 +130,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         variant="navigation"
         title={t('myBuildings', 'navigation')}
         onBackPress={() => router.back()}
-        notificationCount={4}
+        notificationCount={notificationCount}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress}
       />

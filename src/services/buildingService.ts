@@ -137,6 +137,105 @@ export interface BuildingDetailError {
 
 export type BuildingDetailApiResponse = BuildingDetailResponse | BuildingDetailError;
 
+// Interfaces para notificaciones
+export interface NotificationComunicacion {
+  id: number;
+  assumpte: string;
+  leido: string | null;
+  edifici_id: number | null;
+  edifici_nom: string | null;
+}
+
+export interface NotificationDocumento {
+  id: number;
+  nom: string;
+  edifici_id: number;
+  edifici_nom: string;
+  data_caducitat: string;
+}
+
+export interface NotificationActividad {
+  id: number;
+  nom: string;
+  edifici_id: number;
+  edifici_nom: string;
+  data_inici: string;
+  data_fi: string;
+}
+
+export interface NotificationsData {
+  documentos_edificio_caducados: {
+    cantidad: number;
+    documentos: NotificationDocumento[];
+  };
+  documentos_inmueble_caducados: {
+    cantidad: number;
+    documentos: NotificationDocumento[];
+  };
+  comunicaciones_no_leidas: {
+    cantidad: number;
+    comunicaciones: NotificationComunicacion[];
+  };
+  actividades_proximas: {
+    cantidad: number;
+    actividades: NotificationActividad[];
+  };
+}
+
+export interface NotificationsResponse {
+  status: boolean;
+  message: string;
+  data: NotificationsData;
+}
+
+export interface NotificationsError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type NotificationsApiResponse = NotificationsResponse | NotificationsError;
+
+// Interfaces para detalle de comunicación
+export interface ComunicacionDetailData {
+  id: number;
+  assumpte: string;
+  cos: string;
+  data_enviament: string;
+  emisor: string;
+  edifici_id?: number | null;
+  edifici_nom?: string | null;
+  leido: string | null;
+}
+
+export interface ComunicacionDetailResponse {
+  status: boolean;
+  message: string;
+  data: ComunicacionDetailData;
+}
+
+export interface ComunicacionDetailError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type ComunicacionDetailApiResponse = ComunicacionDetailResponse | ComunicacionDetailError;
+
+// Interfaces para marcar comunicación como leída
+export interface MarkAsReadResponse {
+  status: boolean;
+  message: string;
+}
+
+export interface MarkAsReadError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type MarkAsReadApiResponse = MarkAsReadResponse | MarkAsReadError;
+
 export const buildingService = {
   async getBuildings(page: number = 1, searchText: string = ''): Promise<BuildingsApiResponse> {
     try {
@@ -171,6 +270,63 @@ export const buildingService = {
       return response.data;
     } catch (error: any) {
       console.error(`❌ Error en GET /edificio/${id}:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getNotifications(limit: number = 5, full: boolean = true): Promise<NotificationsApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /edificio/notificaciones/listar?limit=${limit}&full=${full}`);
+      const response = await httpClient.get(`/edificio/notificaciones/listar?limit=${limit}&full=${full}`);
+      
+      console.log('📦 Notificaciones recibidas');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener notificaciones:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getComunicacionDetail(id: number): Promise<ComunicacionDetailApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /comunicaciones/my_comunicacion/${id}`);
+      const response = await httpClient.get(`/comunicaciones/my_comunicacion/${id}`);
+      
+      console.log('📦 Detalle de comunicación recibido');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener detalle de comunicación:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async markComunicacionAsRead(id: number, leido: boolean = true): Promise<MarkAsReadApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 PATCH /comunicaciones/mensaje_leido?id=${id}&leido=${leido}`);
+      const response = await httpClient.patch(`/comunicaciones/mensaje_leido?id=${id}&leido=${leido}`);
+      
+      console.log('✅ Comunicación marcada como leída');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al marcar comunicación como leída:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;

@@ -1,8 +1,8 @@
 export interface NotificationDetailData {
   id: string;
   subject: string;
-  dateSent: string;
-  sender: string;
+  dateSent?: string | null;
+  sender?: string | null;
   message: string;
 }
 

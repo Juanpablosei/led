@@ -1,42 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { NotificationDetailModal, NotificationItem } from '../components/notifications';
 import { NotificationDetailData } from '../components/notifications/NotificationDetailModal.types';
 import { NotificationData } from '../components/notifications/NotificationItem.types';
 import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
+import { buildingService, NotificationsData } from '../services/buildingService';
 import { styles } from './NotificationsScreen.styles';
-
-// Datos de ejemplo
-const mockCommunications: NotificationData[] = Array.from({ length: 15 }, (_, i) => ({
-  id: `communication-${i + 1}`,
-  title: 'Actualització de Dades de Facturació de l\'Edifici',
-  date: '20/03/2026',
-  isRead: i >= 5,
-}));
-
-const mockBuildings: NotificationData[] = Array.from({ length: 25 }, (_, i) => ({
-  id: `building-${i + 1}`,
-  title: 'Actualització de Dades de Facturació de l\'Edifici',
-  date: '20/03/2026',
-  isRead: i >= 8,
-}));
-
-const mockHomes: NotificationData[] = Array.from({ length: 18 }, (_, i) => ({
-  id: `home-${i + 1}`,
-  title: 'Notificació de Caducitat de Documentació de la Vivienda',
-  date: '18/03/2026',
-  isRead: i >= 6,
-}));
-
-const mockActivities: NotificationData[] = Array.from({ length: 12 }, (_, i) => ({
-  id: `activity-${i + 1}`,
-  title: 'Recordatori d\'Activitat Programada',
-  date: '22/03/2026',
-  isRead: i >= 3,
-}));
 
 type TabType = 'communications' | 'buildings' | 'homes' | 'activities';
 
@@ -49,78 +21,152 @@ export const NotificationsScreen: React.FC = () => {
   const [activitiesPage, setActivitiesPage] = useState(1);
   const [selectedNotification, setSelectedNotification] = useState<NotificationDetailData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notificationsData, setNotificationsData] = useState<NotificationsData | null>(null);
 
   const itemsPerPage = 10;
 
+  // Cargar notificaciones al montar el componente
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const response = await buildingService.getNotifications(100, true);
+      
+      if (response.status && 'data' in response) {
+        console.log('✅ Notificaciones cargadas:', response.data);
+        setNotificationsData(response.data);
+      } else {
+        console.error('❌ Error al cargar notificaciones:', response.message);
+      }
+    } catch (error) {
+      console.error('❌ Error de red al cargar notificaciones:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Mapear comunicaciones
+  const communications: NotificationData[] = notificationsData?.comunicaciones_no_leidas.comunicaciones.map((com) => ({
+    id: String(com.id),
+    title: com.assumpte,
+    date: '', // No viene fecha en la respuesta
+    isRead: com.leido !== null,
+    buildingName: com.edifici_nom || undefined,
+  })) || [];
+
+  // Mapear edificios (documentos caducados del edificio)
+  const buildings: NotificationData[] = notificationsData?.documentos_edificio_caducados.documentos.map((doc) => ({
+    id: String(doc.id),
+    title: doc.nom,
+    date: doc.data_caducitat,
+    isRead: true,
+    buildingName: doc.edifici_nom || undefined,
+  })) || [];
+
+  // Mapear viviendas (documentos caducados de inmuebles)
+  const homes: NotificationData[] = notificationsData?.documentos_inmueble_caducados.documentos.map((doc) => ({
+    id: String(doc.id),
+    title: doc.nom,
+    date: doc.data_caducitat,
+    isRead: true,
+    buildingName: doc.edifici_nom || undefined,
+  })) || [];
+
+  // Mapear actividades próximas
+  const activities: NotificationData[] = notificationsData?.actividades_proximas.actividades.map((act) => ({
+    id: String(act.id),
+    title: act.nom,
+    date: act.data_inici,
+    isRead: true,
+    buildingName: act.edifici_nom || undefined,
+  })) || [];
+
   // Paginación para comunicaciones
-  const communicationsTotalPages = Math.ceil(mockCommunications.length / itemsPerPage);
+  const communicationsTotalPages = Math.ceil(communications.length / itemsPerPage);
   const getCurrentCommunications = () => {
     const startIndex = (communicationsPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return mockCommunications.slice(startIndex, endIndex);
+    return communications.slice(startIndex, endIndex);
   };
 
   // Paginación para edificios
-  const buildingsTotalPages = Math.ceil(mockBuildings.length / itemsPerPage);
+  const buildingsTotalPages = Math.ceil(buildings.length / itemsPerPage);
   const getCurrentBuildings = () => {
     const startIndex = (buildingsPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return mockBuildings.slice(startIndex, endIndex);
+    return buildings.slice(startIndex, endIndex);
   };
 
   // Paginación para viviendas
-  const homesTotalPages = Math.ceil(mockHomes.length / itemsPerPage);
+  const homesTotalPages = Math.ceil(homes.length / itemsPerPage);
   const getCurrentHomes = () => {
     const startIndex = (homesPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return mockHomes.slice(startIndex, endIndex);
+    return homes.slice(startIndex, endIndex);
   };
 
   // Paginación para actividades
-  const activitiesTotalPages = Math.ceil(mockActivities.length / itemsPerPage);
+  const activitiesTotalPages = Math.ceil(activities.length / itemsPerPage);
   const getCurrentActivities = () => {
     const startIndex = (activitiesPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return mockActivities.slice(startIndex, endIndex);
+    return activities.slice(startIndex, endIndex);
   };
 
-  const handleNotificationPress = (id: string) => {
-    // Crear datos de ejemplo para el modal
-    const notificationDetail: NotificationDetailData = {
-      id: id,
-      subject: 'Actualització de Dades de Facturació de l\'Edifici',
-      dateSent: '10/09/2024',
-      sender: 'Núria Vilaplana Hortensi',
-      message: `Actualització de Dades de Facturació de l'Edifici
-Informació de Facturació:
-
-Número d'Entitats Jurídiques:
-2
-
-Preu Unitari:
-6
-
-Total Facturació:
-12
-
-Règim Jurídic:
-propietat_vertical
-
-Tipus Identificació:
-NIF
-
-Identificació:
-46577521Z
-
-Raó Social:
-Núria Vilaplana Hortensi
-
-Tipus Vía:
-carrer`,
-    };
-    
-    setSelectedNotification(notificationDetail);
-    setIsModalVisible(true);
+  const handleNotificationPress = async (id: string) => {
+    try {
+      // Solo para comunicaciones hacemos GET del detalle
+      if (activeTab === 'communications') {
+        console.log('🔍 Obteniendo detalle de comunicación:', id);
+        
+        const response = await buildingService.getComunicacionDetail(parseInt(id));
+        
+        if (response.status && 'data' in response) {
+          const comunicacion = response.data;
+          
+          // Mapear a formato del modal
+          const notificationDetail: NotificationDetailData = {
+            id: String(comunicacion.id),
+            subject: comunicacion.assumpte,
+            dateSent: comunicacion.data_enviament || null,
+            sender: comunicacion.emisor || null,
+            message: comunicacion.cos,
+          };
+          
+          setSelectedNotification(notificationDetail);
+          setIsModalVisible(true);
+          
+          // Marcar como leída cuando se abre el modal
+          if (!comunicacion.leido) {
+            console.log('📝 Marcando comunicación como leída');
+            await buildingService.markComunicacionAsRead(comunicacion.id, true);
+            
+            // Recargar notificaciones para actualizar el badge
+            await loadNotifications();
+          }
+        } else {
+          console.error('❌ Error al obtener detalle:', response.message);
+        }
+      } else {
+        // Para otras tabs, mantener el comportamiento actual (datos de ejemplo)
+        const notificationDetail: NotificationDetailData = {
+          id: id,
+          subject: 'Notificación',
+          dateSent: new Date().toLocaleDateString(),
+          sender: 'Sistema',
+          message: 'Detalle de la notificación',
+        };
+        
+        setSelectedNotification(notificationDetail);
+        setIsModalVisible(true);
+      }
+    } catch (error) {
+      console.error('❌ Error al abrir notificación:', error);
+    }
   };
 
   const handleCloseModal = () => {
@@ -131,6 +177,24 @@ carrer`,
   const handleBack = () => {
     router.back();
   };
+
+  // Si está cargando, mostrar indicador
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <Ionicons name="chevron-back" size={24} color={colors.white} />
+          </TouchableOpacity>
+          <Text style={styles.title}>{t('title', 'notifications')}</Text>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 12, color: colors.text }}>Cargando notificaciones...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -163,7 +227,7 @@ carrer`,
                 {t('communications', 'notifications')}
               </Text>
               <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>{mockCommunications.length}</Text>
+                <Text style={styles.cardBadgeText}>{communications.length}</Text>
               </View>
             </TouchableOpacity>
 
@@ -182,7 +246,7 @@ carrer`,
                 {t('buildings', 'notifications')}
               </Text>
               <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>{mockBuildings.length}</Text>
+                <Text style={styles.cardBadgeText}>{buildings.length}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -204,7 +268,7 @@ carrer`,
                 {t('homes', 'notifications')}
               </Text>
               <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>{mockHomes.length}</Text>
+                <Text style={styles.cardBadgeText}>{homes.length}</Text>
               </View>
             </TouchableOpacity>
 
@@ -223,7 +287,7 @@ carrer`,
                 {t('activities', 'notifications')}
               </Text>
               <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>{mockActivities.length}</Text>
+                <Text style={styles.cardBadgeText}>{activities.length}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -235,7 +299,7 @@ carrer`,
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
-                {t('communications', 'notifications')} ({mockCommunications.length})
+                {t('communications', 'notifications')} ({communications.length})
               </Text>
             </View>
 
@@ -256,7 +320,7 @@ carrer`,
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
-                {t('buildings', 'notifications')} ({mockBuildings.length})
+                {t('buildings', 'notifications')} ({buildings.length})
               </Text>
             </View>
 
@@ -277,7 +341,7 @@ carrer`,
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
-                {t('homes', 'notifications')} ({mockHomes.length})
+                {t('homes', 'notifications')} ({homes.length})
               </Text>
             </View>
 
@@ -298,7 +362,7 @@ carrer`,
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
-                {t('activities', 'notifications')} ({mockActivities.length})
+                {t('activities', 'notifications')} ({activities.length})
               </Text>
             </View>
 
@@ -316,10 +380,10 @@ carrer`,
       </ScrollView>
 
       {/* Paginación fija abajo - Comunicaciones */}
-      {activeTab === 'communications' && mockCommunications.length > 0 && (
+      {activeTab === 'communications' && communications.length > 0 && (
         <View style={styles.paginationFixed}>
           <Text style={styles.totalText}>
-            {t('total', 'notifications')}: {mockCommunications.length} {t('elements', 'notifications')}
+            {t('total', 'notifications')}: {communications.length} {t('elements', 'notifications')}
           </Text>
           <View style={styles.paginationButtons}>
             <TouchableOpacity
@@ -370,10 +434,10 @@ carrer`,
       )}
 
       {/* Paginación fija abajo - Edificios */}
-      {activeTab === 'buildings' && mockBuildings.length > 0 && (
+      {activeTab === 'buildings' && buildings.length > 0 && (
         <View style={styles.paginationFixed}>
           <Text style={styles.totalText}>
-            {t('total', 'notifications')}: {mockBuildings.length} {t('elements', 'notifications')}
+            {t('total', 'notifications')}: {buildings.length} {t('elements', 'notifications')}
           </Text>
           <View style={styles.paginationButtons}>
             <TouchableOpacity
@@ -424,10 +488,10 @@ carrer`,
       )}
 
       {/* Paginación fija abajo - Viviendas */}
-      {activeTab === 'homes' && mockHomes.length > 0 && (
+      {activeTab === 'homes' && homes.length > 0 && (
         <View style={styles.paginationFixed}>
           <Text style={styles.totalText}>
-            {t('total', 'notifications')}: {mockHomes.length} {t('elements', 'notifications')}
+            {t('total', 'notifications')}: {homes.length} {t('elements', 'notifications')}
           </Text>
           <View style={styles.paginationButtons}>
             <TouchableOpacity
@@ -478,10 +542,10 @@ carrer`,
       )}
 
       {/* Paginación fija abajo - Actividades */}
-      {activeTab === 'activities' && mockActivities.length > 0 && (
+      {activeTab === 'activities' && activities.length > 0 && (
         <View style={styles.paginationFixed}>
           <Text style={styles.totalText}>
-            {t('total', 'notifications')}: {mockActivities.length} {t('elements', 'notifications')}
+            {t('total', 'notifications')}: {activities.length} {t('elements', 'notifications')}
           </Text>
           <View style={styles.paginationButtons}>
             <TouchableOpacity

@@ -22,13 +22,37 @@ export const BuildingsScreen: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
-  const [notificationCount] = useState(4);
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
 
   // Cargar edificios desde el API
   useEffect(() => {
     loadBuildings(1, '');
   }, []);
+
+  // Cargar notificaciones para actualizar el badge
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  const loadNotifications = async () => {
+    try {
+      const response = await buildingService.getNotifications(100, true);
+      
+      if (response.status && 'data' in response) {
+        // Calcular total de notificaciones
+        const total = 
+          response.data.comunicaciones_no_leidas.cantidad +
+          response.data.documentos_edificio_caducados.cantidad +
+          response.data.documentos_inmueble_caducados.cantidad +
+          response.data.actividades_proximas.cantidad;
+        
+        setNotificationCount(total);
+      }
+    } catch (error) {
+      console.error('Error al cargar notificaciones:', error);
+    }
+  };
 
   const loadBuildings = async (page: number, search: string = '') => {
     setIsLoadingBuildings(true);
