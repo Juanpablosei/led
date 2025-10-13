@@ -1,24 +1,40 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Toast, ToastType } from '../components/ui';
 import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
+import { authService } from '../services/authService';
 import { styles } from './ChangePasswordScreen.styles';
 
 export const ChangePasswordScreen: React.FC = () => {
   const { t } = useTranslation();
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<ToastType>('success');
+  
+  const isMounted = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleBack = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     router.back();
   };
 
@@ -28,9 +44,9 @@ export const ChangePasswordScreen: React.FC = () => {
     setToastVisible(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Validaciones
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!newPassword || !confirmPassword) {
       showToast(t('changePassword.errorEmptyFields', 'user'), 'error');
       return;
     }
@@ -40,18 +56,41 @@ export const ChangePasswordScreen: React.FC = () => {
       return;
     }
 
-    // Aquí iría la lógica para cambiar la contraseña
-    console.log('Cambiar contraseña');
+    setIsLoading(true);
     
-    // Mostrar toast de éxito
-    showToast(t('changePassword.successMessage', 'user'), 'success');
-    
-    // Limpiar campos después de guardar exitosamente
-    setTimeout(() => {
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    }, 1500);
+    try {
+      const response = await authService.changePassword({
+        password: newPassword,
+        password_confirmation: confirmPassword
+      });
+
+      if (response.status) {
+        // Éxito
+        // Extraer mensaje correctamente (puede venir como objeto o string)
+        const message = response.message?.message || response.message || t('changePassword.successMessage', 'user');
+        showToast(message, 'success');
+        
+        // Limpiar campos después de guardar exitosamente
+        setNewPassword('');
+        setConfirmPassword('');
+        
+        // Navegar después del toast solo si el componente está montado
+        timeoutRef.current = setTimeout(() => {
+          if (isMounted.current) {
+            router.back();
+          }
+        }, 2000);
+      } else {
+        // Error del servidor
+        const errorMessage = response.message?.message || response.message || 'Error al cambiar la contraseña';
+        showToast(errorMessage, 'error');
+      }
+    } catch (error: any) {
+      console.error('Error al cambiar contraseña:', error);
+      showToast('Error de conexión. Inténtalo de nuevo.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -68,23 +107,6 @@ export const ChangePasswordScreen: React.FC = () => {
       <View style={styles.content}>
         <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
-          {/* Contraseña actual */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>{t('changePassword.currentPassword', 'user')}:</Text>
-            <TextInput
-              style={[
-                styles.input,
-                focusedField === 'currentPassword' && styles.inputFocused,
-              ]}
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              onFocus={() => setFocusedField('currentPassword')}
-              onBlur={() => setFocusedField(null)}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-          </View>
-
           {/* Contraseña nueva */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>{t('changePassword.newPassword', 'user')}:</Text>
@@ -120,8 +142,14 @@ export const ChangePasswordScreen: React.FC = () => {
           </View>
 
           {/* Botón Guardar */}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>{t('changePassword.save', 'user')}</Text>
+          <TouchableOpacity 
+            style={[styles.saveButton, isLoading && styles.saveButtonDisabled]} 
+            onPress={handleSave}
+            disabled={isLoading}
+          >
+            <Text style={styles.saveButtonText}>
+              {isLoading ? 'Guardando...' : t('changePassword.save', 'user')}
+            </Text>
           </TouchableOpacity>
         </View>
         </ScrollView>

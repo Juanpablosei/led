@@ -67,6 +67,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 20,
   },
+  saveButtonDisabled: {
+    backgroundColor: '#ccc',
+    opacity: 0.6,
+  },
   saveButtonText: {
     color: colors.white,
     fontSize: 16,

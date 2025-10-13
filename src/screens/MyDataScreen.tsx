@@ -278,7 +278,9 @@ export const MyDataScreen: React.FC = () => {
         }, 1500);
       } else {
         console.error("❌ Error del servidor:", response.message);
-        showToast(response.message || 'Error al guardar', 'error');
+        // Extraer mensaje correctamente (puede venir como objeto o string)
+        const errorMessage = response.message?.message || response.message || 'Error al guardar';
+        showToast(errorMessage, 'error');
       }
     } catch (error) {
       console.error("❌ Error al guardar datos:", error);
