@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from "react";
 import {
     Alert,
@@ -28,6 +29,8 @@ import { authService } from "../services/authService";
 import { buildingService } from "../services/buildingService";
 import { storageService } from "../services/storageService";
 import { styles } from "./LoginScreen.styles";
+
+const WEB_BASE_URL = 'https://desarrollo.arescoop.es/libro-edificio';
 
 export const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -265,22 +268,34 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
-  const handleFaqsPress = () => {
+  const handleFaqsPress = async () => {
     console.log("Abrir FAQs");
     setShowSupportModal(false);
-    // Aquí iría la navegación a FAQs
+    try {
+      await WebBrowser.openBrowserAsync(`${WEB_BASE_URL}/faqs`);
+    } catch (error) {
+      console.error('Error al abrir FAQs:', error);
+    }
   };
 
-  const handleLegalPress = () => {
+  const handleLegalPress = async () => {
     console.log("Abrir Aviso Legal");
     setShowSupportModal(false);
-    // Aquí iría la navegación a Aviso Legal
+    try {
+      await WebBrowser.openBrowserAsync(`${WEB_BASE_URL}/aviso-legal`);
+    } catch (error) {
+      console.error('Error al abrir Aviso Legal:', error);
+    }
   };
 
-  const handleTermsPress = () => {
+  const handleTermsPress = async () => {
     console.log("Abrir Condiciones");
     setShowSupportModal(false);
-    // Aquí iría la navegación a Condiciones
+    try {
+      await WebBrowser.openBrowserAsync(`${WEB_BASE_URL}/condiciones-contratacion`);
+    } catch (error) {
+      console.error('Error al abrir Condiciones:', error);
+    }
   };
 
   const handleResetPassword = async (nif: string) => {
