@@ -27,6 +27,7 @@ import { colors } from "../constants/colors";
 import { useTranslation } from "../hooks/useTranslation";
 import { authService } from "../services/authService";
 import { buildingService } from "../services/buildingService";
+import { notificationService } from "../services/notificationService";
 import { storageService } from "../services/storageService";
 import { styles } from "./LoginScreen.styles";
 
@@ -63,6 +64,36 @@ export const LoginScreen: React.FC = () => {
 
   const handleLanguageChange = () => {
     // Language change is now handled by the Header component
+  };
+
+  const setupPushNotifications = async () => {
+    try {
+      console.log('🔔 Configurando notificaciones push...');
+      
+      // Solicitar permisos y obtener token
+      const pushToken = await notificationService.getPushToken();
+      
+      if (pushToken) {
+        console.log('✅ Token de notificaciones obtenido:', pushToken.token);
+        console.log('📱 Device ID:', pushToken.deviceId);
+        
+        // Registrar el dispositivo en el backend
+        const response = await authService.registerDevice({
+          device_id: pushToken.deviceId,
+          expoPushToken: pushToken.token,
+        });
+        
+        if (response.status) {
+          console.log('✅ Dispositivo registrado en el servidor');
+        } else {
+          console.log('⚠️ Error al registrar dispositivo:', response.message);
+        }
+      } else {
+        console.log('⚠️ No se pudo obtener token de notificaciones');
+      }
+    } catch (error) {
+      console.error('❌ Error al configurar notificaciones:', error);
+    }
   };
 
   const handleLogin = async (data: LoginFormData, activeTab: string) => {
@@ -103,6 +134,9 @@ export const LoginScreen: React.FC = () => {
             setRememberedNif(data.nif);
           }
           
+          // Configurar notificaciones push
+          await setupPushNotifications();
+
           // Verificar el campo activ para determinar el flujo
           if (response.activ === null) {
             // Mostrar modal de confirmación
@@ -170,6 +204,9 @@ export const LoginScreen: React.FC = () => {
             await storageService.setRememberedNif(data.nif);
             setRememberedNif(data.nif);
           }
+          
+          // Configurar notificaciones push
+          await setupPushNotifications();
           
           // Obtener datos completos del usuario desde /mis-datos
           try {

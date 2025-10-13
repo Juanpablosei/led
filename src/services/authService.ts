@@ -307,6 +307,25 @@ export interface BuildingApprovalError {
 
 export type BuildingApprovalApiResponse = BuildingApprovalResponse | BuildingApprovalError;
 
+// Interfaces para registro de dispositivo
+export interface RegisterDeviceRequest {
+  device_id: string;
+  expoPushToken: string;
+}
+
+export interface RegisterDeviceResponse {
+  status: boolean;
+  message: string;
+}
+
+export interface RegisterDeviceError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type RegisterDeviceApiResponse = RegisterDeviceResponse | RegisterDeviceError;
+
 export const authService = {
   async loginBuilding(credentials: BuildingLoginRequest): Promise<BuildingLoginApiResponse> {
     try {
@@ -570,6 +589,24 @@ export const authService = {
       return response.data;
     } catch (error: any) {
       console.error('❌ Error al cambiar contraseña:', error);
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      throw error;
+    }
+  },
+
+  async registerDevice(data: RegisterDeviceRequest): Promise<RegisterDeviceApiResponse> {
+    try {
+      console.log('📱 Registrando dispositivo en /register-device');
+      console.log('Datos:', data);
+      
+      const response = await httpClient.post('/register-device', data);
+      
+      console.log('✅ Dispositivo registrado exitosamente:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error al registrar dispositivo:', error);
       if (error.response?.data) {
         return error.response.data;
       }
