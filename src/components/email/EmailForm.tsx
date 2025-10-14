@@ -1,13 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
-import { Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Toast, ToastType } from '../ui';
 import { styles } from './EmailForm.styles';
-import { EmailFormData, EmailFormProps } from './EmailForm.types';
+import { EmailAttachment, EmailFormData, EmailFormProps } from './EmailForm.types';
 
 export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
   const { t } = useTranslation();
@@ -41,16 +42,100 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const fileNames = result.assets.map(file => file.name);
+        // Convertir cada archivo a base64 usando fetch
+        const filesPromises = result.assets.map(async (file) => {
+          try {
+            // Leer el archivo usando fetch y convertir a base64
+            const response = await fetch(file.uri);
+            const blob = await response.blob();
+            
+            return new Promise<EmailAttachment | null>((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const base64 = reader.result as string;
+                // Remover el prefijo "data:..." si existe
+                const base64Data = base64.includes(',') ? base64.split(',')[1] : base64;
+                
+                resolve({
+                  base64: base64Data,
+                  nombre: file.name,
+                  type: file.mimeType || 'application/octet-stream',
+                });
+              };
+              reader.onerror = () => {
+                console.error('Error reading file:', file.name);
+                resolve(null);
+              };
+              reader.readAsDataURL(blob);
+            });
+          } catch (error) {
+            console.error('Error reading file:', file.name, error);
+            return null;
+          }
+        });
+        
+        const files = (await Promise.all(filesPromises)).filter((f): f is EmailAttachment => f !== null);
+        
         setFormData(prev => ({
           ...prev,
-          attachments: [...prev.attachments, ...fileNames],
+          attachments: [...prev.attachments, ...files],
         }));
+        
+        showToast(`${files.length} archivo(s) agregado(s)`, 'success');
       }
     } catch (error) {
       console.error('Error selecting files:', error);
       showToast(t('errors.fileSelectionError', 'email'), 'error');
     }
+  };
+
+  const handleTakePhoto = async () => {
+    try {
+      // Solicitar permisos de cámara
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert('', 'Se necesitan permisos de cámara para tomar fotos');
+        return;
+      }
+
+      // Abrir cámara
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        quality: 0.8,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const photo = result.assets[0];
+        
+        if (photo.base64) {
+          const attachment: EmailAttachment = {
+            base64: photo.base64,
+            nombre: `foto_${Date.now()}.jpg`,
+            type: 'image/jpeg',
+          };
+          
+          setFormData(prev => ({
+            ...prev,
+            attachments: [...prev.attachments, attachment],
+          }));
+          
+          showToast('Foto agregada', 'success');
+        }
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      showToast('Error al tomar foto', 'error');
+    }
+  };
+
+  const handleRemoveAttachment = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = () => {
@@ -90,13 +175,43 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
         {/* Adjuntar ficheros */}
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>{t('attachFiles', 'email')}:</Text>
-          <TouchableOpacity style={styles.attachmentContainer} onPress={handleSelectFiles}>
-            <Text style={styles.attachmentText}>
-              {formData.attachments.length > 0
-                ? `${formData.attachments.length} ${t('filesSelected', 'email')}`
-                : t('attachFilesPlaceholder', 'email')}
-            </Text>
-          </TouchableOpacity>
+          
+          {/* Botones para adjuntar */}
+          <View style={styles.attachmentButtons}>
+            <TouchableOpacity style={styles.attachmentButton} onPress={handleSelectFiles}>
+              <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
+              <Text style={styles.attachmentButtonText}>Adjuntar archivo</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.attachmentButton} onPress={handleTakePhoto}>
+              <Ionicons name="camera-outline" size={20} color={colors.primary} />
+              <Text style={styles.attachmentButtonText}>Tomar foto</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Lista de archivos adjuntos */}
+          {formData.attachments.length > 0 && (
+            <View style={styles.attachmentsList}>
+              <Text style={styles.attachmentsListTitle}>
+                {formData.attachments.length} archivo(s) adjunto(s):
+              </Text>
+              {formData.attachments.map((file, index) => (
+                <View key={index} style={styles.attachmentItem}>
+                  <Ionicons 
+                    name={file.type?.startsWith('image/') ? 'image-outline' : 'document-outline'} 
+                    size={18} 
+                    color={colors.text} 
+                  />
+                  <Text style={styles.attachmentItemText} numberOfLines={1}>
+                    {file.nombre}
+                  </Text>
+                  <TouchableOpacity onPress={() => handleRemoveAttachment(index)}>
+                    <Ionicons name="close-circle" size={20} color="#E53E3E" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Mensaje */}

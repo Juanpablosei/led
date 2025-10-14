@@ -12,32 +12,35 @@ import { BuildingLayout } from '../layouts/BuildingLayout';
 import { BuildingDetailData, buildingService } from '../services/buildingService';
 import { styles } from './SendEmailScreen.styles';
 
-const mockUsers: UserSelectData[] = Array.from({ length: 12 }, (_, index) => ({
-  id: `${index + 1}`,
-  name: 'Nombre',
-  surname: 'Apellidos Completos',
-  isSelected: false,
-}));
-
 export const SendEmailScreen: React.FC = () => {
   const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
   const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
   const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
-  const [users, setUsers] = useState<UserSelectData[]>(mockUsers);
+  const [users, setUsers] = useState<UserSelectData[]>([]);
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<ToastType>('success');
 
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const itemsPerPage = 15;
 
   // Cargar edificio desde el API
   useEffect(() => {
     loadBuilding();
   }, [buildingId]);
+
+  // Cargar usuarios cuando cambia la página
+  useEffect(() => {
+    if (buildingId) {
+      loadUsers(currentPage);
+    }
+  }, [buildingId, currentPage]);
 
   const loadBuilding = async () => {
     if (!buildingId) return;
@@ -56,6 +59,38 @@ export const SendEmailScreen: React.FC = () => {
       console.error('❌ Error al cargar edificio:', error);
     } finally {
       setIsLoadingBuilding(false);
+    }
+  };
+
+  const loadUsers = async (page: number) => {
+    if (!buildingId) return;
+    
+    setIsLoadingUsers(true);
+    try {
+      const response = await buildingService.getBuildingUsers(Number(buildingId), page, itemsPerPage);
+      
+      if (response.status && 'data' in response) {
+        console.log('✅ Usuarios cargados:', response.data.total);
+        
+        // Mapear usuarios del API al formato UserSelectData
+        // Mantener selecciones previas si el usuario ya estaba seleccionado
+        const usersData: UserSelectData[] = response.data.data.map((user) => ({
+          id: String(user.user_id),  // ← Usar user_id en lugar de id
+          name: user.first_name,
+          surname: user.last_name,
+          isSelected: selectedUserIds.has(String(user.user_id)),
+        }));
+        
+        setUsers(usersData);
+        setTotalPages(response.data.last_page);
+        setTotalUsers(response.data.total);
+      } else {
+        console.error('❌ Error al cargar usuarios:', response.message);
+      }
+    } catch (error) {
+      console.error('❌ Error de red al cargar usuarios:', error);
+    } finally {
+      setIsLoadingUsers(false);
     }
   };
 
@@ -84,17 +119,31 @@ export const SendEmailScreen: React.FC = () => {
   };
 
   const getCurrentPageUsers = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return users.slice(startIndex, endIndex);
+    // La paginación la maneja el API, solo devolvemos los usuarios actuales
+    return users;
   };
 
   const handleToggleUser = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    // Actualizar el estado local de usuarios
     setUsers(prevUsers =>
-      prevUsers.map(user =>
-        user.id === userId ? { ...user, isSelected: !user.isSelected } : user
+      prevUsers.map(u =>
+        u.id === userId ? { ...u, isSelected: !u.isSelected } : u
       )
     );
+    
+    // Actualizar el Set de IDs seleccionados para mantener selecciones entre páginas
+    setSelectedUserIds(prevIds => {
+      const newIds = new Set(prevIds);
+      if (newIds.has(userId)) {
+        newIds.delete(userId);
+      } else {
+        newIds.add(userId);
+      }
+      return newIds;
+    });
   };
 
   const showToast = (message: string, type: ToastType) => {
@@ -104,11 +153,11 @@ export const SendEmailScreen: React.FC = () => {
   };
 
   const handleContinue = () => {
-    const selectedUsers = users.filter(u => u.isSelected);
-    if (selectedUsers.length === 0) {
+    if (selectedUserIds.size === 0) {
       showToast(t('errors.noUsersSelected', 'email'), 'error');
       return;
     }
+    console.log('✅ Usuarios seleccionados:', selectedUserIds.size);
     setCurrentStep(2);
   };
 
@@ -116,19 +165,57 @@ export const SendEmailScreen: React.FC = () => {
     setCurrentStep(1);
   };
 
-  const handleSendEmail = (emailData: EmailFormData) => {
-    const selectedUsers = users.filter(u => u.isSelected);
-    console.log('Enviar email a:', selectedUsers);
-    console.log('Datos del email:', emailData);
-    
-    // Mostrar toast de éxito
-    const successMessage = t('success.emailSent', 'email').replace('{{count}}', selectedUsers.length.toString());
-    showToast(successMessage, 'success');
-    
-    // Regresar después de 1.5 segundos (tiempo suficiente para ver el toast)
-    setTimeout(() => {
-      router.back();
-    }, 1500);
+  const handleSendEmail = async (emailData: EmailFormData) => {
+    if (selectedUserIds.size === 0) {
+      showToast(t('errors.noUsersSelected', 'email'), 'error');
+      return;
+    }
+
+    try {
+      setIsLoadingUsers(true);
+      
+      // Convertir asunto a base64
+      const assumpteBase64 = btoa(unescape(encodeURIComponent(emailData.subject)));
+
+      // Preparar datos para el API (no incluir adjuntos si está vacío)
+      const sendEmailData: any = {
+        assumpte: assumpteBase64,  // ← Asunto en base64
+        message: emailData.message,
+        plantilles_email_id: 0,
+        edifici_id: buildingId || '',
+        lista_ids: Array.from(selectedUserIds),
+      };
+      
+      // Solo agregar adjuntos si hay archivos (ya vienen con base64 desde el form)
+      if (emailData.attachments && emailData.attachments.length > 0) {
+        sendEmailData.adjuntos = emailData.attachments;
+      }
+
+      console.log('📧 Enviando email...');
+      console.log('Usuarios seleccionados:', selectedUserIds.size);
+      console.log('Lista IDs:', Array.from(selectedUserIds));
+      console.log('Adjuntos:', emailData.attachments.length);
+
+      const response = await buildingService.sendBuildingEmail(sendEmailData);
+
+      if (response.status) {
+        // Mostrar toast de éxito
+        const successMessage = t('success.emailSent', 'email').replace('{{count}}', selectedUserIds.size.toString());
+        showToast(successMessage, 'success');
+        
+        // Regresar después de 1.5 segundos
+        setTimeout(() => {
+          router.back();
+        }, 1500);
+      } else {
+        showToast(response.message || 'Error al enviar el email', 'error');
+      }
+    } catch (error) {
+      console.error('❌ Error al enviar email:', error);
+      showToast('Error de conexión al enviar el email', 'error');
+    } finally {
+      setIsLoadingUsers(false);
+    }
   };
 
   return (
@@ -155,15 +242,22 @@ export const SendEmailScreen: React.FC = () => {
 
             {/* Lista de usuarios */}
             <View style={styles.usersListContainer}>
-              {getCurrentPageUsers().map(item => (
-                <UserSelectItem key={item.id} user={item} onToggle={handleToggleUser} />
-              ))}
+              {isLoadingUsers ? (
+                <View style={{ padding: 40, alignItems: 'center' }}>
+                  <ActivityIndicator size="large" color="#E53E3E" />
+                  <Text style={{ marginTop: 12, color: '#666' }}>Cargando usuarios...</Text>
+                </View>
+              ) : (
+                getCurrentPageUsers().map(item => (
+                  <UserSelectItem key={item.id} user={item} onToggle={handleToggleUser} />
+                ))
+              )}
             </View>
 
             {/* Paginación */}
             <View style={styles.paginationContainer}>
               <Text style={styles.totalText}>
-                {t('total', 'email')}: {users.length} {t('elements', 'email')}
+                {t('total', 'email')}: {totalUsers} {t('elements', 'email')}
               </Text>
               <View style={styles.paginationButtons}>
                 <TouchableOpacity

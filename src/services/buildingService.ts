@@ -208,6 +208,76 @@ export interface NotificationsError {
 
 export type NotificationsApiResponse = NotificationsResponse | NotificationsError;
 
+// Interfaces para usuarios del edificio
+export interface BuildingUser {
+  id: number;
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  nif: string;
+  email: string;
+  telefon?: string;
+  roles?: string[];
+  verificado?: boolean;
+}
+
+export interface BuildingUsersData {
+  current_page: number;
+  data: BuildingUser[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+export interface BuildingUsersResponse {
+  status: boolean;
+  message: string;
+  data: BuildingUsersData;
+}
+
+export interface BuildingUsersError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type BuildingUsersApiResponse = BuildingUsersResponse | BuildingUsersError;
+
+// Interfaces para envío de email
+export interface EmailAttachment {
+  base64: string;
+  nombre: string;
+}
+
+export interface SendEmailRequest {
+  assumpte: string;
+  message: string;
+  plantilles_email_id: number;
+  edifici_id: string;
+  lista_ids: string[];
+  adjuntos: EmailAttachment[];
+}
+
+export interface SendEmailResponse {
+  status: boolean;
+  message: string;
+}
+
+export interface SendEmailError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type SendEmailApiResponse = SendEmailResponse | SendEmailError;
+
 // Interfaces para detalle de comunicación
 export interface ComunicacionDetailData {
   id: number;
@@ -382,6 +452,46 @@ export const buildingService = {
       return response.data;
     } catch (error: any) {
       console.error(`❌ Error al ocultar notificación de documento:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getBuildingUsers(edificiId: number, page: number = 1, limit: number = 15): Promise<BuildingUsersApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /edificio_usuarios?page=${page}&limit=${limit}&edifici_id=${edificiId}`);
+      const response = await httpClient.get(`/edificio_usuarios?page=${page}&limit=${limit}&edifici_id=${edificiId}`);
+      
+      console.log('📦 Usuarios del edificio obtenidos');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener usuarios del edificio:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async sendBuildingEmail(emailData: SendEmailRequest): Promise<SendEmailApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log('📧 POST /comunicaciones/comunicacion_edificio');
+      console.log('Datos del email:', JSON.stringify(emailData, null, 2));
+      
+      const response = await httpClient.post('/comunicaciones/comunicacion_edificio', emailData);
+      
+      console.log('✅ Email enviado exitosamente');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error al enviar email:', error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
