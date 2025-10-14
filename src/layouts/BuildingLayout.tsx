@@ -88,8 +88,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         router.push(`/documents?buildingId=${building.id}`);
         break;
       case 'listado-comunicaciones':
-        // router.push(`/communications?buildingId=${building.id}`);
-        console.log('Listado comunicaciones - pendiente de implementar');
+        router.push(`/communications?buildingId=${building.id}`);
         break;
       default:
         break;

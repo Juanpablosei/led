@@ -12,6 +12,7 @@ const translations: Record<Language, Translations> = {
     notifications: require('../locales/es/notifications.json'),
     user: require('../locales/es/user.json'),
     sidebar: require('../locales/es/sidebar.json'),
+    communications: require('../locales/es/communications.json'),
   },
   ca: {
     common: require('../locales/ca/common.json'),
@@ -21,6 +22,7 @@ const translations: Record<Language, Translations> = {
     notifications: require('../locales/ca/notifications.json'),
     user: require('../locales/ca/user.json'),
     sidebar: require('../locales/ca/sidebar.json'),
+    communications: require('../locales/ca/communications.json'),
   },
 };
 
@@ -60,7 +62,7 @@ export const TranslationProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   };
 
-  const t = (key: string, namespace: keyof Translations = 'common'): string => {
+  const t = (key: string, namespace: keyof Translations = 'common', params?: Record<string, string>): string => {
     const keys = key.split('.');
     let value: any = translations[currentLanguage][namespace];
 
@@ -75,7 +77,16 @@ export const TranslationProvider: React.FC<{ children: ReactNode }> = ({ childre
       }
     }
 
-    return typeof value === 'string' ? value : key;
+    let result = typeof value === 'string' ? value : key;
+    
+    // Reemplazar variables si existen
+    if (params && typeof result === 'string') {
+      Object.keys(params).forEach(paramKey => {
+        result = result.replace(new RegExp(`{{${paramKey}}}`, 'g'), params[paramKey]);
+      });
+    }
+
+    return result;
   };
 
   return (

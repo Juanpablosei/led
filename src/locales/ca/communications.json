@@ -1,0 +1,13 @@
+{
+  "communicationsList": "Llistat de Comunicacions",
+  "subject": "Assumpte",
+  "sentBy": "Enviat per",
+  "sentDate": "Data enviada",
+  "totalRecipients": "Total destinataris",
+  "noCommunications": "No hi ha comunicacions disponibles",
+  "previous": "Anterior",
+  "next": "Següent",
+  "pageInfo": "Pàgina {{current}} de {{total}}",
+  "export": "Exportar",
+  "filter": "Filtrar"
+}

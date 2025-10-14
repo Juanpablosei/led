@@ -1,0 +1,385 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import RenderHTML from 'react-native-render-html';
+import { colors } from '../constants/colors';
+import { useTranslation } from '../hooks/useTranslation';
+import { BuildingLayout } from '../layouts/BuildingLayout';
+import { BuildingDetailData, buildingService, Communication } from '../services/buildingService';
+import { styles } from './CommunicationsScreen.styles';
+
+export const CommunicationsScreen: React.FC = () => {
+  const { t } = useTranslation();
+  const params = useLocalSearchParams();
+  const buildingId = params.buildingId as string;
+  
+  const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
+  const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
+  const [communications, setCommunications] = useState<Communication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedCommunication, setSelectedCommunication] = useState<Communication | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showRecipientsModal, setShowRecipientsModal] = useState(false);
+  const { width } = useWindowDimensions();
+
+  const loadBuilding = async () => {
+    if (!buildingId) return;
+    
+    setIsLoadingBuilding(true);
+    try {
+      const response = await buildingService.getBuildingById(Number(buildingId));
+      if (response.status && 'data' in response) {
+        setBuildingDetail(response.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar edificio:', error);
+    } finally {
+      setIsLoadingBuilding(false);
+    }
+  };
+
+  const loadCommunications = async () => {
+    setIsLoading(true);
+    try {
+      const response = await buildingService.getBuildingCommunications(
+        parseInt(buildingId),
+        currentPage,
+        15
+      );
+
+      if (response.status && 'data' in response) {
+        setCommunications(response.data.data);
+        setTotalPages(response.data.last_page);
+      } else {
+        console.error('Error al cargar comunicaciones');
+      }
+    } catch (error) {
+      console.error('Error al cargar comunicaciones:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBuilding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildingId]);
+
+  useEffect(() => {
+    if (buildingId) {
+      loadCommunications();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildingId, currentPage]);
+
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleViewDetails = (commId: number) => {
+    const comm = communications.find(c => c.id === commId);
+    if (comm) {
+      setSelectedCommunication(comm);
+      setShowDetailsModal(true);
+    }
+  };
+
+  const handleViewRecipients = (commId: number) => {
+    const comm = communications.find(c => c.id === commId);
+    if (comm) {
+      setSelectedCommunication(comm);
+      setShowRecipientsModal(true);
+    }
+  };
+
+  const renderContent = () => {
+    if (isLoadingBuilding || isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 16, color: colors.text }}>
+            {t('loading', 'common')}
+          </Text>
+        </View>
+      );
+    }
+
+    if (communications.length === 0) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            {t('noCommunications', 'communications')}
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <>
+        <ScrollView style={styles.listContainer}>
+          {/* Lista de comunicaciones */}
+          {communications.map((comm, index) => (
+            <View
+              key={comm.id}
+              style={[
+                styles.cardContainer,
+                index % 2 === 1 && styles.cardContainerEven,
+              ]}
+            >
+              {/* Icono de tipo de comunicación */}
+              <View style={styles.cardIconContainer}>
+                <Ionicons name="mail" size={24} color={colors.primary} />
+              </View>
+
+              {/* Contenido principal */}
+              <View style={styles.cardContent}>
+                {/* Fecha */}
+                <View style={styles.cardDateRow}>
+                  <Ionicons name="calendar-outline" size={16} color="#999" />
+                  <Text style={styles.cardDateText}>{formatDate(comm.data_enviada)}</Text>
+                </View>
+
+                {/* Asunto */}
+                <Text style={styles.cardSubjectText} numberOfLines={2}>
+                  {comm.assumpte}
+                </Text>
+                
+                {/* Info inferior */}
+                <View style={styles.cardFooter}>
+                  <View style={styles.cardFooterItem}>
+                    <Ionicons name="person-outline" size={14} color="#666" />
+                    <Text style={styles.cardFooterText}>{`${comm.first_name} ${comm.last_name}`}</Text>
+                  </View>
+                  <View style={styles.cardFooterItem}>
+                    <Ionicons name="people-outline" size={14} color="#666" />
+                    <Text style={styles.cardFooterText}>{comm.total_comunicacions} destinatarios</Text>
+                  </View>
+                </View>
+
+                {/* Botones de acción siempre visibles */}
+                <View style={styles.actionsContainer}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => handleViewDetails(comm.id)}
+                  >
+                    <Ionicons name="document-text-outline" size={18} color="#FFFFFF" />
+                    <Text style={styles.actionButtonText}>Ver mensaje</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.actionButtonSecondary]}
+                    onPress={() => handleViewRecipients(comm.id)}
+                  >
+                    <Ionicons name="people-outline" size={18} color="#FFFFFF" />
+                    <Text style={styles.actionButtonText}>Destinatarios</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
+        {/* Paginación */}
+        <View style={styles.paginationContainer}>
+          <TouchableOpacity
+            style={[
+              styles.paginationButton,
+              currentPage === 1 && styles.paginationButtonDisabled,
+            ]}
+            onPress={handlePreviousPage}
+            disabled={currentPage === 1}
+          >
+            <Text style={styles.paginationButtonText}>‹</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.paginationInfo}>
+            {currentPage} / {totalPages}
+          </Text>
+
+          <TouchableOpacity
+            style={[
+              styles.paginationButton,
+              currentPage === totalPages && styles.paginationButtonDisabled,
+            ]}
+            onPress={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            <Text style={styles.paginationButtonText}>›</Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
+  };
+
+  return (
+    <BuildingLayout
+      building={
+        buildingDetail
+          ? {
+              id: String(buildingDetail.id),
+              title: buildingDetail.nom,
+              type: buildingDetail.tipus_edifici || '',
+              buildingId: String(buildingDetail.id),
+              cadastralReference: buildingDetail.ref_cadastral || '',
+              imageUrl: buildingDetail.imagen || undefined,
+            }
+          : null
+      }
+    >
+      {renderContent()}
+
+      {/* Modal de detalles del mensaje */}
+      <Modal
+        visible={showDetailsModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowDetailsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Detalles del mensaje</Text>
+              <TouchableOpacity onPress={() => setShowDetailsModal(false)}>
+                <Ionicons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              {selectedCommunication && (
+                <>
+                  <View style={styles.modalField}>
+                    <Text style={styles.modalLabel}>Asunto:</Text>
+                    <Text style={styles.modalValue}>{selectedCommunication.assumpte}</Text>
+                  </View>
+
+                  <View style={styles.modalField}>
+                    <Text style={styles.modalLabel}>Fecha de envío:</Text>
+                    <Text style={styles.modalValue}>{formatDate(selectedCommunication.data_enviada)}</Text>
+                  </View>
+
+                  <View style={styles.modalField}>
+                    <Text style={styles.modalLabel}>Enviado por:</Text>
+                    <Text style={styles.modalValue}>
+                      {`${selectedCommunication.first_name} ${selectedCommunication.last_name}`}
+                    </Text>
+                  </View>
+
+                  <View style={styles.modalField}>
+                    <Text style={styles.modalLabel}>Mensaje:</Text>
+                    <RenderHTML
+                      contentWidth={width - 80}
+                      source={{ html: selectedCommunication.message }}
+                      tagsStyles={{
+                        body: { color: colors.text, fontSize: 14, lineHeight: 20 },
+                        p: { marginTop: 0, marginBottom: 8 },
+                        a: { color: colors.primary, textDecorationLine: 'underline' },
+                      }}
+                    />
+                  </View>
+
+                  {selectedCommunication.adjuntos && selectedCommunication.adjuntos.length > 0 && (
+                    <View style={styles.modalField}>
+                      <Text style={styles.modalLabel}>Archivos adjuntos:</Text>
+                      {selectedCommunication.adjuntos.map((adjunto, index) => (
+                        <View key={index} style={styles.attachmentItem}>
+                          <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
+                          <Text style={styles.attachmentName}>{adjunto.nombre_adjunt}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </>
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de destinatarios */}
+      <Modal
+        visible={showRecipientsModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowRecipientsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Destinatarios ({selectedCommunication?.total_comunicacions || 0})</Text>
+              <TouchableOpacity onPress={() => setShowRecipientsModal(false)}>
+                <Ionicons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalContent}>
+              {selectedCommunication?.destinatarios && selectedCommunication.destinatarios.map((dest, index) => (
+                <View key={dest.id} style={styles.recipientItem}>
+                  <View style={styles.recipientIcon}>
+                    <Ionicons name="person-circle-outline" size={40} color={colors.primary} />
+                  </View>
+                  <View style={styles.recipientInfo}>
+                    <Text style={styles.recipientEmail}>{dest.destinatari_email}</Text>
+                    <View style={styles.recipientStatus}>
+                      <Ionicons 
+                        name={dest.estat === 'enviada' ? 'checkmark-circle' : 'alert-circle'} 
+                        size={16} 
+                        color={dest.estat === 'enviada' ? '#4CAF50' : '#FF9800'} 
+                      />
+                      <Text style={[
+                        styles.recipientStatusText,
+                        { color: dest.estat === 'enviada' ? '#4CAF50' : '#FF9800' }
+                      ]}>
+                        {dest.estat === 'enviada' ? 'Enviado' : dest.estat}
+                      </Text>
+                      {dest.leido && (
+                        <>
+                          <Ionicons name="eye" size={16} color="#2196F3" style={{ marginLeft: 8 }} />
+                          <Text style={[styles.recipientStatusText, { color: '#2196F3' }]}>Leído</Text>
+                        </>
+                      )}
+                    </View>
+                    {dest.data_enviada && (
+                      <Text style={styles.recipientDate}>{formatDate(dest.data_enviada)}</Text>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    </BuildingLayout>
+  );
+};

@@ -318,6 +318,84 @@ export interface MarkAsReadError {
 
 export type MarkAsReadApiResponse = MarkAsReadResponse | MarkAsReadError;
 
+// Interfaces para listado de comunicaciones
+export interface CommunicationDestinee {
+  id: number;
+  comunicacio_id: number;
+  destinatari_id: number;
+  destinatari_email: string;
+  assumpte: string;
+  message: string;
+  estat: string;
+  error: string | null;
+  data_enviada: string;
+  leido: boolean | null;
+}
+
+export interface CommunicationAttachment {
+  id: number;
+  comunicacio_id: number;
+  comunicacio_destinatari_id: number | null;
+  ruta_adjunt: string;
+  nombre_adjunt: string;
+}
+
+export interface Communication {
+  id: number;
+  assumpte: string;
+  message: string;
+  tipus: string | null;
+  descripcio: string | null;
+  total_comunicacions: number;
+  total_enviades: number;
+  total_no_enviades: number;
+  plantilles_email_id: number;
+  remitent_id: number;
+  creat_per_id: number;
+  modul_relacionat_id: number | null;
+  modulo_relacionat: string | null;
+  data_inici: string;
+  data_fin: string;
+  data_enviada: string;
+  remitent_nom: string;
+  remitent_email: string;
+  edifici_id: number;
+  timestamp_en_proceso: string | null;
+  first_name: string;
+  last_name: string;
+  destinatarios: CommunicationDestinee[];
+  adjuntos: CommunicationAttachment[];
+}
+
+export interface CommunicationsData {
+  current_page: number;
+  data: Communication[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: PaginationLinks[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+export interface CommunicationsResponse {
+  status: boolean;
+  data: CommunicationsData;
+}
+
+export interface CommunicationsError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type CommunicationsApiResponse = CommunicationsResponse | CommunicationsError;
+
 export const buildingService = {
   async getBuildings(page: number = 1, searchText: string = ''): Promise<BuildingsApiResponse> {
     try {
@@ -492,6 +570,25 @@ export const buildingService = {
       return response.data;
     } catch (error: any) {
       console.error('❌ Error al enviar email:', error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getBuildingCommunications(edificiId: number, page: number = 1, limit: number = 15): Promise<CommunicationsApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /comunicaciones/comunicaciones_edificios/${edificiId}?page=${page}&limit=${limit}`);
+      const response = await httpClient.get(`/comunicaciones/comunicaciones_edificios/${edificiId}?page=${page}&limit=${limit}`);
+      
+      console.log('📦 Comunicaciones del edificio obtenidas');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener comunicaciones del edificio:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
