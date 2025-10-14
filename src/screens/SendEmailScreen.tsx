@@ -174,12 +174,9 @@ export const SendEmailScreen: React.FC = () => {
     try {
       setIsLoadingUsers(true);
       
-      // Convertir asunto a base64
-      const assumpteBase64 = btoa(unescape(encodeURIComponent(emailData.subject)));
-
       // Preparar datos para el API (no incluir adjuntos si está vacío)
       const sendEmailData: any = {
-        assumpte: assumpteBase64,  // ← Asunto en base64
+        assumpte: emailData.subject,  // ← Asunto como texto normal
         message: emailData.message,
         plantilles_email_id: 0,
         edifici_id: buildingId || '',

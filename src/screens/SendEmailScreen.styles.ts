@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   usersListContainer: {
     backgroundColor: colors.white,
-    minHeight: '50%',
+    minHeight: '40%',
   },
   paginationContainer: {
     flexDirection: 'row',
