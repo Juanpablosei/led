@@ -3,13 +3,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useState } from 'react';
 import {
-  Alert,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
+    Alert,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 import { colors } from '../../constants/colors';
 import { styles } from './NewDocumentModal.styles';
@@ -19,6 +20,12 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   isVisible,
   onClose,
   onSave,
+  category = 'edif_doc_admin',
+  onOpenTypesModal,
+  documentTypes = [],
+  isLoadingTypes = false,
+  selectedTypeName = '',
+  onSelectType,
 }) => {
   const [formData, setFormData] = useState<NewDocumentData>({
     name: '',
@@ -27,17 +34,10 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
     validUntil: '',
     includeInBook: false,
   });
+  const [selectedFile, setSelectedFile] = useState<any>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const documentTypes = [
-    'Inspección Técnica de Edificios',
-    'Certificado de Instalaciones',
-    'Informe de Seguridad',
-    'Plano de Instalaciones',
-    'Manual de Mantenimiento',
-  ];
 
   const handleInputChange = (field: keyof NewDocumentData, value: string | boolean) => {
     setFormData((prev: NewDocumentData) => ({
@@ -47,8 +47,11 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   };
 
   const handleSave = () => {
-    if (formData.name && formData.type && formData.file && formData.validUntil) {
-      onSave(formData);
+    if (formData.name && formData.type && formData.file && formData.validUntil && selectedFile) {
+      onSave({
+        ...formData,
+        fileData: selectedFile,
+      });
       // Reset form
       setFormData({
         name: '',
@@ -57,7 +60,10 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         validUntil: '',
         includeInBook: false,
       });
+      setSelectedFile(null);
       onClose();
+    } else {
+      Alert.alert('Error', 'Por favor completa todos los campos obligatorios');
     }
   };
 
@@ -77,6 +83,12 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
           return;
         }
 
+        // Guardar el archivo completo para enviar en el FormData
+        setSelectedFile({
+          uri: file.uri,
+          name: file.name,
+          type: file.mimeType || 'application/pdf',
+        });
         handleInputChange('file', file.name);
       }
     } catch (error) {
@@ -125,7 +137,8 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                 </TouchableOpacity>
               </View>
 
-              {/* Form */}
+              {/* Form - Scrolleable */}
+              <ScrollView style={styles.formScroll} showsVerticalScrollIndicator={true}>
               <View style={styles.form}>
                 {/* Nombre */}
                 <View style={styles.fieldContainer}>
@@ -150,9 +163,19 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                   <Text style={styles.label}>
                     Tipo documento: <Text style={styles.required}>*</Text>
                   </Text>
-                  <TouchableOpacity style={styles.dropdown}>
+                  <TouchableOpacity 
+                    style={styles.dropdown}
+                    onPress={() => {
+                      console.log('🟡 Presionando dropdown de tipos');
+                      if (onOpenTypesModal) {
+                        onOpenTypesModal();
+                      } else {
+                        console.log('❌ onOpenTypesModal no está definido');
+                      }
+                    }}
+                  >
                     <Text style={styles.dropdownText}>
-                      {formData.type || 'Seleccionar tipo'}
+                      {isLoadingTypes ? 'Cargando tipos...' : (selectedTypeName || 'Seleccionar tipo')}
                     </Text>
                     <Ionicons name="chevron-down" size={20} color={colors.text} />
                   </TouchableOpacity>
@@ -213,6 +236,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                   Los documentos que se quieran incluir en el Libro del edificio no deben estar bloqueados ni protegidos con contraseña.
                 </Text>
               </View>
+              </ScrollView>
 
               {/* Save Button */}
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>

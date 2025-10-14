@@ -396,6 +396,52 @@ export interface CommunicationsError {
 
 export type CommunicationsApiResponse = CommunicationsResponse | CommunicationsError;
 
+// Interfaces para documentos del edificio
+export interface BuildingDocument {
+  id: number;
+  edifici_id: number;
+  tipus_document: string;
+  nom: string;
+  nom_arxiu: string;
+  hash_arxiu: string;
+  data_validesa: string | null;
+  afegir_al_libre: boolean;
+  ultima_version: boolean;
+  descripcio: string | null;
+  created_at: string;
+  es_protegido: boolean;
+  doc_params_id: string;
+  doc_params_padre_id: string;
+  doc_params_order: number;
+  doc_params_actiu: boolean;
+  parent_params_order: number;
+  ruta: string;
+  tipus: string;
+  tiene_historico: boolean;
+}
+
+export interface BuildingDocumentsData {
+  edif_doc_tecnica?: BuildingDocument[];
+  edif_doc_admin?: BuildingDocument[];
+  edif_doc_juridica?: BuildingDocument[];
+  edif_doc_otros?: BuildingDocument[];
+  [key: string]: BuildingDocument[] | undefined;
+}
+
+export interface BuildingDocumentsResponse {
+  status: boolean;
+  message: string;
+  data: BuildingDocumentsData;
+}
+
+export interface BuildingDocumentsError {
+  status: false;
+  message: string;
+  code: number;
+}
+
+export type BuildingDocumentsApiResponse = BuildingDocumentsResponse | BuildingDocumentsError;
+
 export const buildingService = {
   async getBuildings(page: number = 1, searchText: string = ''): Promise<BuildingsApiResponse> {
     try {
@@ -589,6 +635,156 @@ export const buildingService = {
       return response.data;
     } catch (error: any) {
       console.error(`❌ Error al obtener comunicaciones del edificio:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getBuildingDocuments(edificiId: number): Promise<BuildingDocumentsApiResponse> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 GET /edificio_documentos?ultimaversion=true&edifici_id=${edificiId}`);
+      const response = await httpClient.get(`/edificio_documentos?ultimaversion=true&edifici_id=${edificiId}`);
+      
+      console.log('📦 Documentos del edificio obtenidos');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener documentos del edificio:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async updateBuildingDocument(
+    documentId: number, 
+    edificiId: number,
+    data: {
+      nom: string;
+      tipus_document: string;
+      file: string;
+      data_validesa: string;
+      afegir_al_libre: boolean;
+    }
+  ): Promise<any> {
+    try {
+      // Crear FormData
+      const formData = new FormData();
+      formData.append('_method', 'PATCH');
+      formData.append('edifici_id', String(edificiId));
+      formData.append('nom', data.nom);
+      formData.append('tipus_document', data.tipus_document);
+      formData.append('file', data.file);
+      formData.append('data_validesa', data.data_validesa);
+      formData.append('afegir_al_libre', String(data.afegir_al_libre));
+
+      console.log(`🌐 POST /edificio_documentos/${documentId}?_method=PATCH`);
+      console.log('📦 Datos del documento:', data);
+      
+      const response = await httpClient.post(`/edificio_documentos/${documentId}?_method=PATCH`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log('✅ Documento actualizado exitosamente');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al actualizar documento:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getDocumentTypes(parametroPadre: string): Promise<any> {
+    try {
+      console.log(`🌐 POST /maestros/parametros-publicos`);
+      console.log('📦 Body:', [{ parametroPadre }]);
+      
+      const response = await httpClient.post('/maestros/parametros-publicos', [{ parametroPadre }]);
+      
+      console.log('✅ Tipos de documentos obtenidos');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al obtener tipos de documentos:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async createBuildingDocument(
+    edificiId: number,
+    data: {
+      nom: string;
+      tipus_document: string;
+      file: any;
+      data_validesa: string;
+      afegir_al_libre: boolean;
+    }
+  ): Promise<any> {
+    try {
+      // Crear FormData
+      const formData = new FormData();
+      formData.append('edifici_id', String(edificiId));
+      formData.append('nom', data.nom);
+      formData.append('tipus_document', data.tipus_document);
+      formData.append('file', data.file);
+      formData.append('data_validesa', data.data_validesa);
+      formData.append('afegir_al_libre', String(data.afegir_al_libre));
+
+      console.log(`🌐 POST /edificio_documentos`);
+      console.log('📦 Datos del documento:', {
+        edifici_id: edificiId,
+        nom: data.nom,
+        tipus_document: data.tipus_document,
+        data_validesa: data.data_validesa,
+        afegir_al_libre: data.afegir_al_libre,
+      });
+      
+      const response = await httpClient.post('/edificio_documentos', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log('✅ Documento creado exitosamente');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al crear documento:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async deleteBuildingDocument(documentId: number): Promise<any> {
+    try {
+      console.log(`🌐 DELETE /edificio_documentos/${documentId}`);
+      
+      const response = await httpClient.delete(`/edificio_documentos/${documentId}`);
+      
+      console.log('✅ Documento eliminado exitosamente');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al eliminar documento:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;

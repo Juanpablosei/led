@@ -192,21 +192,16 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  {/* Documento */}
+                  {/* Documento - SOLO LECTURA */}
                   <View style={styles.fieldContainer}>
                     <Text style={styles.label}>
-                      Documento (Máx. 10 MB): <Text style={styles.required}>*</Text>
+                      Documento:
                     </Text>
-                    <View style={styles.fileContainer}>
-                      <Text style={styles.fileText}>
+                    <View style={styles.fileContainerReadOnly}>
+                      <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
+                      <Text style={styles.fileTextReadOnly}>
                         {formData.file || 'Sin archivos seleccionados'}
                       </Text>
-                      <TouchableOpacity 
-                        style={styles.selectFileButton}
-                        onPress={handleSelectFile}
-                      >
-                        <Text style={styles.selectFileButtonText}>CAMBIAR ARCHIVO</Text>
-                      </TouchableOpacity>
                     </View>
                   </View>
 

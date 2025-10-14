@@ -110,6 +110,22 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  fileContainerReadOnly: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+    paddingVertical: 12,
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    gap: 10,
+  },
+  fileTextReadOnly: {
+    fontSize: 14,
+    color: colors.text,
+    flex: 1,
+  },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',

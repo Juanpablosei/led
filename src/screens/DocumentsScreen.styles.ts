@@ -64,5 +64,70 @@ export const styles = StyleSheet.create({
   documentsList: {
     paddingHorizontal: 20,
     paddingBottom: 20,
+    minHeight: '40%',
+  },
+  // Estilos del modal de tipos de documentos - Patrón del registro
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    zIndex: 9999,
+  },
+  selectionModal: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    padding: 20,
+    width: '90%',
+    maxWidth: 500,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 999,
+    zIndex: 10000,
+  },
+  selectionModalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  selectionScrollView: {
+    maxHeight: 440, // Altura para aproximadamente 8 elementos
+  },
+  selectionOption: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  selectionOptionText: {
+    fontSize: 16,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  selectionCancelButton: {
+    marginTop: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  selectionCancelButtonText: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  selectionLoading: {
+    paddingVertical: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

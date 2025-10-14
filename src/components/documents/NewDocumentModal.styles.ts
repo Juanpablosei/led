@@ -12,14 +12,14 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
+    elevation: 1000,
   },
   modal: {
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 24,
-    marginHorizontal: 20,
-    maxWidth: 400,
-    width: '90%',
+    width: '80%',
+    height: '70%',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -43,6 +43,9 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 4,
+  },
+  formScroll: {
+    flex: 1,
   },
   form: {
     gap: 16,
@@ -85,6 +88,32 @@ export const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 16,
+    color: colors.text,
+  },
+  dropdownList: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dropdownListScroll: {
+    maxHeight: 200,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  dropdownItemText: {
+    fontSize: 15,
     color: colors.text,
   },
   fileContainer: {
@@ -170,5 +199,66 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  // Estilos del modal de tipos de documentos
+  typesModalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2000,
+    elevation: 2000,
+  },
+  typesModalContainer: {
+    width: '80%',
+    height: '80%',
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+    zIndex: 2001,
+  },
+  typesModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    backgroundColor: colors.white,
+  },
+  typesModalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    flex: 1,
+  },
+  typesModalScroll: {
+    flex: 1,
+  },
+  typesModalLoading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  typeItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  typeItemText: {
+    fontSize: 15,
+    color: colors.text,
+    flex: 1,
   },
 });

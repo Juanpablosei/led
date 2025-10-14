@@ -5,6 +5,8 @@ export interface EditDocumentData {
   file: string;
   validUntil: string;
   includeInBook: boolean;
+  tipusDocument?: string;
+  ruta?: string;
 }
 
 export interface EditDocumentModalProps {
