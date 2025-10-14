@@ -66,7 +66,7 @@ export const NotificationsScreen: React.FC = () => {
         .flat()
         .map((doc: any) => ({
           id: String(doc.id),
-          title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+          title: `${doc.nom} - ${doc.texto || doc.tipus || doc.tipus_document}`,  // ← Nombre + texto (descripción)
           date: doc.data_validesa || doc.data_caducitat,
           isRead: true,
           buildingName: doc.edifici_nom || undefined,
@@ -77,7 +77,7 @@ export const NotificationsScreen: React.FC = () => {
   const homes: NotificationData[] = Array.isArray(notificationsData?.documentos_inmueble_caducados.documentos)
     ? notificationsData.documentos_inmueble_caducados.documentos.map((doc: any) => ({
         id: String(doc.id),
-        title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+        title: `${doc.nom} - ${doc.texto || doc.tipus_document}`,  // ← Nombre + texto (descripción del tipo)
         date: doc.data_validesa || doc.data_caducitat,
         isRead: true,
         buildingName: doc.edifici_nom || undefined,
@@ -87,7 +87,7 @@ export const NotificationsScreen: React.FC = () => {
         .flat()
         .map((doc: any) => ({
           id: String(doc.id),
-          title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+          title: `${doc.nom} - ${doc.texto || doc.tipus_document}`,  // ← Nombre + texto (descripción del tipo)
           date: doc.data_validesa || doc.data_caducitat,
           isRead: true,
           buildingName: doc.edifici_nom || undefined,
@@ -217,7 +217,7 @@ export const NotificationsScreen: React.FC = () => {
         if (document) {
           // Crear mensaje HTML con la información del documento
           const message = `
-            <p><strong>Tipo:</strong> ${document.tipus}</p>
+            <p><strong>Tipo:</strong> ${document.texto || document.tipus || document.tipus_document}</p>
             <p><strong>Fecha de Validez:</strong> ${document.data_validesa}</p>
             ${document.edifici_nom ? `<p><strong>Edificio:</strong> ${document.edifici_nom}</p>` : ''}
             ${document.ruta ? `<p><a href="${document.ruta}">Descargar documento</a></p>` : ''}
@@ -250,10 +250,14 @@ export const NotificationsScreen: React.FC = () => {
         // Ocultar notificación de actividad
         console.log('📝 Ocultando notificación de actividad:', currentNotificationId);
         await buildingService.hideActivityNotification(parseInt(currentNotificationId));
-      } else if (activeTab === 'buildings' || activeTab === 'homes') {
-        // Ocultar notificación de documento
-        console.log('📝 Ocultando notificación de documento:', currentNotificationId);
-        await buildingService.hideDocumentNotification(parseInt(currentNotificationId));
+      } else if (activeTab === 'buildings') {
+        // Ocultar notificación de documento de edificio
+        console.log('📝 Ocultando notificación de documento de edificio:', currentNotificationId);
+        await buildingService.hideDocumentNotification(parseInt(currentNotificationId), 'building');
+      } else if (activeTab === 'homes') {
+        // Ocultar notificación de documento de vivienda
+        console.log('📝 Ocultando notificación de documento de vivienda:', currentNotificationId);
+        await buildingService.hideDocumentNotification(parseInt(currentNotificationId), 'home');
       }
       
       // Recargar notificaciones para actualizar badges

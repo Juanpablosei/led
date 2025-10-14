@@ -367,11 +367,16 @@ export const buildingService = {
     }
   },
 
-  async hideDocumentNotification(id: number): Promise<any> {
+  async hideDocumentNotification(id: number, type: 'building' | 'home' = 'building'): Promise<any> {
     try {
+      // Usar endpoint diferente según el tipo
+      const endpoint = type === 'building' 
+        ? `/edificio_documentos/notificaciones/${id}/ocultar`
+        : `/edificio_inmuebles/notificaciones/${id}/ocultar`;
+      
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 PATCH /edificio_documentos/notificaciones/${id}/ocultar`);
-      const response = await httpClient.patch(`/edificio_documentos/notificaciones/${id}/ocultar`);
+      console.log(`🌐 PATCH ${endpoint}`);
+      const response = await httpClient.patch(endpoint);
       
       console.log('✅ Notificación de documento ocultada');
       return response.data;
