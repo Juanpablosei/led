@@ -27,11 +27,11 @@ export interface Building {
   es_catastro: boolean;
   fecha_contratacion: string;
   tipus_edifici: string;
-  perfil_llibre: Array<{
+  perfil_llibre: {
     id: number;
     name: string;
-  }>;
-  identificacion: Array<{
+  }[];
+  identificacion: {
     id: number;
     tipus_via: string;
     via: string;
@@ -49,7 +49,7 @@ export interface Building {
     updated_at: string;
     ref_cadastral: string;
     direccion: string;
-  }>;
+  }[];
   propiedad: any[];
   imagen: string | null;
   planos: any[];
@@ -103,7 +103,7 @@ export interface BuildingDetailData extends Building {
     nif: string;
     collegi_professional: string | null;
   };
-  inmuebles: Array<{
+  inmuebles: {
     id: number;
     edifici_id: number;
     ref_cadastral: string;
@@ -117,7 +117,7 @@ export interface BuildingDetailData extends Building {
     no_existeix_cadastre: boolean;
     habitatge_actiu: boolean;
     es_manual: string | null;
-  }>;
+  }[];
   data_anulacio: string | null;
   data_confirmacio: string | null;
   usuario_estado_edificio: boolean;
@@ -148,29 +148,41 @@ export interface NotificationComunicacion {
 
 export interface NotificationDocumento {
   id: number;
-  nom: string;
-  edifici_id: number;
   edifici_nom: string;
-  data_caducitat: string;
+  edifici_id: number;
+  tipus_document: string;
+  nom: string;
+  hash_arxiu: string;
+  data_validesa: string;
+  ocultar_notificacion: boolean;
+  texto: string;
+  ruta: string;
+  tipus: string;
 }
 
 export interface NotificationActividad {
   id: number;
-  nom: string;
+  titol: string;
   edifici_id: number;
   edifici_nom: string;
-  data_inici: string;
-  data_fi: string;
+  data_inici_calculada: string;
+  durada_mesos: number;
+  tipus_intervencio: string;
+  descripcio: string;
+  sistema_id: number;
+  projecte_id: number;
+  projecte_nom: string;
+  projecte_estat: string;
 }
 
 export interface NotificationsData {
   documentos_edificio_caducados: {
     cantidad: number;
-    documentos: NotificationDocumento[];
+    documentos: { [edificioId: string]: NotificationDocumento[] } | NotificationDocumento[];
   };
   documentos_inmueble_caducados: {
     cantidad: number;
-    documentos: NotificationDocumento[];
+    documentos: { [edificioId: string]: NotificationDocumento[] } | NotificationDocumento[];
   };
   comunicaciones_no_leidas: {
     cantidad: number;
@@ -178,7 +190,7 @@ export interface NotificationsData {
   };
   actividades_proximas: {
     cantidad: number;
-    actividades: NotificationActividad[];
+    actividades: { [edificioId: string]: NotificationActividad[] };
   };
 }
 
@@ -327,6 +339,44 @@ export const buildingService = {
       return response.data;
     } catch (error: any) {
       console.error(`❌ Error al marcar comunicación como leída:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async hideActivityNotification(id: number): Promise<any> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 PATCH /edificio_proyectos/intervenciones/${id}/ocultar_notificacion`);
+      const response = await httpClient.patch(`/edificio_proyectos/intervenciones/${id}/ocultar_notificacion`);
+      
+      console.log('✅ Notificación de actividad ocultada');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al ocultar notificación de actividad:`, error.response?.status || error.message);
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async hideDocumentNotification(id: number): Promise<any> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      console.log(`🌐 PATCH /edificio_documentos/notificaciones/${id}/ocultar`);
+      const response = await httpClient.patch(`/edificio_documentos/notificaciones/${id}/ocultar`);
+      
+      console.log('✅ Notificación de documento ocultada');
+      return response.data;
+    } catch (error: any) {
+      console.error(`❌ Error al ocultar notificación de documento:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;

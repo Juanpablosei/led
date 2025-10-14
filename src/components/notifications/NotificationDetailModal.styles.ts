@@ -40,6 +40,14 @@ export const styles = StyleSheet.create({
   fieldContainer: {
     marginBottom: 20,
   },
+  rowContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 20,
+  },
+  fieldContainerHalf: {
+    flex: 1,
+  },
   label: {
     fontSize: 14,
     fontWeight: '600',
@@ -60,6 +68,20 @@ export const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.lightGray,
     marginVertical: 16,
+  },
+  markAsReadButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  markAsReadButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

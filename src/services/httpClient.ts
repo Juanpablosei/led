@@ -49,12 +49,16 @@ httpClient.interceptors.request.use(
     const language = await AsyncStorage.getItem(TRANSLATION_CONFIG.storageKey);
     if (language) {
       config.headers['Accept-Language'] = language; // "es" o "ca"
+    } else {
+      // Si no hay idioma guardado, usar el default
+      config.headers['Accept-Language'] = 'es';
     }
 
     // 3. Log para debugging (opcional - puedes comentarlo en producción)
     if (__DEV__) {
       console.log('📤 Request:', config.method?.toUpperCase(), config.url);
-      console.log('🌐 Language:', language || 'default');
+      console.log('🌐 Language enviado en header:', config.headers['Accept-Language']);
+      console.log('🌐 Language del storage:', language || 'sin valor (usando default: es)');
       console.log('🔑 Token:', !isPublicRoute && config.headers.Authorization ? '✅' : '❌');
       console.log('🌍 Ruta pública:', isPublicRoute ? 'Sí' : 'No');
       console.log('📦 Datos enviados:', config.data);

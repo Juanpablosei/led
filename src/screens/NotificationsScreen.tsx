@@ -23,6 +23,8 @@ export const NotificationsScreen: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [notificationsData, setNotificationsData] = useState<NotificationsData | null>(null);
+  const [currentNotificationId, setCurrentNotificationId] = useState<string | null>(null);
+  const [showMarkAsReadButton, setShowMarkAsReadButton] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -59,31 +61,51 @@ export const NotificationsScreen: React.FC = () => {
   })) || [];
 
   // Mapear edificios (documentos caducados del edificio)
-  const buildings: NotificationData[] = notificationsData?.documentos_edificio_caducados.documentos.map((doc) => ({
-    id: String(doc.id),
-    title: doc.nom,
-    date: doc.data_caducitat,
-    isRead: true,
-    buildingName: doc.edifici_nom || undefined,
-  })) || [];
+  const buildings: NotificationData[] = notificationsData?.documentos_edificio_caducados.documentos 
+    ? Object.values(notificationsData.documentos_edificio_caducados.documentos)
+        .flat()
+        .map((doc: any) => ({
+          id: String(doc.id),
+          title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+          date: doc.data_validesa || doc.data_caducitat,
+          isRead: true,
+          buildingName: doc.edifici_nom || undefined,
+        }))
+    : [];
 
   // Mapear viviendas (documentos caducados de inmuebles)
-  const homes: NotificationData[] = notificationsData?.documentos_inmueble_caducados.documentos.map((doc) => ({
-    id: String(doc.id),
-    title: doc.nom,
-    date: doc.data_caducitat,
-    isRead: true,
-    buildingName: doc.edifici_nom || undefined,
-  })) || [];
+  const homes: NotificationData[] = Array.isArray(notificationsData?.documentos_inmueble_caducados.documentos)
+    ? notificationsData.documentos_inmueble_caducados.documentos.map((doc: any) => ({
+        id: String(doc.id),
+        title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+        date: doc.data_validesa || doc.data_caducitat,
+        isRead: true,
+        buildingName: doc.edifici_nom || undefined,
+      }))
+    : notificationsData?.documentos_inmueble_caducados.documentos
+    ? Object.values(notificationsData.documentos_inmueble_caducados.documentos)
+        .flat()
+        .map((doc: any) => ({
+          id: String(doc.id),
+          title: `${doc.nom} - ${doc.tipus}`,  // ← Nombre + Tipo
+          date: doc.data_validesa || doc.data_caducitat,
+          isRead: true,
+          buildingName: doc.edifici_nom || undefined,
+        }))
+    : [];
 
   // Mapear actividades próximas
-  const activities: NotificationData[] = notificationsData?.actividades_proximas.actividades.map((act) => ({
-    id: String(act.id),
-    title: act.nom,
-    date: act.data_inici,
-    isRead: true,
-    buildingName: act.edifici_nom || undefined,
-  })) || [];
+  const activities: NotificationData[] = notificationsData?.actividades_proximas.actividades
+    ? Object.values(notificationsData.actividades_proximas.actividades)
+        .flat()
+        .map((act: any) => ({
+          id: String(act.id),
+          title: act.titol,  // ← Usar 'titol' en lugar de 'nom'
+          date: act.data_inici_calculada,  // ← Usar 'data_inici_calculada'
+          isRead: true,
+          buildingName: act.edifici_nom || undefined,
+        }))
+    : [];
 
   // Paginación para comunicaciones
   const communicationsTotalPages = Math.ceil(communications.length / itemsPerPage);
@@ -119,8 +141,8 @@ export const NotificationsScreen: React.FC = () => {
 
   const handleNotificationPress = async (id: string) => {
     try {
-      // Solo para comunicaciones hacemos GET del detalle
       if (activeTab === 'communications') {
+        // Comunicaciones: GET del detalle
         console.log('🔍 Obteniendo detalle de comunicación:', id);
         
         const response = await buildingService.getComunicacionDetail(parseInt(id));
@@ -138,40 +160,114 @@ export const NotificationsScreen: React.FC = () => {
           };
           
           setSelectedNotification(notificationDetail);
+          setCurrentNotificationId(String(comunicacion.id));
+          setShowMarkAsReadButton(false); // Comunicaciones no tienen botón
           setIsModalVisible(true);
           
           // Marcar como leída cuando se abre el modal
           if (!comunicacion.leido) {
             console.log('📝 Marcando comunicación como leída');
             await buildingService.markComunicacionAsRead(comunicacion.id, true);
-            
-            // Recargar notificaciones para actualizar el badge
-            await loadNotifications();
           }
         } else {
           console.error('❌ Error al obtener detalle:', response.message);
         }
-      } else {
-        // Para otras tabs, mantener el comportamiento actual (datos de ejemplo)
-        const notificationDetail: NotificationDetailData = {
-          id: id,
-          subject: 'Notificación',
-          dateSent: new Date().toLocaleDateString(),
-          sender: 'Sistema',
-          message: 'Detalle de la notificación',
-        };
+      } else if (activeTab === 'activities') {
+        // Actividades: Buscar en los datos cargados
+        const activity = Object.values(notificationsData?.actividades_proximas.actividades || {})
+          .flat()
+          .find((act: any) => String(act.id) === id);
         
-        setSelectedNotification(notificationDetail);
-        setIsModalVisible(true);
+        if (activity) {
+          // Crear mensaje HTML con la información de la actividad
+          const message = `
+            <p><strong>Proyecto:</strong> ${activity.projecte_nom}</p>
+            <p><strong>Tipo de Intervención:</strong> ${activity.tipus_intervencio}</p>
+            <p><strong>Descripción:</strong> ${activity.descripcio}</p>
+            <p><strong>Duración:</strong> ${activity.durada_mesos} meses</p>
+            <p><strong>Estado del Proyecto:</strong> ${activity.projecte_estat}</p>
+            ${activity.edifici_nom ? `<p><strong>Edificio:</strong> ${activity.edifici_nom}</p>` : ''}
+          `;
+          
+          const notificationDetail: NotificationDetailData = {
+            id: String(activity.id),
+            subject: activity.titol,
+            dateSent: activity.data_inici_calculada,
+            sender: null,
+            message: message,
+          };
+          
+          setSelectedNotification(notificationDetail);
+          setCurrentNotificationId(String(activity.id));
+          setShowMarkAsReadButton(true); // Actividades SÍ tienen botón
+          setIsModalVisible(true);
+        }
+      } else if (activeTab === 'buildings' || activeTab === 'homes') {
+        // Documentos: Buscar en los datos cargados
+        const documentSource = activeTab === 'buildings' 
+          ? notificationsData?.documentos_edificio_caducados.documentos 
+          : notificationsData?.documentos_inmueble_caducados.documentos;
+        
+        const document = documentSource
+          ? Object.values(documentSource)
+              .flat()
+              .find((doc: any) => String(doc.id) === id)
+          : null;
+        
+        if (document) {
+          // Crear mensaje HTML con la información del documento
+          const message = `
+            <p><strong>Tipo:</strong> ${document.tipus}</p>
+            <p><strong>Fecha de Validez:</strong> ${document.data_validesa}</p>
+            ${document.edifici_nom ? `<p><strong>Edificio:</strong> ${document.edifici_nom}</p>` : ''}
+            ${document.ruta ? `<p><a href="${document.ruta}">Descargar documento</a></p>` : ''}
+          `;
+          
+          const notificationDetail: NotificationDetailData = {
+            id: String(document.id),
+            subject: document.nom,
+            dateSent: document.data_validesa,
+            sender: null,
+            message: message,
+          };
+          
+          setSelectedNotification(notificationDetail);
+          setCurrentNotificationId(String(document.id));
+          setShowMarkAsReadButton(true); // Documentos SÍ tienen botón
+          setIsModalVisible(true);
+        }
       }
     } catch (error) {
       console.error('❌ Error al abrir notificación:', error);
     }
   };
 
-  const handleCloseModal = () => {
+  const handleMarkAsRead = async () => {
+    if (!currentNotificationId) return;
+    
+    try {
+      if (activeTab === 'activities') {
+        // Ocultar notificación de actividad
+        console.log('📝 Ocultando notificación de actividad:', currentNotificationId);
+        await buildingService.hideActivityNotification(parseInt(currentNotificationId));
+      } else if (activeTab === 'buildings' || activeTab === 'homes') {
+        // Ocultar notificación de documento
+        console.log('📝 Ocultando notificación de documento:', currentNotificationId);
+        await buildingService.hideDocumentNotification(parseInt(currentNotificationId));
+      }
+      
+      // Recargar notificaciones para actualizar badges
+      await loadNotifications();
+    } catch (error) {
+      console.error('❌ Error al marcar como leída:', error);
+    }
+  };
+
+  const handleCloseModal = async () => {
     setIsModalVisible(false);
     setSelectedNotification(null);
+    setCurrentNotificationId(null);
+    setShowMarkAsReadButton(false);
   };
 
   const handleBack = () => {
@@ -601,6 +697,8 @@ export const NotificationsScreen: React.FC = () => {
         visible={isModalVisible}
         notification={selectedNotification}
         onClose={handleCloseModal}
+        onMarkAsRead={handleMarkAsRead}
+        showMarkAsReadButton={showMarkAsReadButton}
       />
     </View>
   );

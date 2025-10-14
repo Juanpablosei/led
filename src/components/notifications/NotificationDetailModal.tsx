@@ -11,11 +11,20 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
   visible,
   notification,
   onClose,
+  onMarkAsRead,
+  showMarkAsReadButton = false,
 }) => {
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
 
   if (!notification) return null;
+
+  const handleMarkAsRead = () => {
+    if (onMarkAsRead) {
+      onMarkAsRead();
+    }
+    onClose();
+  };
 
   return (
     <Modal
@@ -40,19 +49,22 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
 
               {/* Content */}
               <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Asunto */}
-                <View style={styles.fieldContainer}>
-                  <Text style={styles.label}>{t('detail.subject', 'notifications')}:</Text>
-                  <Text style={styles.value}>{notification.subject}</Text>
-                </View>
-
-                {/* Fecha enviado - Solo mostrar si existe */}
-                {notification.dateSent && (
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>{t('detail.dateSent', 'notifications')}:</Text>
-                    <Text style={styles.value}>{notification.dateSent}</Text>
+                {/* Asunto y Fecha en la misma fila */}
+                <View style={styles.rowContainer}>
+                  {/* Asunto */}
+                  <View style={styles.fieldContainerHalf}>
+                    <Text style={styles.label}>{t('detail.subject', 'notifications')}:</Text>
+                    <Text style={styles.value}>{notification.subject}</Text>
                   </View>
-                )}
+
+                  {/* Fecha enviado - Solo mostrar si existe */}
+                  {notification.dateSent && (
+                    <View style={styles.fieldContainerHalf}>
+                      <Text style={styles.label}>{t('detail.dateSent', 'notifications')}:</Text>
+                      <Text style={styles.value}>{notification.dateSent}</Text>
+                    </View>
+                  )}
+                </View>
 
                 {/* Remitente - Solo mostrar si existe */}
                 {notification.sender && (
@@ -77,6 +89,13 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
                     }}
                   />
                 </View>
+
+                {/* Botón Marcar como leída - Solo para edificios y actividades */}
+                {showMarkAsReadButton && (
+                  <TouchableOpacity style={styles.markAsReadButton} onPress={handleMarkAsRead}>
+                    <Text style={styles.markAsReadButtonText}>Marcar como leída</Text>
+                  </TouchableOpacity>
+                )}
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
