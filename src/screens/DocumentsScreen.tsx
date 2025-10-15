@@ -43,7 +43,7 @@ export const DocumentsScreen: React.FC = () => {
       return false;
     }
     
-    const allowedIds = [1, 3, 5]; // Solo IDs 1 y 3 pueden crear documentos
+    const allowedIds = [1, 3]; // Solo IDs 1 y 3 pueden crear documentos
     const hasPermission = buildingDetail.perfil_llibre.some(profile => 
       allowedIds.includes(profile.id)
     );
@@ -530,6 +530,7 @@ export const DocumentsScreen: React.FC = () => {
         onClose={handleCloseEditModal}
         onSave={handleSaveEditDocument}
         onDelete={handleDeleteDocument}
+        isReadOnly={!canCreateDocuments(buildingDetail)}
       />
       </BuildingLayout>
 

@@ -68,6 +68,30 @@ export const styles = StyleSheet.create({
   inputFocused: {
     borderBottomColor: colors.primary,
   },
+  inputReadOnly: {
+    backgroundColor: '#F5F5F5',
+    color: colors.text,
+  },
+  dropdownReadOnly: {
+    backgroundColor: '#F5F5F5',
+    opacity: 0.7,
+  },
+  dropdownTextReadOnly: {
+    color: colors.text,
+  },
+  dateContainerReadOnly: {
+    backgroundColor: '#F5F5F5',
+    opacity: 0.7,
+  },
+  dateInputReadOnly: {
+    color: colors.text,
+  },
+  checkboxReadOnly: {
+    opacity: 0.7,
+  },
+  checkboxTextReadOnly: {
+    color: colors.text,
+  },
   dropdown: {
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGray,

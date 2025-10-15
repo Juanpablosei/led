@@ -21,6 +21,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   onClose,
   onSave,
   onDelete,
+  isReadOnly = false,
 }) => {
   const [formData, setFormData] = useState<EditDocumentData>({
     id: '',
@@ -172,12 +173,14 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                       style={[
                         styles.input,
                         focusedField === 'name' && styles.inputFocused,
+                        isReadOnly && styles.inputReadOnly
                       ]}
                       value={formData.name}
                       onChangeText={(value) => handleInputChange('name', value)}
                       onFocus={() => setFocusedField('name')}
                       onBlur={() => setFocusedField(null)}
                       placeholder="Ingrese el nombre del documento"
+                      editable={!isReadOnly}
                     />
                   </View>
 
@@ -186,11 +189,14 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     <Text style={styles.label}>
                       Tipo documento: <Text style={styles.required}>*</Text>
                     </Text>
-                    <TouchableOpacity style={styles.dropdown}>
-                      <Text style={styles.dropdownText}>
+                    <TouchableOpacity 
+                      style={[styles.dropdown, isReadOnly && styles.dropdownReadOnly]} 
+                      disabled={isReadOnly}
+                    >
+                      <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
                         {formData.type || 'Seleccionar tipo'}
                       </Text>
-                      <Ionicons name="chevron-down" size={20} color={colors.text} />
+                      {!isReadOnly && <Ionicons name="chevron-down" size={20} color={colors.text} />}
                     </TouchableOpacity>
                   </View>
 
@@ -210,24 +216,31 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                   {/* Válido hasta */}
                   <View style={styles.fieldContainer}>
                     <Text style={styles.label}>Válido hasta:</Text>
-                    <TouchableOpacity style={styles.dateContainer} onPress={handleDatePicker}>
-                      <Text style={styles.dateInput}>
+                    <TouchableOpacity 
+                      style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]} 
+                      onPress={isReadOnly ? undefined : handleDatePicker}
+                      disabled={isReadOnly}
+                    >
+                      <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
                         {formData.validUntil || 'dd/mm/aaaa'}
                       </Text>
-                      <Ionicons 
-                        name="calendar-outline" 
-                        size={20} 
-                        color={colors.text}
-                        style={styles.dateIcon}
-                      />
+                      {!isReadOnly && (
+                        <Ionicons 
+                          name="calendar-outline" 
+                          size={20} 
+                          color={colors.text}
+                          style={styles.dateIcon}
+                        />
+                      )}
                     </TouchableOpacity>
                   </View>
 
                   {/* Checkbox */}
                   <View style={styles.checkboxContainer}>
                     <TouchableOpacity
-                      style={styles.checkbox}
-                      onPress={() => handleInputChange('includeInBook', !formData.includeInBook)}
+                      style={[styles.checkbox, isReadOnly && styles.checkboxReadOnly]}
+                      onPress={isReadOnly ? undefined : () => handleInputChange('includeInBook', !formData.includeInBook)}
+                      disabled={isReadOnly}
                     >
                       <Ionicons
                         name={formData.includeInBook ? 'checkbox' : 'square-outline'}
@@ -235,7 +248,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                         color={formData.includeInBook ? colors.primary : colors.text}
                       />
                     </TouchableOpacity>
-                    <Text style={styles.checkboxText}>
+                    <Text style={[styles.checkboxText, isReadOnly && styles.checkboxTextReadOnly]}>
                       Incluir en el Libro del edificio (Sólo se admiten documentos en formato pdf)
                     </Text>
                   </View>
@@ -245,18 +258,30 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                   </Text>
                 </View>
 
-                {/* Action Buttons */}
-                <View style={styles.buttonsContainer}>
-                  <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-                    <Ionicons name="trash-outline" size={20} color={colors.error} />
-                    <Text style={styles.deleteButtonText}>ELIMINAR</Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Ionicons name="lock-closed" size={20} color={colors.white} />
-                    <Text style={styles.saveButtonText}>GUARDAR</Text>
-                  </TouchableOpacity>
-                </View>
+                {/* Action Buttons - Solo mostrar si no es modo solo lectura */}
+                {!isReadOnly && (
+                  <View style={styles.buttonsContainer}>
+                    <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+                      <Ionicons name="trash-outline" size={20} color={colors.error} />
+                      <Text style={styles.deleteButtonText}>ELIMINAR</Text>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                      <Ionicons name="lock-closed" size={20} color={colors.white} />
+                      <Text style={styles.saveButtonText}>GUARDAR</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                
+                {/* Botón de cerrar para modo solo lectura */}
+                {isReadOnly && (
+                  <View style={styles.buttonsContainer}>
+                    <TouchableOpacity style={styles.saveButton} onPress={onClose}>
+                      <Ionicons name="close" size={20} color={colors.white} />
+                      <Text style={styles.saveButtonText}>CERRAR</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </TouchableWithoutFeedback>
           </View>

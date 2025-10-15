@@ -15,4 +15,5 @@ export interface EditDocumentModalProps {
   onClose: () => void;
   onSave: (documentData: EditDocumentData) => void;
   onDelete: (documentId: string) => void;
+  isReadOnly?: boolean; // Para modo solo lectura
 }
