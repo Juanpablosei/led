@@ -7,6 +7,7 @@ export interface NewDocumentModalProps {
   documentTypes?: any[];
   isLoadingTypes?: boolean;
   selectedTypeName?: string;
+  selectedTypeId?: string;
   onSelectType?: (typeId: string, typeName: string) => void;
 }
 

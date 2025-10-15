@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useEffect, useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
 import { styles } from './EditDocumentModal.styles';
 import { EditDocumentData, EditDocumentModalProps } from './EditDocumentModal.types';
@@ -32,7 +32,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
     includeInBook: false,
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const documentTypes = [
@@ -118,24 +118,20 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
     }
   };
 
-  const handleDatePicker = () => {
-    console.log('Opening date picker...');
-    setShowDatePicker(true);
-  };
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    console.log('Date picker event:', event, selectedDate);
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setSelectedDate(selectedDate);
-      const formattedDate = selectedDate.toLocaleDateString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-      console.log('Formatted date:', formattedDate);
-      handleInputChange('validUntil', formattedDate);
-    }
+  const handleConfirm = (date: Date) => {
+    console.log('Date confirmed:', date);
+    setSelectedDate(date);
+    const formattedDate = date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    console.log('Formatted date:', formattedDate);
+    handleInputChange('validUntil', formattedDate);
+    hideDatePicker();
   };
 
   if (!document) return null;
@@ -218,7 +214,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     <Text style={styles.label}>Válido hasta:</Text>
                     <TouchableOpacity 
                       style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]} 
-                      onPress={isReadOnly ? undefined : handleDatePicker}
+                      onPress={isReadOnly ? undefined : showDatePicker}
                       disabled={isReadOnly}
                     >
                       <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
@@ -289,15 +285,17 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
       </Modal>
 
       {/* Date Picker Modal */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-          minimumDate={new Date()}
-        />
-      )}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={selectedDate}
+        minimumDate={new Date()}
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        locale="es-ES"
+        textColor={colors.text}
+        accentColor={colors.primary}
+      />
     </>
   );
 };

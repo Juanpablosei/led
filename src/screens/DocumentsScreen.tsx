@@ -318,15 +318,19 @@ export const DocumentsScreen: React.FC = () => {
         // Resetear selecciones
         setTempTypeSelection('');
         setSelectedTypeName('');
+        // Cerrar modal solo si fue exitoso
+        setIsNewDocumentModalVisible(false);
       } else {
         console.error('❌ Error al crear documento:', response.message);
         Alert.alert('Error', response.message || 'No se pudo crear el documento');
+        // Lanzar error para que el modal no se cierre
+        throw new Error(response.message || 'No se pudo crear el documento');
       }
     } catch (error: any) {
       console.error('❌ Error al guardar documento:', error);
       Alert.alert('Error', 'No se pudo guardar el documento');
-    } finally {
-      setIsNewDocumentModalVisible(false);
+      // Re-lanzar el error para que el modal no se cierre
+      throw error;
     }
   };
 
@@ -521,6 +525,7 @@ export const DocumentsScreen: React.FC = () => {
         isLoadingTypes={isLoadingTypes}
         selectedTypeName={selectedTypeName}
         onSelectType={handleSelectType}
+        selectedTypeId={tempTypeSelection}
       />
 
       {/* Modal Editar Documento */}

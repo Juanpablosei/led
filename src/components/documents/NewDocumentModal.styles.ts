@@ -14,8 +14,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 24,
     width: '90%',
-    height: '80%',
-   
+    height: '90%',
+    
   },
   header: {
     flexDirection: 'row',
@@ -248,5 +248,68 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text,
     flex: 1,
+  },
+  
+  // Estilos para DateTimePickerModal
+  datePickerModal: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+    margin: 20,
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  datePickerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  datePickerButtons: {
+   
+  },
+  datePickerButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  datePickerButtonCancel: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  datePickerButtonConfirm: {
+    backgroundColor: colors.primary,
+  },
+  datePickerButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  datePickerButtonTextCancel: {
+    color: colors.text,
+  },
+  datePickerButtonTextConfirm: {
+    color: colors.white,
   },
 });
