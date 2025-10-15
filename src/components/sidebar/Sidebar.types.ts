@@ -3,6 +3,7 @@ export interface SidebarProps {
   onClose: () => void;
   onItemPress?: (itemId: string) => void;
   currentRoute?: string;
+  buildingData?: any; // Datos del edificio para validar permisos
 }
 
 export interface SidebarItem {

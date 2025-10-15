@@ -18,6 +18,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isBuildingLogin, setIsBuildingLogin] = useState(false);
+  const [buildingDetailData, setBuildingDetailData] = useState<any>(null);
 
   // Función para obtener el título dinámico del header
   const getHeaderTitle = () => {
@@ -47,6 +48,29 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   useEffect(() => {
     checkLoginType();
   }, []);
+
+  // Cargar datos completos del edificio cuando cambie
+  useEffect(() => {
+    if (building?.id) {
+      loadBuildingDetail();
+    }
+  }, [building?.id]);
+
+  const loadBuildingDetail = async () => {
+    if (!building?.id) return;
+    
+    try {
+      console.log('🔍 Cargando datos del edificio para permisos:', building.id);
+      const response = await buildingService.getBuildingById(building.id);
+      
+      if (response.status && response.data) {
+        console.log('✅ Datos del edificio cargados:', response.data);
+        setBuildingDetailData(response.data);
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar datos del edificio:', error);
+    }
+  };
 
   const checkLoginType = async () => {
     const isBuildingUser = await storageService.isBuildingLogin();
@@ -193,6 +217,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         onClose={handleSidebarClose}
         onItemPress={handleSidebarItemPress}
         currentRoute={pathname}
+        buildingData={buildingDetailData}
       />
 
       {/* Menú de usuario */}

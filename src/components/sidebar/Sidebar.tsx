@@ -6,7 +6,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './Sidebar.styles';
 import { SidebarItem, SidebarProps } from './Sidebar.types';
 
-export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPress, currentRoute }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPress, currentRoute, buildingData }) => {
   const { t } = useTranslation();
   
   // Función para determinar qué sección debe estar expandida basándose en la ruta
@@ -34,7 +34,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
     }
   }, [currentRoute]);
 
-  const sidebarItems: SidebarItem[] = [
+  // Función para verificar si el usuario tiene permisos de gestión de usuarios
+  const hasUserManagementPermissions = (): boolean => {
+    if (!buildingData?.perfil_llibre) return false;
+    
+    // Solo pueden ver usuarios y comunicación si tienen perfil_llibre con IDs 1, 3, o 4
+    const allowedIds = [1, 3, 4];
+    return buildingData.perfil_llibre.some((perfil: any) => 
+      allowedIds.includes(perfil.id)
+    );
+  };
+
+  const allSidebarItems: SidebarItem[] = [
     {
       id: 'edificio',
       title: t('building', 'sidebar'),
@@ -71,6 +82,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
       ],
     },
   ];
+
+  // Filtrar elementos del sidebar basándose en los permisos del usuario
+  const sidebarItems = allSidebarItems.filter((item) => {
+    // Siempre mostrar 'edificio' y 'documentacion'
+    if (item.id === 'edificio' || item.id === 'documentacion') {
+      return true;
+    }
+    
+    // Solo mostrar 'usuarios' y 'comunicacion' si el usuario tiene permisos
+    if (item.id === 'usuarios' || item.id === 'comunicacion') {
+      return hasUserManagementPermissions();
+    }
+    
+    return true;
+  });
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
