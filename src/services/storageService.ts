@@ -212,11 +212,8 @@ export const storageService = {
   // NIF management
   async setRememberedNif(nif: string): Promise<void> {
     try {
-      console.log('💾 Guardando NIF recordado:', nif);
       await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_NIF, nif);
-      console.log('✅ NIF recordado guardado exitosamente');
     } catch (error) {
-      console.error('Error saving remembered NIF:', error);
       throw error;
     }
   },

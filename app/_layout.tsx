@@ -29,7 +29,6 @@ export default function RootLayout() {
                 <Stack.Screen name="my-data" options={{ headerShown: false }} />
                 <Stack.Screen name="user-type" options={{ headerShown: false }} />
                 <Stack.Screen name="alerts" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               </Stack>
       <StatusBar style="light" hidden={true} translucent={true} backgroundColor="transparent" />
     </TranslationProvider>

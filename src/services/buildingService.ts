@@ -621,7 +621,6 @@ export const buildingService = {
       // El interceptor agrega automáticamente el token y el idioma
       const response = await httpClient.get(`/edificio_documentos?ultimaversion=true&edifici_id=${edificiId}`);
       
-      console.log('📦 Documentos del edificio obtenidos');
       return response.data;
     } catch (error: any) {
       // Si axios devuelve un error con respuesta, devolver esa data
@@ -655,8 +654,6 @@ export const buildingService = {
       formData.append('data_validesa', data.data_validesa);
       formData.append('afegir_al_libre', String(data.afegir_al_libre));
 
-      console.log(`🌐 POST /edificio_documentos/${documentId}?_method=PATCH`);
-      console.log('📦 Datos del documento:', data);
       
       const response = await httpClient.post(`/edificio_documentos/${documentId}?_method=PATCH`, formData, {
         headers: {
@@ -664,10 +661,8 @@ export const buildingService = {
         },
       });
       
-      console.log('✅ Documento actualizado exitosamente');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al actualizar documento:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -679,15 +674,11 @@ export const buildingService = {
 
   async getDocumentTypes(parametroPadre: string): Promise<any> {
     try {
-      console.log(`🌐 POST /maestros/parametros-publicos`);
-      console.log('📦 Body:', [{ parametroPadre }]);
       
       const response = await httpClient.post('/maestros/parametros-publicos', [{ parametroPadre }]);
       
-      console.log('✅ Tipos de documentos obtenidos');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener tipos de documentos:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;

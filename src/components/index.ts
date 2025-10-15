@@ -20,8 +20,6 @@ export type { LoginFormData } from './login/login-form/LoginForm.types';
 export { RegistrationSection } from './login/registration-section/RegistrationSection';
 export type { RegistrationSectionProps } from './login/registration-section/RegistrationSection.types';
 
-export { LanguageSelector } from './language-selector/LanguageSelector';
-export type { LanguageSelectorProps } from './language-selector/LanguageSelector.types';
 
 export { SupportOptions } from './support-options/SupportOptions';
 export type { SupportOptionsProps } from './support-options/SupportOptions.types';

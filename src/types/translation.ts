@@ -23,8 +23,3 @@ export interface TranslationContextType {
   availableLanguages: readonly Language[];
 }
 
-export interface LanguageSelectorProps {
-  style?: any;
-  showLabel?: boolean;
-  labelText?: string;
-}
