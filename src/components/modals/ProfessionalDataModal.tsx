@@ -1,21 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { authService } from '../../services/authService';
 import { styles } from './ProfessionalDataModal.styles';
 import {
-    AutonomousCommunityOption,
-    ProfessionalCollegeOption,
-    ProfessionalDataFormData,
-    ProfessionalDataModalProps,
-    ProfessionOption,
-    UserTypeOption,
+  AutonomousCommunityOption,
+  ProfessionalCollegeOption,
+  ProfessionalDataFormData,
+  ProfessionalDataModalProps,
+  ProfessionOption,
+  UserTypeOption,
 } from './ProfessionalDataModal.types';
 
 const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
@@ -36,6 +37,100 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   });
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [professionOptions, setProfessionOptions] = useState<ProfessionOption[]>([]);
+  const [autonomousCommunityOptions, setAutonomousCommunityOptions] = useState<AutonomousCommunityOption[]>([]);
+  const [professionalCollegeOptions, setProfessionalCollegeOptions] = useState<ProfessionalCollegeOption[]>([]);
+  const [isLoadingProfessions, setIsLoadingProfessions] = useState(false);
+  const [isLoadingCommunities, setIsLoadingCommunities] = useState(false);
+  const [isLoadingColleges, setIsLoadingColleges] = useState(false);
+
+  const loadProfessions = useCallback(async () => {
+    setIsLoadingProfessions(true);
+    try {
+      const response = await authService.getPublicParameters([
+        { parametroPadre: 'profesion' }
+      ]);
+
+      if (response.profesion) {
+        const professions = Object.entries(response.profesion).map(([id, name]) => ({
+          value: id,
+          label: name
+        }));
+        setProfessionOptions(professions);
+      }
+    } catch (error) {
+      console.error('Error loading professions:', error);
+    } finally {
+      setIsLoadingProfessions(false);
+    }
+  }, []);
+
+  const loadAutonomousCommunities = useCallback(async () => {
+    if (!formData.profession) return;
+    
+    setIsLoadingCommunities(true);
+    try {
+      const professionId = parseInt(formData.profession);
+      
+      // Arquitectura técnica (4) o Arquitectura (5)
+      if (professionId === 4 || professionId === 5) {
+        const apiResponse = await authService.getComunidadesAutonomas(professionId);
+        const response = (apiResponse as any).comunidadautonoma || apiResponse;
+        
+        if (response) {
+          const communities = Object.entries(response).map(([id, name]) => ({
+            value: id,
+            label: name as string
+          }));
+          setAutonomousCommunityOptions(communities);
+        }
+      } 
+      // Altres/Otras (10) - usar parámetros públicos
+      else if (professionId === 10) {
+        const paramResponse = await authService.getPublicParameters([
+          { parametroPadre: 'comunidadautonoma' }
+        ]);
+        
+        if (paramResponse.comunidadautonoma) {
+          const communities = Object.entries(paramResponse.comunidadautonoma).map(([id, name]) => ({
+            value: id,
+            label: name as string
+          }));
+          setAutonomousCommunityOptions(communities);
+        }
+      }
+      // Otras profesiones - no tienen comunidades
+      else {
+        setAutonomousCommunityOptions([]);
+      }
+    } catch (error) {
+      console.error('Error loading autonomous communities:', error);
+    } finally {
+      setIsLoadingCommunities(false);
+    }
+  }, [formData.profession]);
+
+  const loadProfessionalColleges = useCallback(async () => {
+    if (!formData.autonomousCommunity || !formData.profession) return;
+    
+    setIsLoadingColleges(true);
+    try {
+      const professionId = parseInt(formData.profession);
+      const apiResponse = await authService.getColegiosProfesionales(formData.autonomousCommunity, professionId);
+      
+      if (apiResponse && apiResponse.colegioprofesional) {
+        const colleges = Object.entries(apiResponse.colegioprofesional).map(([id, name]) => ({
+          value: id,
+          label: name as string
+        }));
+        setProfessionalCollegeOptions(colleges);
+      }
+    } catch (error) {
+      console.error('Error loading professional colleges:', error);
+    } finally {
+      setIsLoadingColleges(false);
+    }
+  }, [formData.autonomousCommunity, formData.profession]);
 
   useEffect(() => {
     if (initialData) {
@@ -43,36 +138,52 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
     }
   }, [initialData]);
 
+  // Cargar profesiones al abrir el modal
+  useEffect(() => {
+    if (visible) {
+      loadProfessions();
+    }
+  }, [visible, loadProfessions]);
+
+  // Cargar comunidades cuando cambia la profesión
+  useEffect(() => {
+    if (formData.profession) {
+      loadAutonomousCommunities();
+    }
+  }, [formData.profession, loadAutonomousCommunities]);
+
+  // Cargar colegios cuando cambia la comunidad autónoma
+  useEffect(() => {
+    if (formData.autonomousCommunity && formData.profession) {
+      loadProfessionalColleges();
+    }
+  }, [formData.autonomousCommunity, formData.profession, loadProfessionalColleges]);
+
   const userTypeOptions: UserTypeOption[] = [
     { value: 'propietario', label: 'Propietario' },
     { value: 'profesional', label: 'Profesional' },
   ];
 
-  const professionOptions: ProfessionOption[] = [
-    { value: 'arquitectura_tecnica', label: 'Arquitectura técnica' },
-    { value: 'arquitectura', label: 'Arquitectura' },
-    { value: 'ingenieria', label: 'Ingeniería' },
-    { value: 'derecho', label: 'Derecho' },
-    { value: 'economia', label: 'Economía' },
-  ];
-
-  const autonomousCommunityOptions: AutonomousCommunityOption[] = [
-    { value: 'andalucia', label: 'Andalucía' },
-    { value: 'cataluna', label: 'Cataluña' },
-    { value: 'madrid', label: 'Madrid' },
-    { value: 'valencia', label: 'Comunidad Valenciana' },
-    { value: 'galicia', label: 'Galicia' },
-  ];
-
-  const professionalCollegeOptions: ProfessionalCollegeOption[] = [
-    { value: 'colegio_arquitectos', label: 'Colegio de Arquitectos' },
-    { value: 'colegio_aparejadores', label: 'Colegio de Aparejadores' },
-    { value: 'colegio_ingenieros', label: 'Colegio de Ingenieros' },
-    { value: 'colegio_abogados', label: 'Colegio de Abogados' },
-  ];
-
   const handleInputChange = (field: keyof ProfessionalDataFormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Limpiar campos dependientes cuando cambia la profesión
+      if (field === 'profession') {
+        newData.autonomousCommunity = '';
+        newData.professionalCollege = '';
+        setAutonomousCommunityOptions([]);
+        setProfessionalCollegeOptions([]);
+      }
+      
+      // Limpiar colegio cuando cambia la comunidad autónoma
+      if (field === 'autonomousCommunity') {
+        newData.professionalCollege = '';
+        setProfessionalCollegeOptions([]);
+      }
+      
+      return newData;
+    });
   };
 
   const handleFinish = () => {
@@ -87,7 +198,8 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
     value: string,
     options: { value: string; label: string }[],
     onSelect: (value: string) => void,
-    placeholder: string
+    placeholder: string,
+    isLoading: boolean = false
   ) => (
     <TouchableOpacity
       style={styles.dropdown}
@@ -95,9 +207,10 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
         // Aquí implementarías un picker nativo o modal
         console.log('Open dropdown for:', placeholder);
       }}
+      disabled={isLoading}
     >
       <Text style={value ? styles.dropdownText : styles.dropdownPlaceholder}>
-        {value ? options.find(opt => opt.value === value)?.label : placeholder}
+        {isLoading ? 'Cargando...' : (value ? options.find(opt => opt.value === value)?.label : placeholder)}
       </Text>
       <Ionicons name="chevron-down" size={16} color="#666" style={{ position: 'absolute', right: 12, top: 12 }} />
     </TouchableOpacity>
@@ -172,7 +285,8 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
                   formData.profession,
                   professionOptions,
                   (value) => handleInputChange('profession', value),
-                  'Seleccionar profesión'
+                  'Seleccionar profesión',
+                  isLoadingProfessions
                 )}
               </View>
 
@@ -184,7 +298,8 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
                   formData.autonomousCommunity,
                   autonomousCommunityOptions,
                   (value) => handleInputChange('autonomousCommunity', value),
-                  'Seleccionar comunidad'
+                  'Seleccionar comunidad',
+                  isLoadingCommunities
                 )}
               </View>
 
@@ -208,7 +323,8 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
                   formData.professionalCollege,
                   professionalCollegeOptions,
                   (value) => handleInputChange('professionalCollege', value),
-                  'Seleccionar colegio'
+                  'Seleccionar colegio',
+                  isLoadingColleges
                 )}
               </View>
             </View>
