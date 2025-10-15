@@ -8,14 +8,18 @@
     "scheme": "ledat",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "statusBar": {
+      "hidden": true,
+      "translucent": true,
+      "backgroundColor": "transparent"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "es.arescoop.ledat",
-      "statusBar": {
-        "hidden": true
-      },
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -28,11 +32,6 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "es.arescoop.ledat",
-      "statusBar": {
-        "hidden": true,
-        "translucent": true,
-        "backgroundColor": "transparent"
-      },
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",
@@ -68,7 +67,8 @@
           "sounds": [],
           "mode": "production"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
