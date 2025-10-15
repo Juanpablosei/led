@@ -25,12 +25,10 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   onClose,
   onSave,
   category = "edif_doc_admin",
-  onOpenTypesModal,
   documentTypes = [],
   isLoadingTypes = false,
   selectedTypeName = "",
   selectedTypeId = "",
-  onSelectType,
 }) => {
   const [formData, setFormData] = useState<NewDocumentData>({
     name: "",
@@ -44,6 +42,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSaving, setIsSaving] = useState(false);
+  const [showTypesDropdown, setShowTypesDropdown] = useState(false);
 
   // Actualizar formData.type cuando se selecciona un tipo
   useEffect(() => {
@@ -152,6 +151,21 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
     setDatePickerVisibility(false);
   };
 
+  const showTypesPicker = () => {
+    console.log("🟡 Abriendo selector de tipos");
+    setShowTypesDropdown(true);
+  };
+
+  const hideTypesPicker = () => {
+    setShowTypesDropdown(false);
+  };
+
+  const handleSelectType = (typeId: string, typeName: string) => {
+    console.log("✅ Tipo seleccionado:", typeId, typeName);
+    handleInputChange("type", typeId);
+    setShowTypesDropdown(false);
+  };
+
   const handleConfirm = (date: Date) => {
     console.log("✅ Date confirmed:", date);
     setSelectedDate(date);
@@ -236,14 +250,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                       </Text>
                       <TouchableOpacity
                         style={styles.dropdown}
-                        onPress={() => {
-                          console.log("🟡 Presionando dropdown de tipos");
-                          if (onOpenTypesModal) {
-                            onOpenTypesModal();
-                          } else {
-                            console.log("❌ onOpenTypesModal no está definido");
-                          }
-                        }}
+                        onPress={showTypesPicker}
                       >
                         <Text style={styles.dropdownText}>
                           {isLoadingTypes
@@ -256,6 +263,27 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                           color={colors.text}
                         />
                       </TouchableOpacity>
+
+                      {/* Dropdown de tipos */}
+                      {showTypesDropdown && (
+                        <TouchableWithoutFeedback onPress={hideTypesPicker}>
+                          <View style={styles.dropdownList}>
+                            <ScrollView style={styles.dropdownListScroll}>
+                              {documentTypes.map((docType) => (
+                                <TouchableOpacity
+                                  key={docType.id}
+                                  style={styles.dropdownItem}
+                                  onPress={() => handleSelectType(docType.id, docType.texto)}
+                                >
+                                  <Text style={styles.dropdownItemText}>
+                                    {docType.texto}
+                                  </Text>
+                                </TouchableOpacity>
+                              ))}
+                            </ScrollView>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      )}
                     </View>
 
                     {/* Documento */}

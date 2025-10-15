@@ -3,12 +3,10 @@ export interface NewDocumentModalProps {
   onClose: () => void;
   onSave: (documentData: NewDocumentData) => void;
   category?: string;
-  onOpenTypesModal?: () => void;
   documentTypes?: any[];
   isLoadingTypes?: boolean;
   selectedTypeName?: string;
   selectedTypeId?: string;
-  onSelectType?: (typeId: string, typeName: string) => void;
 }
 
 export interface NewDocumentData {

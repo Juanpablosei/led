@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Modal,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -34,6 +35,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showTypesDropdown, setShowTypesDropdown] = useState(false);
 
   const documentTypes = [
     'Inspección Técnica de Edificios',
@@ -121,6 +123,21 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
+  const showTypesPicker = () => {
+    console.log("🟡 Abriendo selector de tipos");
+    setShowTypesDropdown(true);
+  };
+
+  const hideTypesPicker = () => {
+    setShowTypesDropdown(false);
+  };
+
+  const handleSelectType = (typeName: string) => {
+    console.log("✅ Tipo seleccionado:", typeName);
+    handleInputChange('type', typeName);
+    setShowTypesDropdown(false);
+  };
+
   const handleConfirm = (date: Date) => {
     console.log('Date confirmed:', date);
     setSelectedDate(date);
@@ -187,6 +204,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     </Text>
                     <TouchableOpacity 
                       style={[styles.dropdown, isReadOnly && styles.dropdownReadOnly]} 
+                      onPress={isReadOnly ? undefined : showTypesPicker}
                       disabled={isReadOnly}
                     >
                       <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
@@ -194,6 +212,27 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                       </Text>
                       {!isReadOnly && <Ionicons name="chevron-down" size={20} color={colors.text} />}
                     </TouchableOpacity>
+
+                    {/* Dropdown de tipos */}
+                    {showTypesDropdown && !isReadOnly && (
+                      <TouchableWithoutFeedback onPress={hideTypesPicker}>
+                        <View style={styles.dropdownList}>
+                          <ScrollView style={styles.dropdownListScroll}>
+                            {documentTypes.map((docType, index) => (
+                              <TouchableOpacity
+                                key={index}
+                                style={styles.dropdownItem}
+                                onPress={() => handleSelectType(docType)}
+                              >
+                                <Text style={styles.dropdownItemText}>
+                                  {docType}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    )}
                   </View>
 
                   {/* Documento - SOLO LECTURA */}
@@ -214,20 +253,40 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     <Text style={styles.label}>Válido hasta:</Text>
                     <TouchableOpacity 
                       style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]} 
-                      onPress={isReadOnly ? undefined : showDatePicker}
+                      onPress={isReadOnly ? undefined : () => {
+                        console.log("📅 Date container pressed");
+                        showDatePicker();
+                      }}
                       disabled={isReadOnly}
                     >
                       <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
                         {formData.validUntil || 'dd/mm/aaaa'}
                       </Text>
-                      {!isReadOnly && (
-                        <Ionicons 
-                          name="calendar-outline" 
-                          size={20} 
-                          color={colors.text}
-                          style={styles.dateIcon}
-                        />
-                      )}
+                      <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        date={selectedDate}
+                        minimumDate={new Date()}
+                        onConfirm={handleConfirm}
+                        onCancel={() => {
+                          console.log("❌ Date picker cancelled");
+                          hideDatePicker();
+                        }}
+                        locale="es-ES"
+                        textColor={colors.text}
+                        accentColor={colors.primary}
+                        display="inline"
+                        isDarkModeEnabled={false}
+                        modalStyleIOS={{
+                          backgroundColor: "transparent",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          paddingBottom: 0,
+                        }}
+                        customCancelButtonIOS={() => null}
+                        confirmTextIOS="Aceptar"
+                        themeVariant="light"
+                      />
                     </TouchableOpacity>
                   </View>
 
@@ -284,18 +343,6 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Date Picker Modal */}
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={selectedDate}
-        minimumDate={new Date()}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        locale="es-ES"
-        textColor={colors.text}
-        accentColor={colors.primary}
-      />
     </>
   );
 };

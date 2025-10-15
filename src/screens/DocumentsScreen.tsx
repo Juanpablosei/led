@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -14,7 +13,6 @@ import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
-import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
 import { BuildingDetailData, BuildingDocument, buildingService } from '../services/buildingService';
@@ -520,11 +518,9 @@ export const DocumentsScreen: React.FC = () => {
         onClose={handleCloseModal}
         onSave={handleSaveDocument}
         category={getCurrentCategory()}
-        onOpenTypesModal={handleOpenTypesModal}
         documentTypes={documentTypes}
         isLoadingTypes={isLoadingTypes}
         selectedTypeName={selectedTypeName}
-        onSelectType={handleSelectType}
         selectedTypeId={tempTypeSelection}
       />
 
@@ -539,8 +535,8 @@ export const DocumentsScreen: React.FC = () => {
       />
       </BuildingLayout>
 
-      {/* Modal de selección de tipos - FUERA de BuildingLayout */}
-      {showTypesModal && console.log('📺 Renderizando modal de tipos...')}
+      {/* Modal de selección de tipos - YA NO SE USA, EL DROPDOWN ESTÁ DENTRO DEL MODAL */}
+      {/* {showTypesModal && console.log('📺 Renderizando modal de tipos...')}
       <Modal
         visible={showTypesModal}
         transparent={true}
@@ -594,7 +590,7 @@ export const DocumentsScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

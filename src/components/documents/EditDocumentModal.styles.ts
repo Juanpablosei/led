@@ -105,6 +105,33 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
   },
+  dropdownList: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    minHeight: '30%',
+    maxHeight: '70%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  dropdownListScroll: {
+    maxHeight: 500,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  dropdownItemText: {
+    fontSize: 15,
+    color: colors.text,
+  },
   fileContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.lightGray,
