@@ -54,20 +54,12 @@ httpClient.interceptors.request.use(
       config.headers['Accept-Language'] = 'es';
     }
 
-    // 3. Log para debugging (opcional - puedes comentarlo en producción)
-    if (__DEV__) {
-      console.log('📤 Request:', config.method?.toUpperCase(), config.url);
-      console.log('🌐 Language enviado en header:', config.headers['Accept-Language']);
-      console.log('🌐 Language del storage:', language || 'sin valor (usando default: es)');
-      console.log('🔑 Token:', !isPublicRoute && config.headers.Authorization ? '✅' : '❌');
-      console.log('🌍 Ruta pública:', isPublicRoute ? 'Sí' : 'No');
-      console.log('📦 Datos enviados:', config.data);
-    }
+    // 3. Configuración completada
 
     return config;
   },
   (error) => {
-    console.error('❌ Request Error:', error);
+    // Request Error
     return Promise.reject(error);
   }
 );
@@ -77,18 +69,13 @@ httpClient.interceptors.request.use(
 // ==========================================
 httpClient.interceptors.response.use(
   (response) => {
-    // Log de respuestas exitosas (opcional)
-    if (__DEV__) {
-      console.log('📥 Response:', response.status, response.config.url);
-    }
+    // Respuesta exitosa procesada
     return response;
   },
   async (error) => {
     // Manejar token expirado (401)
     if (error.response?.status === 401) {
-      if (__DEV__) {
-        console.warn('⚠️ Token expirado o inválido');
-      }
+      // Token expirado o inválido
       
       // Limpiar datos de autenticación
       await storageService.clearAuthData();
@@ -102,22 +89,7 @@ httpClient.interceptors.response.use(
       });
     }
 
-    // Log silencioso de errores en desarrollo (sin console.error para evitar logs feos)
-    if (__DEV__) {
-      const status = error.response?.status;
-      const url = error.config?.url;
-      
-      // Solo loggear información útil, no el stack trace completo
-      if (status === 422) {
-        console.log('⚠️ Error de validación (422):', url);
-      } else if (status === 403) {
-        console.log('🚫 Acceso denegado (403):', url);
-      } else if (status === 500) {
-        console.log('💥 Error del servidor (500):', url);
-      } else if (status) {
-        console.log(`⚠️ Error ${status}:`, url);
-      }
-    }
+    // Error manejado silenciosamente
     
     // Devolver el error sin más logging para que el código que llama lo maneje
     return Promise.reject(error);

@@ -534,12 +534,9 @@ export const authService = {
 
   async getMyData(): Promise<MyDataApiResponse> {
     try {
-      console.log('🔍 Obteniendo datos del usuario desde /mis-datos');
       const response = await httpClient.get('/mis-datos');
-      console.log('✅ Datos del usuario obtenidos:', response.data);
       return response.data;
     } catch (error: any) {
-      console.error('❌ Error al obtener datos del usuario:', error);
       if (error.response?.data) {
         return error.response.data;
       }
@@ -562,15 +559,11 @@ export const authService = {
     password_confirmation?: string;
   }): Promise<any> {
     try {
-      console.log('📤 Actualizando datos del usuario en /mis-datos');
-      console.log('Datos a enviar:', JSON.stringify(data, null, 2));
       
       const response = await httpClient.patch('/mis-datos', data);
       
-      console.log('✅ Datos del usuario actualizados:', response.data);
       return response.data;
     } catch (error: any) {
-      console.error('❌ Error al actualizar datos del usuario:', error);
       if (error.response?.data) {
         return error.response.data;
       }
@@ -580,16 +573,10 @@ export const authService = {
 
 
   async registerDevice(data: RegisterDeviceRequest): Promise<RegisterDeviceApiResponse> {
-    try {
-      console.log('📱 Registrando dispositivo en /register-device');
-      console.log('Datos:', data);
-      
-      const response = await httpClient.post('/register-device', data);
-      
-      console.log('✅ Dispositivo registrado exitosamente:', response.data);
+    try {      
+      const response = await httpClient.post('/register-device', data); 
       return response.data;
     } catch (error: any) {
-      console.error('❌ Error al registrar dispositivo:', error);
       if (error.response?.data) {
         return error.response.data;
       }
