@@ -7,8 +7,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 9999,
-    elevation: 10, // Para Android - asegura que esté por encima de otros elementos
+  
   },
   modal: {
     backgroundColor: colors.white,
@@ -16,15 +15,7 @@ export const styles = StyleSheet.create({
     padding: 24,
     width: '90%',
     height: '80%',
-    elevation: 15, // Aumentado para Android
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    zIndex: 10000, // Asegurar que esté por encima del overlay
+   
   },
   header: {
     flexDirection: 'row',
