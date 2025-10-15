@@ -558,6 +558,8 @@ export const authService = {
     entidad_convenio: string | null;
     tipo_usuario: 'propietario' | 'profesional';
     otra_profesion?: string;
+    password?: string;
+    password_confirmation?: string;
   }): Promise<any> {
     try {
       console.log('📤 Actualizando datos del usuario en /mis-datos');

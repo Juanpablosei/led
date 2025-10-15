@@ -181,5 +181,11 @@ export const styles = StyleSheet.create({
     color: colors.text,
     flex: 1,
   },
+  errorText: {
+    fontSize: 12,
+    color: '#E53E3E',
+    marginTop: 4,
+    marginLeft: 4,
+  },
 });
 

@@ -36,6 +36,11 @@ export const MyDataScreen: React.FC = () => {
   const [colegioProfesionalSlug, setColegioProfesionalSlug] = useState('');
   const [agreement, setAgreement] = useState('');
   
+  // Estados para cambio de contraseña
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  
   // Opciones para dropdowns
   const [professionOptions, setProfessionOptions] = useState<SelectOption[]>([]);
   const [comunidadAutonomaOptions, setComunidadAutonomaOptions] = useState<SelectOption[]>([]);
@@ -226,12 +231,83 @@ export const MyDataScreen: React.FC = () => {
     router.back();
   };
 
+  // Validación en tiempo real (solo muestra errores, no bloquea)
+  const validatePasswordsInRealTime = (password: string, confirmation: string) => {
+    setPasswordError('');
+    
+    // Si no coinciden, mostrar error
+    if (password !== confirmation) {
+      setPasswordError('Las contraseñas no coinciden');
+      return;
+    }
+    
+    // Si es muy corta, mostrar error
+    if (password.length > 0 && password.length < 8) {
+      setPasswordError('La contraseña debe tener al menos 8 caracteres');
+      return;
+    }
+    
+    // Verificar que tenga al menos una letra
+    if (password.length > 0) {
+      const hasLetter = /[a-zA-Z]/.test(password);
+      if (!hasLetter) {
+        setPasswordError('La contraseña debe contener al menos una letra');
+        return;
+      }
+    }
+    
+    // Si llega aquí, no hay errores
+    setPasswordError('');
+  };
+
+  // Validar contraseñas (validación completa para envío)
+  const validatePasswords = () => {
+    setPasswordError('');
+    
+    // Si ambos campos están vacíos, no hay error
+    if (!newPassword && !confirmPassword) {
+      return true;
+    }
+    
+    // Si uno está lleno y el otro no, hay error
+    if (!newPassword || !confirmPassword) {
+      setPasswordError('Ambos campos de contraseña son obligatorios');
+      return false;
+    }
+    
+    // Si no coinciden, hay error
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Las contraseñas no coinciden');
+      return false;
+    }
+    
+    // Si es muy corta, hay error
+    if (newPassword.length < 8) {
+      setPasswordError('La contraseña debe tener al menos 8 caracteres');
+      return false;
+    }
+    
+    // Verificar que tenga al menos una letra
+    const hasLetter = /[a-zA-Z]/.test(newPassword);
+    if (!hasLetter) {
+      setPasswordError('La contraseña debe contener al menos una letra');
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSave = async () => {
     if (!userData) return;
     
+    // Validar contraseñas antes de enviar
+    if (!validatePasswords()) {
+      return;
+    }
+    
     try {
       // Crear objeto con datos para enviar al API
-      const dataToUpdate = {
+      const dataToUpdate: any = {
         professio: profession,
         colegiado_externo_num_colegiado: numeroColegiado,
         collegi_professional: colegioProfesional,
@@ -243,6 +319,13 @@ export const MyDataScreen: React.FC = () => {
         tipo_usuario: tipoUsuario,
         otra_profesion: otraProfesion || undefined,
       };
+      
+      // Solo agregar contraseña si se proporcionó
+      if (newPassword && confirmPassword) {
+        dataToUpdate.password = newPassword;
+        dataToUpdate.password_confirmation = confirmPassword;
+        console.log('🔐 Cambio de contraseña incluido en la actualización');
+      }
       
       console.log("💾 Guardando datos del usuario...");
       console.log("Datos a enviar:", JSON.stringify(dataToUpdate, null, 2));
@@ -270,7 +353,18 @@ export const MyDataScreen: React.FC = () => {
         await storageService.setUserData(updatedData);
         console.log("💾 Datos actualizados guardados en storage");
         
+        // Si se cambió la contraseña, actualizar el storage para Face ID
+        if (newPassword && confirmPassword) {
+          await storageService.setRememberedPassword(newPassword);
+          console.log('🔐 Nueva contraseña guardada en storage para Face ID');
+        }
+        
         showToast(t('myData.successMessage', 'user'), 'success');
+        
+        // Limpiar campos de contraseña después de guardar exitosamente
+        setNewPassword('');
+        setConfirmPassword('');
+        setPasswordError('');
         
         // Volver a la pantalla anterior después de 1.5 segundos
         setTimeout(() => {
@@ -559,6 +653,48 @@ export const MyDataScreen: React.FC = () => {
               </View>
             </>
           )}
+
+          {/* Campos de cambio de contraseña */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Contraseña nueva (opcional)</Text>
+            <TextInput
+              style={styles.input}
+              value={newPassword}
+              onChangeText={(text) => {
+                setNewPassword(text);
+                setPasswordError(''); // Limpiar error al escribir
+                // Validación en tiempo real si ambos campos tienen contenido
+                if (text && confirmPassword) {
+                  validatePasswordsInRealTime(text, confirmPassword);
+                }
+              }}
+              placeholder="Nueva contraseña"
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>Confirmar contraseña</Text>
+            <TextInput
+              style={styles.input}
+              value={confirmPassword}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+                setPasswordError(''); // Limpiar error al escribir
+                // Validación en tiempo real si ambos campos tienen contenido
+                if (text && newPassword) {
+                  validatePasswordsInRealTime(newPassword, text);
+                }
+              }}
+              placeholder="Confirmar nueva contraseña"
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
+          </View>
 
           {/* Botón Guardar */}
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
