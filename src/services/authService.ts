@@ -578,25 +578,6 @@ export const authService = {
     }
   },
 
-  async changePassword(data: {
-    password: string;
-    password_confirmation: string;
-  }): Promise<any> {
-    try {
-      console.log('🔐 Cambiando contraseña en /mis-datos');
-      
-      const response = await httpClient.patch('/mis-datos', data);
-      
-      console.log('✅ Contraseña cambiada exitosamente:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('❌ Error al cambiar contraseña:', error);
-      if (error.response?.data) {
-        return error.response.data;
-      }
-      throw error;
-    }
-  },
 
   async registerDevice(data: RegisterDeviceRequest): Promise<RegisterDeviceApiResponse> {
     try {

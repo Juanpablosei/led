@@ -1,9 +1,21 @@
+import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 import { TranslationProvider } from '../src/contexts/TranslationContext';
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Ocultar barra de navegación y estado en Android
+    if (Platform.OS === 'android') {
+      NavigationBar.setVisibilityAsync('hidden');
+      // Forzar ocultar barra de estado
+      NavigationBar.setBehaviorAsync('overlay-swipe');
+    }
+  }, []);
+
   return (
     <TranslationProvider>
               <Stack>
@@ -17,10 +29,9 @@ export default function RootLayout() {
                 <Stack.Screen name="my-data" options={{ headerShown: false }} />
                 <Stack.Screen name="user-type" options={{ headerShown: false }} />
                 <Stack.Screen name="alerts" options={{ headerShown: false }} />
-                <Stack.Screen name="change-password" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               </Stack>
-      <StatusBar style="light" hidden={true} />
+      <StatusBar style="light" hidden={true} translucent={true} backgroundColor="transparent" />
     </TranslationProvider>
   );
 }

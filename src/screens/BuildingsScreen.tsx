@@ -139,9 +139,9 @@ export const BuildingsScreen: React.FC = () => {
       case 'myData':
         router.push('/my-data');
         break;
-      case 'changePassword':
-        router.push('/change-password');
-        break;
+      // case 'changePassword':
+      //   router.push('/change-password');
+      //   break;
       case 'logout':
         handleLogout();
         break;

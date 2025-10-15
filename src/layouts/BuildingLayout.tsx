@@ -112,9 +112,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       // case 'alerts':
       //   router.push('/alerts');
       //   break;
-      case 'changePassword':
-        router.push('/change-password');
-        break;
+      // case 'changePassword':
+      //   router.push('/change-password');
+      //   break;
       case 'logout':
         handleLogout();
         break;
