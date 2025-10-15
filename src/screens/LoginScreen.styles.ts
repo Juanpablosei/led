@@ -70,11 +70,19 @@ export const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 3, // Por encima de todo
   },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+  },
   main: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
+    minHeight: 400, // Altura mínima para asegurar que el contenido sea scrolleable
   },
   title: {
     ...typography.title,
@@ -89,8 +97,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-    
+    minHeight: 60, // Altura mínima para el footer
   },
   footerText: {
     fontSize: 16,

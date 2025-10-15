@@ -3,13 +3,14 @@ import { router } from "expo-router";
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect, useState } from "react";
 import {
-    Alert,
-    ImageBackground,
-    Keyboard,
-    Text,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  Alert,
+  ImageBackground,
+  Keyboard,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import { BuildingAcceptanceModal } from "../components/building-acceptance-modal/BuildingAcceptanceModal";
 import { Header } from "../components/header/Header";
@@ -534,36 +535,44 @@ export const LoginScreen: React.FC = () => {
           {/* Header */}
           <Header onLanguageChange={handleLanguageChange} />
 
-          {/* Main Content */}
-          <View style={styles.main}>
-            {/* Title */}
-            <Text style={styles.title}>Área de acceso</Text>
+          {/* ScrollView para contenido scrolleable */}
+          <ScrollView 
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Main Content */}
+            <View style={styles.main}>
+              {/* Title */}
+              <Text style={styles.title}>Área de acceso</Text>
 
-            {/* Login Card */}
-            <LoginCard
-              onLogin={handleLogin}
-              onRegister={handleRegister}
-              onForgotPassword={handleForgotPassword}
-              isLoading={isLoading}
-              rememberedNif={rememberedNif}
-            />
-          </View>
+              {/* Login Card */}
+              <LoginCard
+                onLogin={handleLogin}
+                onRegister={handleRegister}
+                onForgotPassword={handleForgotPassword}
+                isLoading={isLoading}
+                rememberedNif={rememberedNif}
+              />
+            </View>
 
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>© 2025 Cateb</Text>
-            <TouchableOpacity onPress={() => setShowSupportModal(true)}>
-              <View style={styles.supportContainer}>
-                <Text style={styles.footerText}>{t("support", "common")}</Text>
-                <Ionicons
-                  name="chevron-down"
-                  size={16}
-                  color={colors.black}
-                  style={styles.chevronIcon}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
+            {/* Footer */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>© 2025 Cateb</Text>
+              <TouchableOpacity onPress={() => setShowSupportModal(true)}>
+                <View style={styles.supportContainer}>
+                  <Text style={styles.footerText}>{t("support", "common")}</Text>
+                  <Ionicons
+                    name="chevron-down"
+                    size={16}
+                    color={colors.black}
+                    style={styles.chevronIcon}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
 
           {/* Support Modal */}
           <SupportOptions

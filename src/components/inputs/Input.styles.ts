@@ -23,6 +23,7 @@ export const spacing = {
 
 export const styles = StyleSheet.create({
   inputContainer: {
+    width: '100%', // Asegurar que el contenedor ocupe todo el ancho
     marginBottom: spacing.lg,
   },
   inputLabel: {
@@ -31,6 +32,7 @@ export const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   input: {
+    flex: 1, // Hacer que el input ocupe todo el ancho disponible
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingVertical: spacing.sm,
@@ -43,6 +45,7 @@ export const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%', // Asegurar que la fila ocupe todo el ancho
   },
   inputIcon: {
     position: 'absolute',

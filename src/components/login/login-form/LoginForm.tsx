@@ -35,7 +35,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     if (rememberedNif) {
       setFormData(prev => ({
         ...prev,
-        nif: rememberedNif,
+        nif: rememberedNif.toUpperCase(), // Convertir a mayúsculas
         rememberNif: true
       }));
     }
@@ -61,9 +61,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   const handleInputChange = (field: keyof LoginFormData, value: string | boolean) => {
+    // Convertir NIF a mayúsculas automáticamente
+    const processedValue = field === 'nif' && typeof value === 'string' ? value.toUpperCase() : value;
+    
     setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: processedValue,
     }));
   };
 

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './Tab.styles';
 import { TabData } from './Tab.types';
 
@@ -10,6 +10,28 @@ interface TabProps {
 }
 
 export const Tab: React.FC<TabProps> = ({ tab, onPress }) => {
+  // Obtener el ancho de la pantalla para hacer el texto responsive
+  const screenWidth = Dimensions.get('window').width;
+  
+  // Determinar el tamaño de fuente basado en el ancho de la pantalla
+  const getFontSize = () => {
+    if (screenWidth < 375) {
+      // Pantallas muy pequeñas (como iPhone SE)
+      return 12;
+    } else if (screenWidth < 414) {
+      // Pantallas pequeñas
+      return 14;
+    } else {
+      // Pantallas normales y grandes
+      return 16;
+    }
+  };
+
+  const dynamicTabTextStyle = {
+    ...styles.tabText,
+    fontSize: getFontSize(),
+  };
+
   return (
     <TouchableOpacity
       style={[styles.tab, tab.active && styles.tabActive]}
@@ -21,7 +43,7 @@ export const Tab: React.FC<TabProps> = ({ tab, onPress }) => {
           size={16}
           color={tab.active ? '#E95460' : '#666666'}
         />
-        <Text style={styles.tabText}>{tab.label}</Text>
+        <Text style={dynamicTabTextStyle}>{tab.label}</Text>
       </View>
     </TouchableOpacity>
   );

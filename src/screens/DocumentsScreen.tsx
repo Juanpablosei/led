@@ -221,13 +221,9 @@ export const DocumentsScreen: React.FC = () => {
   const handleOpenTypesModal = () => {
     console.log('🔵 Abriendo modal de tipos - showTypesModal:', showTypesModal);
     console.log('🔵 Tipos disponibles:', documentTypes.length);
-    // Cerrar temporalmente el modal de nuevo documento para iOS
     setIsNewDocumentModalVisible(false);
-    // Abrir el modal de tipos después de un pequeño delay
-    setTimeout(() => {
-      setShowTypesModal(true);
-      console.log('🔵 Modal abierto - nuevo estado: true');
-    }, 300);
+    setShowTypesModal(true);
+    console.log('🔵 Modal abierto - nuevo estado: true');
   };
 
   const handleSelectType = (typeId: string, typeName: string) => {
@@ -235,10 +231,7 @@ export const DocumentsScreen: React.FC = () => {
     setTempTypeSelection(typeId);
     setSelectedTypeName(typeName);
     setShowTypesModal(false);
-    // Reabrir el modal de nuevo documento después de seleccionar
-    setTimeout(() => {
-      setIsNewDocumentModalVisible(true);
-    }, 300);
+    setIsNewDocumentModalVisible(true);
     console.log('✅ Modal cerrado');
   };
 
@@ -551,10 +544,7 @@ export const DocumentsScreen: React.FC = () => {
               style={styles.selectionCancelButton}
               onPress={() => {
                 setShowTypesModal(false);
-                // Reabrir el modal de nuevo documento al cancelar
-                setTimeout(() => {
-                  setIsNewDocumentModalVisible(true);
-                }, 300);
+                setIsNewDocumentModalVisible(true);
               }}
             >
               <Text style={styles.selectionCancelButtonText}>Cancelar</Text>
