@@ -223,9 +223,8 @@ export const storageService = {
 
   async getRememberedNif(): Promise<string | null> {
     try {
-      console.log('🔍 Cargando NIF recordado...');
+     
       const nif = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_NIF);
-      console.log('📋 NIF recordado encontrado:', nif);
       return nif;
     } catch (error) {
       console.error('Error getting remembered NIF:', error);
@@ -245,9 +244,9 @@ export const storageService = {
   // Funciones para manejar contraseña y código recordados
   async setRememberedPassword(password: string): Promise<void> {
     try {
-      console.log('💾 Guardando contraseña recordada');
+     
       await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_PASSWORD, password);
-      console.log('✅ Contraseña recordada guardada exitosamente');
+     
     } catch (error) {
       console.error('Error saving remembered password:', error);
       throw error;
@@ -256,9 +255,7 @@ export const storageService = {
 
   async getRememberedPassword(): Promise<string | null> {
     try {
-      console.log('🔍 Cargando contraseña recordada...');
       const password = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_PASSWORD);
-      console.log('📋 Contraseña recordada encontrada:', password ? '***' : 'null');
       return password;
     } catch (error) {
       console.error('Error getting remembered password:', error);
@@ -268,9 +265,7 @@ export const storageService = {
 
   async setRememberedCode(code: string): Promise<void> {
     try {
-      console.log('💾 Guardando código recordado');
       await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_CODE, code);
-      console.log('✅ Código recordado guardado exitosamente');
     } catch (error) {
       console.error('Error saving remembered code:', error);
       throw error;
@@ -279,9 +274,7 @@ export const storageService = {
 
   async getRememberedCode(): Promise<string | null> {
     try {
-      console.log('🔍 Cargando código recordado...');
-      const code = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_CODE);
-      console.log('📋 Código recordado encontrado:', code ? '***' : 'null');
+    const code = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_CODE);
       return code;
     } catch (error) {
       console.error('Error getting remembered code:', error);
@@ -295,7 +288,6 @@ export const storageService = {
         AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_PASSWORD),
         AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_CODE),
       ]);
-      console.log('🗑️ Credenciales recordadas borradas');
     } catch (error) {
       console.error('Error clearing remembered credentials:', error);
       throw error;
@@ -338,7 +330,6 @@ export const storageService = {
         AsyncStorage.removeItem(STORAGE_KEYS.LOGIN_TYPE),
         AsyncStorage.removeItem(STORAGE_KEYS.BIOMETRIC_ENABLED),
       ]);
-      console.log('🗑️ Todos los datos borrados completamente');
     } catch (error) {
       console.error('Error clearing all data:', error);
       throw error;

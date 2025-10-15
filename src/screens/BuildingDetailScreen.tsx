@@ -27,9 +27,7 @@ export const BuildingDetailScreen: React.FC = () => {
         const isBuildingUser = await storageService.isBuildingLogin();
         
         if (isBuildingUser) {
-          console.log('🚫 Bloqueando botón de atrás para usuario de edificio');
           backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-            console.log('🚫 Intento de volver atrás bloqueado');
             return true; // Bloquear
           });
         }
@@ -40,44 +38,39 @@ export const BuildingDetailScreen: React.FC = () => {
       // Cleanup cuando la pantalla pierde el foco
       return () => {
         if (backHandler) {
-          console.log('✅ Desbloqueando botón de atrás');
           backHandler.remove();
         }
       };
     }, [])
   );
 
-  // Cargar detalles del edificio desde el API
-  useEffect(() => {
-    loadBuildingDetail();
-  }, [buildingId]);
-
-  const loadBuildingDetail = async () => {
+  const loadBuildingDetail = useCallback(async () => {
     if (!buildingId) {
-      console.log('❌ No hay buildingId en los parámetros');
       return;
     }
     
-    console.log('🏢 Cargando edificio con ID:', buildingId);
     setIsLoading(true);
     try {
       const response = await buildingService.getBuildingById(Number(buildingId));
       
       if (response.status && response.data) {
-        console.log('✅ Detalle de edificio cargado:', response.data.nom);
-        console.log('📊 ID del edificio:', response.data.id);
         setBuildingDetail(response.data);
       } else {
-        console.error('❌ Error al cargar detalle:', response.message);
+        // Error al cargar detalle
         Alert.alert('', response.message || 'Error al cargar el edificio');
       }
-    } catch (error) {
-      console.error('❌ Error al cargar detalle del edificio:', error);
+    } catch {
+      // Error al cargar detalle del edificio
       Alert.alert('', 'Error de conexión al cargar el edificio');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [buildingId]);
+
+  // Cargar detalles del edificio desde el API
+  useEffect(() => {
+    loadBuildingDetail();
+  }, [loadBuildingDetail]);
 
   // Mostrar loading mientras carga
   if (isLoading) {
@@ -114,7 +107,6 @@ export const BuildingDetailScreen: React.FC = () => {
 
   const handleMaintenancePress = () => {
     // Aquí puedes implementar la navegación a la gestión de mantenimiento
-    console.log('Acceder a gestión de mantenimiento del edificio:', building.id);
   };
 
   return (

@@ -469,13 +469,10 @@ export const buildingService = {
   async getBuildingById(id: number): Promise<BuildingDetailApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /edificio/${id}`);
       const response = await httpClient.get(`/edificio/${id}`);
       
-      console.log('📦 Respuesta recibida para edificio:', id);
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error en GET /edificio/${id}:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -488,13 +485,10 @@ export const buildingService = {
   async getNotifications(limit: number = 5, full: boolean = true): Promise<NotificationsApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /edificio/notificaciones/listar?limit=${limit}&full=${full}`);
       const response = await httpClient.get(`/edificio/notificaciones/listar?limit=${limit}&full=${full}`);
       
-      console.log('📦 Notificaciones recibidas');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener notificaciones:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -507,13 +501,10 @@ export const buildingService = {
   async getComunicacionDetail(id: number): Promise<ComunicacionDetailApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /comunicaciones/my_comunicacion/${id}`);
       const response = await httpClient.get(`/comunicaciones/my_comunicacion/${id}`);
       
-      console.log('📦 Detalle de comunicación recibido');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener detalle de comunicación:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -526,13 +517,10 @@ export const buildingService = {
   async markComunicacionAsRead(id: number, leido: boolean = true): Promise<MarkAsReadApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 PATCH /comunicaciones/mensaje_leido?id=${id}&leido=${leido}`);
       const response = await httpClient.patch(`/comunicaciones/mensaje_leido?id=${id}&leido=${leido}`);
       
-      console.log('✅ Comunicación marcada como leída');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al marcar comunicación como leída:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -545,13 +533,10 @@ export const buildingService = {
   async hideActivityNotification(id: number): Promise<any> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 PATCH /edificio_proyectos/intervenciones/${id}/ocultar_notificacion`);
       const response = await httpClient.patch(`/edificio_proyectos/intervenciones/${id}/ocultar_notificacion`);
       
-      console.log('✅ Notificación de actividad ocultada');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al ocultar notificación de actividad:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -569,13 +554,10 @@ export const buildingService = {
         : `/edificio_inmuebles/notificaciones/${id}/ocultar`;
       
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 PATCH ${endpoint}`);
       const response = await httpClient.patch(endpoint);
       
-      console.log('✅ Notificación de documento ocultada');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al ocultar notificación de documento:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -588,13 +570,10 @@ export const buildingService = {
   async getBuildingUsers(edificiId: number, page: number = 1, limit: number = 15): Promise<BuildingUsersApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /edificio_usuarios?page=${page}&limit=${limit}&edifici_id=${edificiId}`);
       const response = await httpClient.get(`/edificio_usuarios?page=${page}&limit=${limit}&edifici_id=${edificiId}`);
       
-      console.log('📦 Usuarios del edificio obtenidos');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener usuarios del edificio:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -606,16 +585,12 @@ export const buildingService = {
 
   async sendBuildingEmail(emailData: SendEmailRequest): Promise<SendEmailApiResponse> {
     try {
-      // El interceptor agrega automáticamente el token y el idioma
-      console.log('📧 POST /comunicaciones/comunicacion_edificio');
-      console.log('Datos del email:', JSON.stringify(emailData, null, 2));
+    
       
       const response = await httpClient.post('/comunicaciones/comunicacion_edificio', emailData);
       
-      console.log('✅ Email enviado exitosamente');
       return response.data;
     } catch (error: any) {
-      console.error('❌ Error al enviar email:', error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -628,13 +603,10 @@ export const buildingService = {
   async getBuildingCommunications(edificiId: number, page: number = 1, limit: number = 15): Promise<CommunicationsApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /comunicaciones/comunicaciones_edificios/${edificiId}?page=${page}&limit=${limit}`);
       const response = await httpClient.get(`/comunicaciones/comunicaciones_edificios/${edificiId}?page=${page}&limit=${limit}`);
       
-      console.log('📦 Comunicaciones del edificio obtenidas');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener comunicaciones del edificio:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -647,13 +619,11 @@ export const buildingService = {
   async getBuildingDocuments(edificiId: number): Promise<BuildingDocumentsApiResponse> {
     try {
       // El interceptor agrega automáticamente el token y el idioma
-      console.log(`🌐 GET /edificio_documentos?ultimaversion=true&edifici_id=${edificiId}`);
       const response = await httpClient.get(`/edificio_documentos?ultimaversion=true&edifici_id=${edificiId}`);
       
       console.log('📦 Documentos del edificio obtenidos');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al obtener documentos del edificio:`, error.response?.status || error.message);
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
@@ -746,15 +716,6 @@ export const buildingService = {
       formData.append('file', data.file);
       formData.append('data_validesa', data.data_validesa);
       formData.append('afegir_al_libre', String(data.afegir_al_libre));
-
-      console.log(`🌐 POST /edificio_documentos`);
-      console.log('📦 Datos del documento:', {
-        edifici_id: edificiId,
-        nom: data.nom,
-        tipus_document: data.tipus_document,
-        data_validesa: data.data_validesa,
-        afegir_al_libre: data.afegir_al_libre,
-      });
       
       const response = await httpClient.post('/edificio_documentos', formData, {
         headers: {
@@ -762,11 +723,9 @@ export const buildingService = {
         },
       });
       
-      console.log('✅ Documento creado exitosamente');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al crear documento:`, error.response?.status || error.message);
-      // Si axios devuelve un error con respuesta, devolver esa data
+      
       if (error.response?.data) {
         return error.response.data;
       }
@@ -777,14 +736,13 @@ export const buildingService = {
 
   async deleteBuildingDocument(documentId: number): Promise<any> {
     try {
-      console.log(`🌐 DELETE /edificio_documentos/${documentId}`);
+    
       
       const response = await httpClient.delete(`/edificio_documentos/${documentId}`);
       
-      console.log('✅ Documento eliminado exitosamente');
       return response.data;
     } catch (error: any) {
-      console.error(`❌ Error al eliminar documento:`, error.response?.status || error.message);
+     
       // Si axios devuelve un error con respuesta, devolver esa data
       if (error.response?.data) {
         return error.response.data;
