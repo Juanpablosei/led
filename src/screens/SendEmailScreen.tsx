@@ -239,16 +239,22 @@ export const SendEmailScreen: React.FC = () => {
 
             {/* Lista de usuarios */}
             <View style={styles.usersListContainer}>
-              {isLoadingUsers ? (
-                <View style={{ padding: 40, alignItems: 'center' }}>
-                  <ActivityIndicator size="large" color="#E53E3E" />
-                  <Text style={{ marginTop: 12, color: '#666' }}>Cargando usuarios...</Text>
-                </View>
-              ) : (
-                getCurrentPageUsers().map(item => (
-                  <UserSelectItem key={item.id} user={item} onToggle={handleToggleUser} />
-                ))
-              )}
+              <ScrollView 
+                style={styles.usersScrollContainer}
+                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled={true}
+              >
+                {isLoadingUsers ? (
+                  <View style={{ padding: 40, alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color="#E53E3E" />
+                    <Text style={{ marginTop: 12, color: '#666' }}>Cargando usuarios...</Text>
+                  </View>
+                ) : (
+                  getCurrentPageUsers().map(item => (
+                    <UserSelectItem key={item.id} user={item} onToggle={handleToggleUser} />
+                  ))
+                )}
+              </ScrollView>
             </View>
 
             {/* Paginación */}

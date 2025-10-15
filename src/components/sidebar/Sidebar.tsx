@@ -1,14 +1,38 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './Sidebar.styles';
 import { SidebarItem, SidebarProps } from './Sidebar.types';
 
-export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPress }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPress, currentRoute }) => {
   const { t } = useTranslation();
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['edificio']));
+  
+  // Función para determinar qué sección debe estar expandida basándose en la ruta
+  const getExpandedSection = (route: string): string => {
+    const routeMap: { [key: string]: string } = {
+      '/building-detail': 'edificio',
+      '/send-email': 'usuarios',
+      '/users': 'usuarios',
+      '/documents': 'documentacion',
+      '/communications': 'comunicacion',
+    };
+    
+    return routeMap[route] || 'edificio'; // Por defecto 'edificio'
+  };
+  
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set([getExpandedSection(currentRoute || '')])
+  );
+
+  // Actualizar las secciones expandidas cuando cambie la ruta
+  useEffect(() => {
+    if (currentRoute) {
+      const sectionToExpand = getExpandedSection(currentRoute);
+      setExpandedSections(new Set([sectionToExpand]));
+    }
+  }, [currentRoute]);
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -58,6 +82,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
     setExpandedSections(newExpanded);
   };
 
+  const isItemActive = (itemId: string): boolean => {
+    if (!currentRoute) return false;
+    
+    // Mapear las rutas a los IDs del sidebar
+    const routeMap: { [key: string]: string } = {
+      '/building-detail': 'identificacion',
+      '/send-email': 'enviar-email',
+      '/documents': 'biblioteca',
+      '/communications': 'listado-comunicaciones',
+      '/users': 'listado-usuarios',
+    };
+    
+    return routeMap[currentRoute] === itemId;
+  };
+
   const handleItemPress = (itemId: string) => {
     console.log('Sidebar item pressed:', itemId);
     onItemPress?.(itemId);
@@ -102,19 +141,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
                           key={child.id}
                           style={[
                             styles.sectionItem,
-                            child.id === 'identificacion' && styles.sectionItemActive,
+                            isItemActive(child.id) && styles.sectionItemActive,
                           ]}
                           onPress={() => handleItemPress(child.id)}
                         >
                           <Ionicons
                             name={child.icon as any}
                             size={16}
-                            color={child.id === 'identificacion' ? colors.white : colors.text}
+                            color={isItemActive(child.id) ? colors.white : colors.text}
                           />
                           <Text
                             style={[
                               styles.sectionItemText,
-                              child.id === 'identificacion' && styles.sectionItemTextActive,
+                              isItemActive(child.id) && styles.sectionItemTextActive,
                             ]}
                           >
                             {child.title}

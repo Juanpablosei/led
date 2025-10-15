@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalHeader } from '../components/global/GlobalHeader';
@@ -13,6 +13,7 @@ import { BuildingLayoutProps } from './BuildingLayout.types';
 
 export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, children }) => {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -167,6 +168,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         isVisible={isSidebarVisible}
         onClose={handleSidebarClose}
         onItemPress={handleSidebarItemPress}
+        currentRoute={pathname}
       />
 
       {/* Menú de usuario */}

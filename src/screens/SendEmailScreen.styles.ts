@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    flexGrow: 1,
   },
   header: {
     backgroundColor: colors.white,
@@ -27,17 +28,16 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
   headerSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderBottomWidth: 1,
-    
     borderBottomColor: colors.lightGray,
   },
   headerLabel: {
@@ -48,14 +48,19 @@ export const styles = StyleSheet.create({
   },
   usersListContainer: {
     backgroundColor: colors.white,
-    minHeight: '40%',
+    minHeight: 200,
+    maxHeight: '50%',
+    flexShrink: 1,
+  },
+  usersScrollContainer: {
+    flex: 1,
   },
   paginationContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderTopWidth: 1,
     borderTopColor: colors.lightGray,
   },
@@ -87,9 +92,9 @@ export const styles = StyleSheet.create({
   },
   continueButton: {
     backgroundColor: colors.primary,
-    paddingVertical: 14,
+    paddingVertical: 12,
     paddingHorizontal: 24,
-    margin: 20,
+    margin: 16,
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
@@ -105,7 +110,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 16,
     gap: 12,
   },
   backButton: {

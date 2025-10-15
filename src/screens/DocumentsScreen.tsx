@@ -1,13 +1,14 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    Modal,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components/documents';
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
@@ -22,6 +23,19 @@ import { styles } from './DocumentsScreen.styles';
 export const DocumentsScreen: React.FC = () => {
   const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
+  const screenWidth = Dimensions.get('window').width;
+  
+  // Función para obtener el tamaño de fuente basado en el ancho de pantalla
+  const getTabFontSize = () => {
+    if (screenWidth < 375) {
+      return 12; // Pantallas muy pequeñas
+    } else if (screenWidth < 414) {
+      return 14; // Pantallas pequeñas
+    } else {
+      return 16; // Pantallas normales y grandes
+    }
+  };
+  
   const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
   const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
   const [documents, setDocuments] = useState<BuildingDocument[]>([]);
@@ -426,7 +440,8 @@ export const DocumentsScreen: React.FC = () => {
             >
               <Text style={[
                 styles.tabText,
-                activeTab === tab.id && styles.tabTextActive
+                activeTab === tab.id && styles.tabTextActive,
+                { fontSize: getTabFontSize() }
               ]}>
                 {tab.label}
               </Text>

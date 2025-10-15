@@ -2,6 +2,7 @@ export interface SidebarProps {
   isVisible: boolean;
   onClose: () => void;
   onItemPress?: (itemId: string) => void;
+  currentRoute?: string;
 }
 
 export interface SidebarItem {
