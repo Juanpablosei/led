@@ -152,6 +152,10 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
+    // También cerrar el editor rico si está activo
+    if (richText.current) {
+      richText.current.blurContentEditor();
+    }
   };
 
   return (

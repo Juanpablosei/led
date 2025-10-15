@@ -19,6 +19,30 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   const [notificationCount, setNotificationCount] = useState(0);
   const [isBuildingLogin, setIsBuildingLogin] = useState(false);
 
+  // Función para obtener el título dinámico del header
+  const getHeaderTitle = () => {
+    if (pathname === '/building-detail') {
+      return t('myBuildings', 'navigation'); // "Mis Edificios" (solo en detalle del edificio)
+    } else {
+      return t('building', 'navigation'); // "Edificio" (en todas las demás pantallas)
+    }
+  };
+
+  // Función para manejar la navegación del botón atrás
+  const handleBackPress = () => {
+    if (pathname === '/building-detail') {
+      // Desde detalle del edificio, ir al listado de edificios
+      router.push('/buildings');
+    } else {
+      // Desde otras pantallas, ir al detalle del edificio
+      if (building?.id) {
+        router.push(`/building-detail?buildingId=${building.id}`);
+      } else {
+        router.back();
+      }
+    }
+  };
+
   // Verificar tipo de login
   useEffect(() => {
     checkLoginType();
@@ -142,8 +166,8 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       {/* Header Global - SIEMPRE */}
       <GlobalHeader
         variant="navigation"
-        title={t('myBuildings', 'navigation')}
-        onBackPress={() => router.back()}
+        title={getHeaderTitle()}
+        onBackPress={handleBackPress}
         notificationCount={notificationCount}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress}

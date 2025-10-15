@@ -8,8 +8,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    marginBottom: 40,
-   
+    marginBottom: 60, // Aumentado para evitar superposición con botones de navegación en Android
   },
   totalText: {
     fontSize: 14,

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Modal, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Toast, ToastType } from '../components/ui';
 import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
@@ -469,6 +469,11 @@ export const MyDataScreen: React.FC = () => {
     return agr?.name || 'Seleccionar convenio';
   };
 
+  // Función para ocultar el teclado
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -480,8 +485,9 @@ export const MyDataScreen: React.FC = () => {
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <View style={styles.content}>
+          <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           {/* Nombre y Apellidos en la misma fila - SOLO LECTURA */}
           <View style={styles.rowContainer}>
@@ -702,7 +708,8 @@ export const MyDataScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
         </ScrollView>
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
 
       {/* Toast notification */}
       <Toast

@@ -5,13 +5,17 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  content: {
+    flex: 1,
+    flexGrow: 1,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   listContainer: {
-    flex: 1,
+    flexGrow: 1,
   },
   // Estilos de las cards mejorados
   cardContainer: {
@@ -111,6 +115,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    paddingBottom: 32, // Padding extra para evitar superposición con botones de navegación
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
     backgroundColor: '#FFFFFF',

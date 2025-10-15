@@ -2,13 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    ActivityIndicator,
+    Modal,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    useWindowDimensions,
+    View,
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { colors } from '../constants/colors';
@@ -149,7 +149,7 @@ export const CommunicationsScreen: React.FC = () => {
 
     return (
       <>
-        <ScrollView style={styles.listContainer}>
+        <View style={styles.listContainer}>
           {/* Lista de comunicaciones */}
           {communications.map((comm, index) => (
             <View
@@ -209,7 +209,7 @@ export const CommunicationsScreen: React.FC = () => {
               </View>
             </View>
           ))}
-        </ScrollView>
+        </View>
 
         {/* Paginación */}
         <View style={styles.paginationContainer}>
@@ -258,7 +258,9 @@ export const CommunicationsScreen: React.FC = () => {
           : null
       }
     >
-      {renderContent()}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {renderContent()}
+      </ScrollView>
 
       {/* Modal de detalles del mensaje */}
       <Modal
