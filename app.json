@@ -8,11 +8,6 @@
     "scheme": "ledat",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "statusBar": {
-      "hidden": true,
-      "translucent": true,
-      "backgroundColor": "transparent"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "es.arescoop.ledat",
