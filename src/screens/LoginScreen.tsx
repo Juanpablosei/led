@@ -20,11 +20,13 @@ import { LoginCard } from "../components/login/login-card/LoginCard";
 import { LoginFormData } from "../components/login/login-card/LoginCard.types";
 import { ResetCodeModal } from "../components/login/reset-code-modal/ResetCodeModal";
 import { ResetPasswordModal } from "../components/login/reset-password-modal/ResetPasswordModal";
+import { BiometricSetupModal } from "../components/modals/BiometricSetupModal";
 import BuildingRejectedModal from "../components/modals/BuildingRejectedModal";
 import ProfessionalDataModal from "../components/modals/ProfessionalDataModal";
 import { ProfessionalDataFormData } from "../components/modals/ProfessionalDataModal.types";
 import { SupportOptions } from "../components/support-options/SupportOptions";
 import { colors } from "../constants/colors";
+import { useBiometricAuth } from "../hooks/useBiometricAuth";
 import { useTranslation } from "../hooks/useTranslation";
 import { authService } from "../services/authService";
 import { buildingService } from "../services/buildingService";
@@ -36,6 +38,7 @@ const WEB_BASE_URL = 'https://desarrollo.arescoop.es/libro-edificio';
 
 export const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
+  const { isAvailable: isBiometricAvailable, getBiometricLabel } = useBiometricAuth();
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showResetCodeModal, setShowResetCodeModal] = useState(false);
@@ -48,6 +51,9 @@ export const LoginScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberedNif, setRememberedNif] = useState<string | null>(null);
   const [showProfessionalDataModal, setShowProfessionalDataModal] = useState(false);
+  const [showBiometricSetupModal, setShowBiometricSetupModal] = useState(false);
+  const [currentLoginNif, setCurrentLoginNif] = useState<string | null>(null);
+  const [pendingNavigation, setPendingNavigation] = useState<{ route: string; params?: any } | null>(null);
 
   // Cargar NIF recordado al iniciar
   useEffect(() => {
@@ -99,6 +105,12 @@ export const LoginScreen: React.FC = () => {
 
   const handleLogin = async (data: LoginFormData, activeTab: string) => {
     console.log("Iniciar sesión:", data, "Tab:", activeTab);
+    console.log("🔍 Verificando datos de login:");
+    console.log("  - NIF:", data.nif);
+    console.log("  - Contraseña:", data.password ? '***' : 'vacía');
+    console.log("  - Código:", data.code ? '***' : 'vacío');
+    console.log("  - Recordar NIF:", data.rememberNif);
+    console.log("  - Tab:", activeTab);
     setIsLoading(true);
     
     try {
@@ -129,10 +141,25 @@ export const LoginScreen: React.FC = () => {
             await storageService.setUserRoles(response.roles);
           }
           
-          // Guardar NIF si está marcado para recordar
+          // Guardar NIF y credenciales si está marcado para recordar
           if (data.rememberNif && data.nif) {
+            console.log('💾 Guardando datos para Face ID...');
+            console.log('  - NIF:', data.nif);
+            console.log('  - Contraseña:', data.password ? '***' : 'vacía');
+            console.log('  - Código:', data.code ? '***' : 'vacío');
+            
             await storageService.setRememberedNif(data.nif);
             setRememberedNif(data.nif);
+            
+            // Guardar credenciales para Face ID
+            if (data.password) {
+              await storageService.setRememberedPassword(data.password);
+              console.log('✅ Contraseña guardada para Face ID');
+            }
+            if (data.code) {
+              await storageService.setRememberedCode(data.code);
+              console.log('✅ Código guardado para Face ID');
+            }
           }
           
           // Configurar notificaciones push
@@ -143,11 +170,20 @@ export const LoginScreen: React.FC = () => {
             // Mostrar modal de confirmación
             setShowBuildingAcceptanceModal(true);
           } else if (response.activ === true) {
-            // Login de edificio: ir directo al detalle del edificio (no a la lista)
-            if (response.edificio?.id) {
-              router.replace(`/building-detail?buildingId=${response.edificio.id}`);
+            // Verificar si debe mostrar modal de Face ID (solo para login normal, no biométrico)
+            if (data.nif && !data.password && !data.code) {
+              // Login biométrico, no mostrar modal
+              if (response.edificio?.id) {
+                router.replace(`/building-detail?buildingId=${response.edificio.id}`);
+              } else {
+                router.replace("/buildings");
+              }
             } else {
-              router.replace("/buildings");
+              // Login normal, verificar si mostrar modal de Face ID
+              const navigationTarget = response.edificio?.id 
+                ? { route: '/building-detail', params: { buildingId: response.edificio.id.toString() } }
+                : { route: '/buildings' };
+              await checkAndShowBiometricSetup(data.nif, navigationTarget);
             }
           } else if (response.activ === false) {
             // Mostrar modal de error
@@ -200,10 +236,25 @@ export const LoginScreen: React.FC = () => {
             console.log("🔔 Token de notificaciones guardado");
           }
           
-          // Guardar NIF si está marcado para recordar
+          // Guardar NIF y credenciales si está marcado para recordar
           if (data.rememberNif && data.nif) {
+            console.log('💾 Guardando datos para Face ID...');
+            console.log('  - NIF:', data.nif);
+            console.log('  - Contraseña:', data.password ? '***' : 'vacía');
+            console.log('  - Código:', data.code ? '***' : 'vacío');
+            
             await storageService.setRememberedNif(data.nif);
             setRememberedNif(data.nif);
+            
+            // Guardar credenciales para Face ID
+            if (data.password) {
+              await storageService.setRememberedPassword(data.password);
+              console.log('✅ Contraseña guardada para Face ID');
+            }
+            if (data.code) {
+              await storageService.setRememberedCode(data.code);
+              console.log('✅ Código guardado para Face ID');
+            }
           }
           
           // Configurar notificaciones push
@@ -267,8 +318,14 @@ export const LoginScreen: React.FC = () => {
               console.error('Error al cargar edificios:', error);
             }
             
-            // Navegar a la pantalla de edificios
-            router.replace("/buildings");
+            // Verificar si debe mostrar modal de Face ID (solo para login normal, no biométrico)
+            if (data.nif && !data.password && !data.code) {
+              // Login biométrico, no mostrar modal
+              router.replace("/buildings");
+            } else {
+              // Login normal, verificar si mostrar modal de Face ID
+              await checkAndShowBiometricSetup(data.nif, { route: '/buildings' });
+            }
           }
         } else {
           // Error en el login - mostrar el mensaje exacto de la respuesta
@@ -511,6 +568,89 @@ export const LoginScreen: React.FC = () => {
     router.replace("/buildings");
   };
 
+  // Funciones para manejar la configuración de Face ID/Touch ID
+  const handleBiometricSetupAccept = async () => {
+    if (currentLoginNif) {
+      await storageService.setBiometricEnabled(currentLoginNif, true);
+      console.log(`Face ID/Touch ID habilitado para NIF: ${currentLoginNif}`);
+    }
+    setShowBiometricSetupModal(false);
+    setCurrentLoginNif(null);
+    
+    // Navegar después de cerrar el modal
+    if (pendingNavigation) {
+      if (pendingNavigation.params) {
+        const params = new URLSearchParams(pendingNavigation.params).toString();
+        router.replace(`${pendingNavigation.route}?${params}` as any);
+      } else {
+        router.replace(pendingNavigation.route as any);
+      }
+      setPendingNavigation(null);
+    }
+  };
+
+  const handleBiometricSetupReject = async () => {
+    if (currentLoginNif) {
+      await storageService.setBiometricEnabled(currentLoginNif, false);
+      console.log(`Face ID/Touch ID rechazado para NIF: ${currentLoginNif}`);
+    }
+    setShowBiometricSetupModal(false);
+    setCurrentLoginNif(null);
+    
+    // Navegar después de cerrar el modal
+    if (pendingNavigation) {
+      if (pendingNavigation.params) {
+        const params = new URLSearchParams(pendingNavigation.params).toString();
+        router.replace(`${pendingNavigation.route}?${params}` as any);
+      } else {
+        router.replace(pendingNavigation.route as any);
+      }
+      setPendingNavigation(null);
+    }
+  };
+
+  const checkAndShowBiometricSetup = async (nif: string, navigationTarget: { route: string; params?: any }) => {
+    // Solo mostrar el modal si:
+    // 1. La biometría está disponible
+    // 2. Es la primera vez que se loguea (no tiene preferencia guardada)
+    // 3. No es un login con Face ID (para evitar loops)
+    
+    console.log('🔍 checkAndShowBiometricSetup llamado con NIF:', nif);
+    console.log('🔍 isBiometricAvailable:', isBiometricAvailable);
+    console.log('🔍 navigationTarget:', navigationTarget);
+    
+    try {
+      const biometricEnabled = await storageService.isBiometricEnabled(nif);
+      console.log('🔍 biometricEnabled para NIF', nif, ':', biometricEnabled);
+      
+      if (isBiometricAvailable && !biometricEnabled) {
+        console.log('✅ Mostrando modal de Face ID setup');
+        setCurrentLoginNif(nif);
+        setPendingNavigation(navigationTarget);
+        setShowBiometricSetupModal(true);
+      } else {
+        console.log('❌ No se muestra modal - navegando directamente');
+        console.log('❌ isBiometricAvailable:', isBiometricAvailable, 'biometricEnabled:', biometricEnabled);
+        // Navegar directamente si no se muestra el modal
+        if (navigationTarget.params) {
+          const params = new URLSearchParams(navigationTarget.params).toString();
+          router.replace(`${navigationTarget.route}?${params}` as any);
+        } else {
+          router.replace(navigationTarget.route as any);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking biometric setup:', error);
+      // En caso de error, navegar directamente
+      if (navigationTarget.params) {
+        const params = new URLSearchParams(navigationTarget.params).toString();
+        router.replace(`${navigationTarget.route}?${params}` as any);
+      } else {
+        router.replace(navigationTarget.route as any);
+      }
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -627,6 +767,14 @@ export const LoginScreen: React.FC = () => {
             visible={showProfessionalDataModal}
             onClose={handleProfessionalDataClose}
             onFinish={handleProfessionalDataFinish}
+          />
+
+          {/* Biometric Setup Modal */}
+          <BiometricSetupModal
+            visible={showBiometricSetupModal}
+            biometricType={getBiometricLabel()}
+            onAccept={handleBiometricSetupAccept}
+            onReject={handleBiometricSetupReject}
           />
         </View>
       </View>

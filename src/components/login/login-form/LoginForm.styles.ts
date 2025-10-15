@@ -23,6 +23,7 @@ export const typography = {
 };
 
 export const spacing = {
+  sm: 8,
   md: 16,
   lg: 24,
   xl: 32,
@@ -99,5 +100,23 @@ export const styles = StyleSheet.create({
     color: colors.primary,
     textAlign: 'center',
     marginBottom: spacing.lg,
+  },
+  biometricButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  biometricButtonText: {
+    ...typography.body,
+    color: colors.primary,
+    marginLeft: spacing.sm,
+    fontWeight: '600',
   },
 });

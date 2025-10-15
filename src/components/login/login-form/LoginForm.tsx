@@ -1,6 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useBiometricAuth } from '../../../hooks/useBiometricAuth';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { storageService } from '../../../services/storageService';
 import { Button } from '../../buttons/Button';
 import { Input } from '../../inputs/Input';
 import { Tab } from '../../tabs/Tab';
@@ -21,6 +24,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   rememberedNif = null,
 }) => {
   const { t } = useTranslation();
+  const { 
+    isAvailable: isBiometricAvailable, 
+    isLoading: isBiometricLoading, 
+    authenticateWithBiometric, 
+    getBiometricIcon, 
+    getBiometricLabel 
+  } = useBiometricAuth();
+  
   const [formData, setFormData] = useState<LoginFormData>({
     nif: '',
     password: '',
@@ -29,6 +40,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   });
 
   const [activeTab, setActiveTab] = useState('general');
+  const [isBiometricEnabled, setIsBiometricEnabled] = useState(false);
 
   // Cargar NIF recordado cuando el componente se monta
   useEffect(() => {
@@ -40,6 +52,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       }));
     }
   }, [rememberedNif]);
+
+  // Verificar si Face ID está habilitado para el NIF actual
+  useEffect(() => {
+    const checkBiometricEnabled = async () => {
+      if (formData.nif && isBiometricAvailable) {
+        try {
+          const enabled = await storageService.isBiometricEnabled(formData.nif);
+          setIsBiometricEnabled(enabled);
+        } catch (error) {
+          console.error('Error checking biometric enabled:', error);
+          setIsBiometricEnabled(false);
+        }
+      } else {
+        setIsBiometricEnabled(false);
+      }
+    };
+
+    checkBiometricEnabled();
+  }, [formData.nif, isBiometricAvailable]);
 
   const tabs = [
     {
@@ -76,6 +107,53 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   const handleForgotPassword = () => {
     onForgotPassword(activeTab);
+  };
+
+  const handleBiometricLogin = async () => {
+    if (!isBiometricAvailable || !formData.nif || !isBiometricEnabled) {
+      Alert.alert('Error', 'Autenticación biométrica no disponible o NIF requerido');
+      return;
+    }
+
+    try {
+      const result = await authenticateWithBiometric();
+      
+      if (result.success) {
+        // Obtener las credenciales guardadas para el login biométrico
+        console.log('🔍 Obteniendo credenciales guardadas...');
+        const savedPassword = await storageService.getRememberedPassword();
+        const savedCode = await storageService.getRememberedCode();
+        
+        console.log('🔍 Credenciales encontradas:');
+        console.log('  - Contraseña:', savedPassword ? '***' : 'null');
+        console.log('  - Código:', savedCode ? '***' : 'null');
+        console.log('  - NIF:', formData.nif);
+        console.log('  - Tab activo:', activeTab);
+        
+        // Para login biométrico, usar las credenciales guardadas
+        const biometricLoginData: LoginFormData = {
+          nif: formData.nif,
+          password: savedPassword || '', // Usar contraseña guardada
+          code: savedCode || '', // Usar código guardado
+          rememberNif: formData.rememberNif,
+        };
+        
+        console.log('🔐 Login biométrico con credenciales guardadas');
+        console.log('📤 Datos que se enviarán:', {
+          nif: biometricLoginData.nif,
+          password: biometricLoginData.password ? '***' : 'vacío',
+          code: biometricLoginData.code ? '***' : 'vacío',
+          rememberNif: biometricLoginData.rememberNif
+        });
+        
+        onLogin(biometricLoginData, activeTab);
+      } else {
+        Alert.alert('Error', result.error || 'Error en la autenticación biométrica');
+      }
+    } catch (error) {
+      console.error('Biometric login error:', error);
+      Alert.alert('Error', 'Error en la autenticación biométrica');
+    }
   };
 
   return (
@@ -130,6 +208,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </View>
         <Text style={styles.checkboxLabel}>{t('rememberNif', 'auth')}</Text>
       </TouchableOpacity>
+
+      {/* Biometric Login Button - Solo mostrar si Face ID está habilitado para este NIF */}
+      {isBiometricAvailable && formData.nif && isBiometricEnabled && (
+        <TouchableOpacity
+          style={styles.biometricButton}
+          onPress={handleBiometricLogin}
+          disabled={isBiometricLoading || isLoading}
+        >
+          <Ionicons 
+            name={getBiometricIcon() as any} 
+            size={24} 
+            color="#E95460" 
+          />
+          <Text style={styles.biometricButtonText}>
+            {isBiometricLoading ? 'Autenticando...' : `Iniciar sesión con ${getBiometricLabel()}`}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* Login Button */}
       <Button

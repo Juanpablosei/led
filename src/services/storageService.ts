@@ -7,7 +7,10 @@ const STORAGE_KEYS = {
   USER_ROLES: 'user_roles',
   USER_DATA: 'user_data',
   REMEMBERED_NIF: 'remembered_nif',
+  REMEMBERED_PASSWORD: 'remembered_password',
+  REMEMBERED_CODE: 'remembered_code',
   LOGIN_TYPE: 'login_type',
+  BIOMETRIC_ENABLED: 'biometric_enabled',
 } as const;
 
 export interface StoredBuildingData {
@@ -209,7 +212,9 @@ export const storageService = {
   // NIF management
   async setRememberedNif(nif: string): Promise<void> {
     try {
+      console.log('💾 Guardando NIF recordado:', nif);
       await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_NIF, nif);
+      console.log('✅ NIF recordado guardado exitosamente');
     } catch (error) {
       console.error('Error saving remembered NIF:', error);
       throw error;
@@ -218,7 +223,10 @@ export const storageService = {
 
   async getRememberedNif(): Promise<string | null> {
     try {
-      return await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_NIF);
+      console.log('🔍 Cargando NIF recordado...');
+      const nif = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_NIF);
+      console.log('📋 NIF recordado encontrado:', nif);
+      return nif;
     } catch (error) {
       console.error('Error getting remembered NIF:', error);
       return null;
@@ -234,6 +242,66 @@ export const storageService = {
     }
   },
 
+  // Funciones para manejar contraseña y código recordados
+  async setRememberedPassword(password: string): Promise<void> {
+    try {
+      console.log('💾 Guardando contraseña recordada');
+      await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_PASSWORD, password);
+      console.log('✅ Contraseña recordada guardada exitosamente');
+    } catch (error) {
+      console.error('Error saving remembered password:', error);
+      throw error;
+    }
+  },
+
+  async getRememberedPassword(): Promise<string | null> {
+    try {
+      console.log('🔍 Cargando contraseña recordada...');
+      const password = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_PASSWORD);
+      console.log('📋 Contraseña recordada encontrada:', password ? '***' : 'null');
+      return password;
+    } catch (error) {
+      console.error('Error getting remembered password:', error);
+      return null;
+    }
+  },
+
+  async setRememberedCode(code: string): Promise<void> {
+    try {
+      console.log('💾 Guardando código recordado');
+      await AsyncStorage.setItem(STORAGE_KEYS.REMEMBERED_CODE, code);
+      console.log('✅ Código recordado guardado exitosamente');
+    } catch (error) {
+      console.error('Error saving remembered code:', error);
+      throw error;
+    }
+  },
+
+  async getRememberedCode(): Promise<string | null> {
+    try {
+      console.log('🔍 Cargando código recordado...');
+      const code = await AsyncStorage.getItem(STORAGE_KEYS.REMEMBERED_CODE);
+      console.log('📋 Código recordado encontrado:', code ? '***' : 'null');
+      return code;
+    } catch (error) {
+      console.error('Error getting remembered code:', error);
+      return null;
+    }
+  },
+
+  async clearRememberedCredentials(): Promise<void> {
+    try {
+      await Promise.all([
+        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_PASSWORD),
+        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_CODE),
+      ]);
+      console.log('🗑️ Credenciales recordadas borradas');
+    } catch (error) {
+      console.error('Error clearing remembered credentials:', error);
+      throw error;
+    }
+  },
+
   // Clear all auth data
   async clearAuthData(): Promise<void> {
     try {
@@ -243,11 +311,36 @@ export const storageService = {
         AsyncStorage.removeItem(STORAGE_KEYS.BUILDING_DATA),
         AsyncStorage.removeItem(STORAGE_KEYS.USER_ROLES),
         AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA),
-        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_NIF),
+        // NO borrar REMEMBERED_NIF - debe persistir entre sesiones
+        // NO borrar credenciales recordadas - necesarias para Face ID
+        // AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_PASSWORD),
+        // AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_CODE),
         AsyncStorage.removeItem(STORAGE_KEYS.LOGIN_TYPE),
       ]);
     } catch (error) {
       console.error('Error clearing auth data:', error);
+      throw error;
+    }
+  },
+
+  // Limpiar completamente todos los datos (incluyendo NIF recordado y credenciales)
+  async clearAllData(): Promise<void> {
+    try {
+      await Promise.all([
+        AsyncStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN),
+        AsyncStorage.removeItem(STORAGE_KEYS.NOTIFICATION_TOKEN),
+        AsyncStorage.removeItem(STORAGE_KEYS.BUILDING_DATA),
+        AsyncStorage.removeItem(STORAGE_KEYS.USER_ROLES),
+        AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA),
+        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_NIF),
+        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_PASSWORD),
+        AsyncStorage.removeItem(STORAGE_KEYS.REMEMBERED_CODE),
+        AsyncStorage.removeItem(STORAGE_KEYS.LOGIN_TYPE),
+        AsyncStorage.removeItem(STORAGE_KEYS.BIOMETRIC_ENABLED),
+      ]);
+      console.log('🗑️ Todos los datos borrados completamente');
+    } catch (error) {
+      console.error('Error clearing all data:', error);
       throw error;
     }
   },
@@ -289,6 +382,50 @@ export const storageService = {
     } catch (error) {
       console.error('Error checking login type:', error);
       return false;
+    }
+  },
+
+  // Funciones para manejar preferencias de Face ID/Touch ID
+  async setBiometricEnabled(nif: string, enabled: boolean): Promise<void> {
+    try {
+      const biometricData = await this.getBiometricEnabled();
+      const updatedData = {
+        ...biometricData,
+        [nif]: enabled,
+      };
+      await AsyncStorage.setItem(STORAGE_KEYS.BIOMETRIC_ENABLED, JSON.stringify(updatedData));
+    } catch (error) {
+      console.error('Error setting biometric preference:', error);
+    }
+  },
+
+  async getBiometricEnabled(): Promise<Record<string, boolean>> {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEYS.BIOMETRIC_ENABLED);
+      return data ? JSON.parse(data) : {};
+    } catch (error) {
+      console.error('Error getting biometric preferences:', error);
+      return {};
+    }
+  },
+
+  async isBiometricEnabled(nif: string): Promise<boolean> {
+    try {
+      const biometricData = await this.getBiometricEnabled();
+      return biometricData[nif] === true;
+    } catch (error) {
+      console.error('Error checking biometric preference:', error);
+      return false;
+    }
+  },
+
+  async clearBiometricPreference(nif: string): Promise<void> {
+    try {
+      const biometricData = await this.getBiometricEnabled();
+      delete biometricData[nif];
+      await AsyncStorage.setItem(STORAGE_KEYS.BIOMETRIC_ENABLED, JSON.stringify(biometricData));
+    } catch (error) {
+      console.error('Error clearing biometric preference:', error);
     }
   }
 };
