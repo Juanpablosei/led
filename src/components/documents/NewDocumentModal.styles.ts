@@ -3,24 +3,20 @@ import { colors } from '../../constants/colors';
 
 export const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
-    elevation: 1000,
+    zIndex: 9999,
+    elevation: 10, // Para Android - asegura que esté por encima de otros elementos
   },
   modal: {
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 24,
-    width: '80%',
-    height: '70%',
-    elevation: 5,
+    width: '90%',
+    height: '80%',
+    elevation: 15, // Aumentado para Android
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -28,6 +24,7 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    zIndex: 10000, // Asegurar que esté por encima del overlay
   },
   header: {
     flexDirection: 'row',

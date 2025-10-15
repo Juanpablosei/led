@@ -3,13 +3,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    Modal,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Alert,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import { colors } from '../../constants/colors';
 import { styles } from './EditDocumentModal.styles';
@@ -146,6 +146,8 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         transparent={true}
         animationType="fade"
         onRequestClose={onClose}
+        statusBarTranslucent={true}
+        presentationStyle="overFullScreen"
       >
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.overlay}>

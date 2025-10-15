@@ -1,14 +1,14 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Dimensions,
-    Modal,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components/documents';
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
@@ -34,6 +34,26 @@ export const DocumentsScreen: React.FC = () => {
     } else {
       return 16; // Pantallas normales y grandes
     }
+  };
+
+  // Función para verificar si el usuario puede crear documentos
+  const canCreateDocuments = (buildingDetail?: BuildingDetailData): boolean => {
+    if (!buildingDetail?.perfil_llibre) {
+      console.log('🔒 No hay datos de perfil_llibre disponibles para crear documentos');
+      return false;
+    }
+    
+    const allowedIds = [1, 3, 5]; // Solo IDs 1 y 3 pueden crear documentos
+    const hasPermission = buildingDetail.perfil_llibre.some(profile => 
+      allowedIds.includes(profile.id)
+    );
+    
+    console.log('🔒 Verificando permisos para crear documentos:');
+    console.log('  - Perfil_llibre:', buildingDetail.perfil_llibre);
+    console.log('  - IDs permitidos:', allowedIds);
+    console.log('  - Puede crear documentos:', hasPermission);
+    
+    return hasPermission;
   };
   
   const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
@@ -452,9 +472,11 @@ export const DocumentsScreen: React.FC = () => {
         {/* Subtítulo y botón NUEVO */}
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>Documentación técnica</Text>
-          <TouchableOpacity style={styles.newButton} onPress={handleNewDocument}>
-            <Text style={styles.newButtonText}>+ NUEVO</Text>
-          </TouchableOpacity>
+          {canCreateDocuments(buildingDetail) && (
+            <TouchableOpacity style={styles.newButton} onPress={handleNewDocument}>
+              <Text style={styles.newButtonText}>+ NUEVO</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Lista de documentos */}
