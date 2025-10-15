@@ -31,13 +31,13 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
           <Image
             source={{ uri: building.imageUrl }}
             style={styles.buildingImage}
-            resizeMode="cover"
+            resizeMode="contain"
           />
         ) : (
           <Image
             source={DEFAULT_IMAGE}
             style={styles.buildingImage}
-            resizeMode="cover"
+            resizeMode="contain"
           />
         )}
       </View>

@@ -222,7 +222,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             color="#E95460" 
           />
           <Text style={styles.biometricButtonText}>
-            {isBiometricLoading ? 'Autenticando...' : `Iniciar sesión con ${getBiometricLabel()}`}
+            {isBiometricLoading ? 'Autenticando...' : 'Usar datos biométricos'}
           </Text>
         </TouchableOpacity>
       )}

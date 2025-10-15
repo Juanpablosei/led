@@ -158,13 +158,13 @@ export const BuildingDetailScreen: React.FC = () => {
               <Image
                 source={{ uri: buildingDetail.imagen }}
                 style={styles.buildingImage}
-                resizeMode="cover"
+                resizeMode="contain"
               />
             ) : (
               <Image
                 source={DEFAULT_IMAGE}
                 style={styles.buildingImage}
-                resizeMode="cover"
+                resizeMode="contain"
               />
             )}
           </View>

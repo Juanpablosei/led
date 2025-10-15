@@ -98,10 +98,15 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 8,
     overflow: 'hidden',
+    backgroundColor: colors.lightGray,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 200,
   },
   buildingImage: {
     width: '100%',
     height: 400,
+    resizeMode: 'contain',
   },
   placeholderImage: {
     width: '100%',

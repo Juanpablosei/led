@@ -27,11 +27,13 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.lightGray,
     marginRight: 16,
     overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buildingImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   contentContainer: {
     flex: 1,
