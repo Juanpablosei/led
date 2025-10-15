@@ -15,7 +15,6 @@ import { styles } from './BuildingsScreen.styles';
 
 export const BuildingsScreen: React.FC = () => {
   const { t } = useTranslation();
-  const [buildings, setBuildings] = useState<BuildingData[]>([]);
   const [filteredBuildings, setFilteredBuildings] = useState<BuildingData[]>([]);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,8 +48,8 @@ export const BuildingsScreen: React.FC = () => {
         
         setNotificationCount(total);
       }
-    } catch (error) {
-      console.error('Error al cargar notificaciones:', error);
+    } catch {
+      // Error al cargar notificaciones
     }
   };
 
@@ -60,10 +59,6 @@ export const BuildingsScreen: React.FC = () => {
       const response = await buildingService.getBuildings(page, search);
       
       if (response.status && response.data) {
-        console.log('Edificios cargados:', response.data.total);
-        console.log('Búsqueda:', search || 'sin filtro');
-        console.log('Página:', response.data.current_page, 'de', response.data.last_page);
-        
         // Transformar los datos del API al formato BuildingData
         const buildingsData: BuildingData[] = response.data.data.map((building) => ({
           id: String(building.id),
@@ -74,20 +69,18 @@ export const BuildingsScreen: React.FC = () => {
           imageUrl: building.imagen || undefined,
         }));
         
-        setBuildings(buildingsData);
         setFilteredBuildings(buildingsData);
         setCurrentPage(response.data.current_page);
         setTotalPages(response.data.last_page);
         setTotalItems(response.data.total);
       } else {
-        console.error('Error al cargar edificios:', response.message);
-        setBuildings([]);
+        // Error al cargar edificios
         setFilteredBuildings([]);
         setTotalPages(1);
         setTotalItems(0);
       }
-    } catch (error) {
-      console.error('Error al cargar edificios:', error);
+    } catch {
+      // Error al cargar edificios
       Alert.alert('', 'Error de conexión al cargar edificios');
     } finally {
       setIsLoadingBuildings(false);
@@ -128,8 +121,8 @@ export const BuildingsScreen: React.FC = () => {
     try {
       await storageService.clearAuthData();
       router.replace('/login');
-    } catch (error) {
-      console.error('Error al hacer logout:', error);
+    } catch {
+      // Error al hacer logout
       router.replace('/login');
     }
   };
@@ -139,9 +132,7 @@ export const BuildingsScreen: React.FC = () => {
       case 'myData':
         router.push('/my-data');
         break;
-      // case 'changePassword':
-      //   router.push('/change-password');
-      //   break;
+     
       case 'logout':
         handleLogout();
         break;

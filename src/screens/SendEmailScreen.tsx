@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { EmailForm, StepIndicator, UserSelectItem } from '../components/email';
 import { EmailFormData } from '../components/email/EmailForm.types';
@@ -30,19 +30,7 @@ export const SendEmailScreen: React.FC = () => {
 
   const itemsPerPage = 15;
 
-  // Cargar edificio desde el API
-  useEffect(() => {
-    loadBuilding();
-  }, [buildingId]);
-
-  // Cargar usuarios cuando cambia la página
-  useEffect(() => {
-    if (buildingId) {
-      loadUsers(currentPage);
-    }
-  }, [buildingId, currentPage]);
-
-  const loadBuilding = async () => {
+  const loadBuilding = useCallback(async () => {
     if (!buildingId) return;
     
     setIsLoadingBuilding(true);
@@ -50,19 +38,18 @@ export const SendEmailScreen: React.FC = () => {
       const response = await buildingService.getBuildingById(Number(buildingId));
       
       if (response.status && response.data) {
-        console.log('✅ Edificio cargado para enviar email:', response.data.nom);
         setBuildingDetail(response.data);
       } else {
-        console.error('❌ Error al cargar edificio:', response.message);
+        // Error al cargar edificio
       }
-    } catch (error) {
-      console.error('❌ Error al cargar edificio:', error);
+    } catch {
+      // Error al cargar edificio
     } finally {
       setIsLoadingBuilding(false);
     }
-  };
+  }, [buildingId]);
 
-  const loadUsers = async (page: number) => {
+  const loadUsers = useCallback(async (page: number) => {
     if (!buildingId) return;
     
     setIsLoadingUsers(true);
@@ -70,8 +57,6 @@ export const SendEmailScreen: React.FC = () => {
       const response = await buildingService.getBuildingUsers(Number(buildingId), page, itemsPerPage);
       
       if (response.status && 'data' in response) {
-        console.log('✅ Usuarios cargados:', response.data.total);
-        
         // Mapear usuarios del API al formato UserSelectData
         // Mantener selecciones previas si el usuario ya estaba seleccionado
         const usersData: UserSelectData[] = response.data.data.map((user) => ({
@@ -85,14 +70,26 @@ export const SendEmailScreen: React.FC = () => {
         setTotalPages(response.data.last_page);
         setTotalUsers(response.data.total);
       } else {
-        console.error('❌ Error al cargar usuarios:', response.message);
+        // Error al cargar usuarios
       }
-    } catch (error) {
-      console.error('❌ Error de red al cargar usuarios:', error);
+    } catch {
+      // Error de red al cargar usuarios
     } finally {
       setIsLoadingUsers(false);
     }
-  };
+  }, [buildingId, itemsPerPage, selectedUserIds]);
+
+  // Cargar edificio desde el API
+  useEffect(() => {
+    loadBuilding();
+  }, [buildingId, loadBuilding]);
+
+  // Cargar usuarios cuando cambia la página
+  useEffect(() => {
+    if (buildingId) {
+      loadUsers(currentPage);
+    }
+  }, [buildingId, currentPage, loadUsers]);
 
   // Mostrar loading mientras carga el edificio
   if (isLoadingBuilding || !buildingDetail) {
@@ -157,7 +154,6 @@ export const SendEmailScreen: React.FC = () => {
       showToast(t('errors.noUsersSelected', 'email'), 'error');
       return;
     }
-    console.log('✅ Usuarios seleccionados:', selectedUserIds.size);
     setCurrentStep(2);
   };
 
@@ -188,10 +184,6 @@ export const SendEmailScreen: React.FC = () => {
         sendEmailData.adjuntos = emailData.attachments;
       }
 
-      console.log('📧 Enviando email...');
-      console.log('Usuarios seleccionados:', selectedUserIds.size);
-      console.log('Lista IDs:', Array.from(selectedUserIds));
-      console.log('Adjuntos:', emailData.attachments.length);
 
       const response = await buildingService.sendBuildingEmail(sendEmailData);
 
@@ -207,8 +199,8 @@ export const SendEmailScreen: React.FC = () => {
       } else {
         showToast(response.message || 'Error al enviar el email', 'error');
       }
-    } catch (error) {
-      console.error('❌ Error al enviar email:', error);
+    } catch {
+      // Error al enviar email
       showToast('Error de conexión al enviar el email', 'error');
     } finally {
       setIsLoadingUsers(false);

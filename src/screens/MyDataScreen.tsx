@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Keyboard, Modal, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Toast, ToastType } from '../components/ui';
 import { colors } from '../constants/colors';
@@ -33,7 +33,6 @@ export const MyDataScreen: React.FC = () => {
   const [comunidadAutonoma, setComunidadAutonoma] = useState('');
   const [numeroColegiado, setNumeroColegiado] = useState('');
   const [colegioProfesional, setColegioProfesional] = useState('');
-  const [colegioProfesionalSlug, setColegioProfesionalSlug] = useState('');
   const [agreement, setAgreement] = useState('');
   
   // Estados para cambio de contraseña
@@ -48,7 +47,6 @@ export const MyDataScreen: React.FC = () => {
   const [agreementOptions, setAgreementOptions] = useState<SelectOption[]>([]);
   
   // Estados de loading
-  const [isLoadingProfessions, setIsLoadingProfessions] = useState(false);
   const [isLoadingComunidades, setIsLoadingComunidades] = useState(false);
   const [isLoadingColegios, setIsLoadingColegios] = useState(false);
   
@@ -58,50 +56,17 @@ export const MyDataScreen: React.FC = () => {
   const [showColegioModal, setShowColegioModal] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
 
-  // TODOS los useEffect al inicio (antes de cualquier return condicional)
-  
-  // Cargar datos del usuario desde storage
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  // Cargar opciones de profesiones y convenios
-  useEffect(() => {
-    loadPublicParameters();
-  }, []);
-
-  // Cargar comunidades autónomas cuando cambia la profesión
-  useEffect(() => {
-    if (tipoUsuario === 'profesional' && profession) {
-      loadComunidadesAutonomas();
-    }
-  }, [profession, tipoUsuario]);
-
-  // Cargar colegios profesionales cuando cambia la comunidad
-  useEffect(() => {
-    if (tipoUsuario === 'profesional' && comunidadAutonoma && profession) {
-      loadColegiosProfesionales();
-    }
-  }, [comunidadAutonoma, profession, tipoUsuario]);
-
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log("🔍 Obteniendo datos del usuario desde /mis-datos...");
-      
       // Obtener datos frescos desde el servidor
       const response = await authService.getMyData();
       
       if (response.status && response.data) {
         const data = response.data;
         
-        console.log("👤 ==================== DATOS DEL USUARIO DESDE API ====================");
-        console.log(JSON.stringify(data, null, 2));
-        console.log("====================================================================");
-        
         // Guardar datos en storage para uso posterior
         await storageService.setUserData(data);
-        console.log("💾 Datos guardados en storage");
         
         // Actualizar estados con los datos del servidor
         setUserData(data);
@@ -118,19 +83,17 @@ export const MyDataScreen: React.FC = () => {
           setColegioProfesional(data.collegi_professional || '');
           setAgreement(data.entitat_conveni_id ? String(data.entitat_conveni_id) : '');
         }
-        
-        console.log("✅ Datos del usuario cargados correctamente");
       } else {
-        console.warn("⚠️ No se pudieron obtener los datos del usuario desde el servidor");
+        // No se pudieron obtener los datos del usuario desde el servidor
         showToast('No se encontraron datos del usuario', 'error');
       }
-    } catch (error) {
-      console.error("❌ Error al cargar datos del usuario:", error);
+    } catch {
+      // Error al cargar datos del usuario
       showToast('Error al cargar los datos', 'error');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const loadPublicParameters = async () => {
     try {
@@ -154,12 +117,12 @@ export const MyDataScreen: React.FC = () => {
         }));
         setAgreementOptions(agreements);
       }
-    } catch (error) {
-      console.error('Error loading public parameters:', error);
+    } catch {
+      // Error loading public parameters
     }
   };
 
-  const loadComunidadesAutonomas = async () => {
+  const loadComunidadesAutonomas = useCallback(async () => {
     if (!profession) return;
 
     const professionId = parseInt(profession);
@@ -190,14 +153,14 @@ export const MyDataScreen: React.FC = () => {
         }));
         setComunidadAutonomaOptions(comunidades);
       }
-    } catch (error) {
-      console.error('Error loading comunidades:', error);
+    } catch {
+      // Error loading comunidades
     } finally {
       setIsLoadingComunidades(false);
     }
-  };
+  }, [profession]);
 
-  const loadColegiosProfesionales = async () => {
+  const loadColegiosProfesionales = useCallback(async () => {
     if (!comunidadAutonoma || !profession) return;
 
     const professionId = parseInt(profession);
@@ -220,12 +183,38 @@ export const MyDataScreen: React.FC = () => {
         }));
         setColegioProfesionalOptions(colegios);
       }
-    } catch (error) {
-      console.error('Error loading colegios:', error);
+    } catch {
+      // Error loading colegios
     } finally {
       setIsLoadingColegios(false);
     }
-  };
+  }, [comunidadAutonoma, profession]);
+
+  // TODOS los useEffect después de las declaraciones de funciones
+  
+  // Cargar datos del usuario desde storage
+  useEffect(() => {
+    loadUserData();
+  }, [loadUserData]);
+
+  // Cargar opciones de profesiones y convenios
+  useEffect(() => {
+    loadPublicParameters();
+  }, []);
+
+  // Cargar comunidades autónomas cuando cambia la profesión
+  useEffect(() => {
+    if (tipoUsuario === 'profesional' && profession) {
+      loadComunidadesAutonomas();
+    }
+  }, [profession, tipoUsuario, loadComunidadesAutonomas]);
+
+  // Cargar colegios profesionales cuando cambia la comunidad
+  useEffect(() => {
+    if (tipoUsuario === 'profesional' && comunidadAutonoma && profession) {
+      loadColegiosProfesionales();
+    }
+  }, [comunidadAutonoma, profession, tipoUsuario, loadColegiosProfesionales]);
 
   const handleBack = () => {
     router.back();
@@ -324,18 +313,12 @@ export const MyDataScreen: React.FC = () => {
       if (newPassword && confirmPassword) {
         dataToUpdate.password = newPassword;
         dataToUpdate.password_confirmation = confirmPassword;
-        console.log('🔐 Cambio de contraseña incluido en la actualización');
       }
-      
-      console.log("💾 Guardando datos del usuario...");
-      console.log("Datos a enviar:", JSON.stringify(dataToUpdate, null, 2));
       
       // Actualizar en el servidor
       const response = await authService.updateMyData(dataToUpdate);
       
       if (response.status) {
-        console.log("✅ Datos actualizados en el servidor");
-        
         // Actualizar storage con los datos actualizados
         const updatedData: StoredUserData = {
           ...userData,
@@ -351,12 +334,10 @@ export const MyDataScreen: React.FC = () => {
         };
         
         await storageService.setUserData(updatedData);
-        console.log("💾 Datos actualizados guardados en storage");
         
         // Si se cambió la contraseña, actualizar el storage para Face ID
         if (newPassword && confirmPassword) {
           await storageService.setRememberedPassword(newPassword);
-          console.log('🔐 Nueva contraseña guardada en storage para Face ID');
         }
         
         showToast(t('myData.successMessage', 'user'), 'success');
@@ -371,13 +352,13 @@ export const MyDataScreen: React.FC = () => {
           router.back();
         }, 1500);
       } else {
-        console.error("❌ Error del servidor:", response.message);
+        // Error del servidor
         // Extraer mensaje correctamente (puede venir como objeto o string)
         const errorMessage = response.message?.message || response.message || 'Error al guardar';
         showToast(errorMessage, 'error');
       }
-    } catch (error) {
-      console.error("❌ Error al guardar datos:", error);
+    } catch {
+      // Error al guardar datos
       showToast('Error al guardar los datos', 'error');
     }
   };
@@ -435,7 +416,6 @@ export const MyDataScreen: React.FC = () => {
   
   const handleTipoUsuarioChange = (tipo: 'propietario' | 'profesional') => {
     setTipoUsuario(tipo);
-    console.log('Tipo de usuario cambiado a:', tipo);
     
     // Limpiar campos profesionales si cambia a propietario
     if (tipo === 'propietario') {
@@ -444,7 +424,6 @@ export const MyDataScreen: React.FC = () => {
       setComunidadAutonoma('');
       setNumeroColegiado('');
       setColegioProfesional('');
-      setColegioProfesionalSlug('');
       setAgreement('');
     }
   };
@@ -813,7 +792,6 @@ export const MyDataScreen: React.FC = () => {
                   style={styles.selectionItem}
                   onPress={() => {
                     setColegioProfesional(option.id);
-                    setColegioProfesionalSlug(option.id);
                     setShowColegioModal(false);
                   }}
                 >
