@@ -9,6 +9,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -33,7 +35,6 @@ export const notificationService = {
     try {
       // Verificar si es un dispositivo físico
       if (!Device.isDevice) {
-        console.log('⚠️ Las notificaciones push solo funcionan en dispositivos físicos');
         return false;
       }
 
@@ -43,20 +44,16 @@ export const notificationService = {
 
       // Si no están concedidos, solicitarlos
       if (existingStatus !== 'granted') {
-        console.log('📲 Solicitando permisos de notificaciones...');
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
 
       if (finalStatus !== 'granted') {
-        console.log('❌ Permisos de notificaciones denegados');
         return false;
       }
 
-      console.log('✅ Permisos de notificaciones concedidos');
       return true;
-    } catch (error) {
-      console.error('❌ Error al solicitar permisos:', error);
+    } catch {
       return false;
     }
   },
@@ -89,16 +86,13 @@ export const notificationService = {
 
       const deviceId = this.getDeviceId();
 
-      console.log('🔔 Token de notificaciones obtenido:', tokenData.data);
-      console.log('📱 Device ID:', deviceId);
-
       return {
         token: tokenData.data,
         deviceId: deviceId,
         type: 'expo',
       };
-    } catch (error) {
-      console.error('❌ Error al obtener token de notificaciones:', error);
+    } catch {
+      // Error al obtener token de notificaciones
       return null;
     }
   },
@@ -127,8 +121,8 @@ export const notificationService = {
   async clearBadge(): Promise<void> {
     try {
       await Notifications.setBadgeCountAsync(0);
-    } catch (error) {
-      console.error('Error al limpiar badge:', error);
+    } catch {
+      // Error al limpiar badge
     }
   },
 };

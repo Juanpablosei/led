@@ -733,8 +733,7 @@ export const buildingService = {
       
       return response.data;
     } catch (error: any) {
-     
-      // Si axios devuelve un error con respuesta, devolver esa data
+      
       if (error.response?.data) {
         return error.response.data;
       }

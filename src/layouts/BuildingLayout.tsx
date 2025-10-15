@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { Sidebar } from '../components/sidebar/Sidebar';
@@ -45,6 +45,20 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   };
 
   // Verificar tipo de login
+  const loadBuildingDetail = useCallback(async () => {
+    if (!building?.id) return;
+    
+    try {
+      const response = await buildingService.getBuildingById(Number(building.id));
+      
+      if (response.status && response.data) {
+        setBuildingDetailData(response.data);
+      }
+    } catch {
+      // Error al cargar datos del edificio
+    }
+  }, [building?.id]);
+
   useEffect(() => {
     checkLoginType();
   }, []);
@@ -54,23 +68,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
     if (building?.id) {
       loadBuildingDetail();
     }
-  }, [building?.id]);
-
-  const loadBuildingDetail = async () => {
-    if (!building?.id) return;
-    
-    try {
-      console.log('🔍 Cargando datos del edificio para permisos:', building.id);
-      const response = await buildingService.getBuildingById(building.id);
-      
-      if (response.status && response.data) {
-        console.log('✅ Datos del edificio cargados:', response.data);
-        setBuildingDetailData(response.data);
-      }
-    } catch (error) {
-      console.error('❌ Error al cargar datos del edificio:', error);
-    }
-  };
+  }, [building?.id, loadBuildingDetail]);
 
   const checkLoginType = async () => {
     const isBuildingUser = await storageService.isBuildingLogin();
@@ -96,8 +94,8 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
         
         setNotificationCount(total);
       }
-    } catch (error) {
-      console.error('Error al cargar notificaciones:', error);
+    } catch {
+      // Error al cargar notificaciones
     }
   };
 
@@ -110,11 +108,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   };
 
   const handleSidebarItemPress = (itemId: string) => {
-    console.log('Sidebar item pressed:', itemId);
     setIsSidebarVisible(false);
     
     if (!building) {
-      console.log('No hay building disponible');
       return;
     }
     
@@ -178,9 +174,8 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       await storageService.clearAuthData();
       // Navegar al login
       router.replace('/login');
-    } catch (error) {
-      console.error('Error al hacer logout:', error);
-      // Navegar al login aunque haya error
+    } catch {
+      // Error al hacer logout - navegar al login aunque haya error
       router.replace('/login');
     }
   };

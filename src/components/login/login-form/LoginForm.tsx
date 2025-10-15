@@ -28,8 +28,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     isAvailable: isBiometricAvailable, 
     isLoading: isBiometricLoading, 
     authenticateWithBiometric, 
-    getBiometricIcon, 
-    getBiometricLabel 
+    getBiometricIcon 
   } = useBiometricAuth();
   
   const [formData, setFormData] = useState<LoginFormData>({
@@ -60,8 +59,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         try {
           const enabled = await storageService.isBiometricEnabled(formData.nif);
           setIsBiometricEnabled(enabled);
-        } catch (error) {
-          console.error('Error checking biometric enabled:', error);
+        } catch {
+          // Error checking biometric enabled
           setIsBiometricEnabled(false);
         }
       } else {
@@ -120,15 +119,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       
       if (result.success) {
         // Obtener las credenciales guardadas para el login biométrico
-        console.log('🔍 Obteniendo credenciales guardadas...');
         const savedPassword = await storageService.getRememberedPassword();
         const savedCode = await storageService.getRememberedCode();
-        
-        console.log('🔍 Credenciales encontradas:');
-        console.log('  - Contraseña:', savedPassword ? '***' : 'null');
-        console.log('  - Código:', savedCode ? '***' : 'null');
-        console.log('  - NIF:', formData.nif);
-        console.log('  - Tab activo:', activeTab);
         
         // Para login biométrico, usar las credenciales guardadas
         const biometricLoginData: LoginFormData = {
@@ -138,20 +130,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           rememberNif: formData.rememberNif,
         };
         
-        console.log('🔐 Login biométrico con credenciales guardadas');
-        console.log('📤 Datos que se enviarán:', {
-          nif: biometricLoginData.nif,
-          password: biometricLoginData.password ? '***' : 'vacío',
-          code: biometricLoginData.code ? '***' : 'vacío',
-          rememberNif: biometricLoginData.rememberNif
-        });
-        
         onLogin(biometricLoginData, activeTab);
       } else {
         Alert.alert('Error', result.error || 'Error en la autenticación biométrica');
       }
-    } catch (error) {
-      console.error('Biometric login error:', error);
+    } catch {
+      // Error en la autenticación biométrica
       Alert.alert('Error', 'Error en la autenticación biométrica');
     }
   };

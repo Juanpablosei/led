@@ -39,13 +39,11 @@ export const NotificationsScreen: React.FC = () => {
       const response = await buildingService.getNotifications(100, true);
       
       if (response.status && 'data' in response) {
-        console.log('✅ Notificaciones cargadas:', response.data);
         setNotificationsData(response.data);
       } else {
-        console.error('❌ Error al cargar notificaciones:', response.message);
       }
     } catch (error) {
-      console.error('❌ Error de red al cargar notificaciones:', error);
+      console.error(' Error de red al cargar notificaciones:', error);
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +141,6 @@ export const NotificationsScreen: React.FC = () => {
     try {
       if (activeTab === 'communications') {
         // Comunicaciones: GET del detalle
-        console.log('🔍 Obteniendo detalle de comunicación:', id);
         
         const response = await buildingService.getComunicacionDetail(parseInt(id));
         
@@ -166,11 +163,10 @@ export const NotificationsScreen: React.FC = () => {
           
           // Marcar como leída cuando se abre el modal
           if (!comunicacion.leido) {
-            console.log('📝 Marcando comunicación como leída');
             await buildingService.markComunicacionAsRead(comunicacion.id, true);
           }
         } else {
-          console.error('❌ Error al obtener detalle:', response.message);
+          console.error(' Error al obtener detalle:', response.message);
         }
       } else if (activeTab === 'activities') {
         // Actividades: Buscar en los datos cargados
@@ -238,7 +234,7 @@ export const NotificationsScreen: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error('❌ Error al abrir notificación:', error);
+      console.error(' Error al abrir notificación:', error);
     }
   };
 
@@ -248,22 +244,22 @@ export const NotificationsScreen: React.FC = () => {
     try {
       if (activeTab === 'activities') {
         // Ocultar notificación de actividad
-        console.log('📝 Ocultando notificación de actividad:', currentNotificationId);
+     
         await buildingService.hideActivityNotification(parseInt(currentNotificationId));
       } else if (activeTab === 'buildings') {
         // Ocultar notificación de documento de edificio
-        console.log('📝 Ocultando notificación de documento de edificio:', currentNotificationId);
+       
         await buildingService.hideDocumentNotification(parseInt(currentNotificationId), 'building');
       } else if (activeTab === 'homes') {
         // Ocultar notificación de documento de vivienda
-        console.log('📝 Ocultando notificación de documento de vivienda:', currentNotificationId);
+      
         await buildingService.hideDocumentNotification(parseInt(currentNotificationId), 'home');
       }
       
       // Recargar notificaciones para actualizar badges
       await loadNotifications();
     } catch (error) {
-      console.error('❌ Error al marcar como leída:', error);
+      console.error(' Error al marcar como leída:', error);
     }
   };
 

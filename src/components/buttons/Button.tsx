@@ -12,12 +12,12 @@ export const Button: React.FC<ButtonProps> = ({
   const buttonStyle: ViewStyle[] = [
     styles.button,
     variant === 'primary' ? styles.buttonPrimary : styles.buttonSecondary,
-    disabled && styles.buttonDisabled,
+    ...(disabled ? [styles.buttonDisabled] : []),
   ];
 
   const textStyle: TextStyle[] = [
     styles.buttonText,
-    variant === 'secondary' && styles.buttonTextSecondary,
+    ...(variant === 'secondary' ? [styles.buttonTextSecondary] : []),
   ];
 
   return (

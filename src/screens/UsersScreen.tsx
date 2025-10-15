@@ -105,10 +105,7 @@ export const UsersScreen: React.FC = () => {
     );
   };
 
-  const handleAddUser = () => {
-    console.log('Add new user');
-    Alert.alert(t('addUser', 'navigation'), 'Funcionalidad de agregar usuario');
-  };
+
 
   const renderUserCard = ({ item }: { item: UserData }) => (
     <UserCard
