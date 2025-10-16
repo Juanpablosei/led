@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.text,
     textAlign: 'center',
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   tab: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 2,
+    paddingHorizontal: 0,
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
     alignItems: 'center',
@@ -30,9 +30,8 @@ export const styles = StyleSheet.create({
     borderBottomColor: colors.primary,
   },
   tabText: {
-    fontSize: 16,
     color: colors.text,
-    fontWeight: '500',
+   
   },
   tabTextActive: {
     color: colors.primary,

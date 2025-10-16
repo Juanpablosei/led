@@ -269,7 +269,7 @@ export const styles = StyleSheet.create({
   },
   exitButtonText: {
     color: colors.black,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
   },
   continueButton: {
@@ -286,7 +286,7 @@ export const styles = StyleSheet.create({
   },
   continueButtonText: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   finishButton: {
