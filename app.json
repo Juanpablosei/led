@@ -14,7 +14,17 @@
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
-        ]
+        ],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "desarrollo.arescoop.es": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSExceptionMinimumTLSVersion": "1.0",
+              "NSExceptionRequiresForwardSecrecy": false
+            }
+          }
+        }
       }
     },
     "android": {
@@ -63,7 +73,12 @@
           "mode": "production"
         }
       ],
-      "expo-web-browser"
+      [
+        "expo-web-browser",
+        {
+          "scheme": "ledat"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

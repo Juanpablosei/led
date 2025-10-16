@@ -4,13 +4,15 @@ import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  AppState,
   ImageBackground,
   Keyboard,
+  Linking,
   ScrollView,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { BuildingAcceptanceModal } from "../components/building-acceptance-modal/BuildingAcceptanceModal";
 import { Header } from "../components/header/Header";
@@ -76,7 +78,23 @@ export const LoginScreen: React.FC = () => {
     loadRememberedNif();
   }, []);
 
+  // Detectar cuando la aplicación vuelve del navegador para resetear estado
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: string) => {
+      if (nextAppState === 'active') {
+        // Resetear estado cuando la aplicación vuelve a estar activa
+        setIsLoading(false);
+        setShowSupportModal(false);
+        console.log('App became active, resetting state');
+      }
+    };
 
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    
+    return () => {
+      subscription?.remove();
+    };
+  }, []);
 
   const setupPushNotifications = async () => {
     try {
@@ -338,35 +356,128 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
-  const handleFaqsPress = async () => {
-    setShowSupportModal(false);
+  // Función helper para abrir URLs con fallback a Linking
+  const openURL = async (url: string, title: string) => {
     try {
-      await WebBrowser.openBrowserAsync(`${WEB_BASE_URL}/faqs`);
+      setShowSupportModal(false);
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log(`Opening browser for ${title}...`);
+      const result = await WebBrowser.openBrowserAsync(url, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        controlsColor: '#E53E3E',
+        showTitle: true,
+        enableBarCollapsing: false,
+        showInRecents: false,
+      });
+      
+      console.log(`WebBrowser result for ${title}:`, result);
+      
+      // Si el resultado es "locked", usar Linking como fallback
+      if (result.type === 'locked') {
+        console.log(`WebBrowser locked for ${title}, trying Linking...`);
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+          await Linking.openURL(url);
+          console.log(`Successfully opened ${title} with Linking`);
+        } else {
+          Alert.alert("Error", `No se pudo abrir ${title}.`);
+        }
+      }
+      
+      setIsLoading(false);
     } catch (error) {
-      // Error opening FAQs
-      Alert.alert("", `Error al abrir FAQs: ${error}`);
+      console.error(`Error opening ${title}:`, error);
+      
+      // Fallback a Linking si WebBrowser falla
+      try {
+        console.log(`Trying Linking fallback for ${title}...`);
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+          await Linking.openURL(url);
+          console.log(`Successfully opened ${title} with Linking fallback`);
+        } else {
+          Alert.alert("Error", `No se pudo abrir ${title}.`);
+        }
+      } catch (linkingError) {
+        console.error(`Linking fallback failed for ${title}:`, linkingError);
+        Alert.alert("Error", `No se pudo abrir ${title}.`);
+      }
+      
+      setShowSupportModal(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handleFaqsPress = async () => {
+    console.log('handleFaqsPress called');
+    try {
+      setShowSupportModal(false);
+      
+      console.log('Opening FAQs with Linking...');
+      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/faqs`);
+      
+      if (supported) {
+        await Linking.openURL(`${WEB_BASE_URL}/faqs`);
+        console.log('Successfully opened FAQs with Linking');
+      } else {
+        Alert.alert("Error", "No se puede abrir la página de FAQs en este dispositivo.");
+      }
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error opening FAQs:', error);
+      setShowSupportModal(false);
+      setIsLoading(false);
+      Alert.alert("Error", "No se pudo abrir la página de FAQs.");
     }
   };
 
   const handleLegalPress = async () => {
-    setShowSupportModal(false);
+    console.log('handleLegalPress called');
     try {
-      await WebBrowser.openBrowserAsync(`${WEB_BASE_URL}/aviso-legal`);
+      setShowSupportModal(false);
+      
+      console.log('Opening Legal with Linking...');
+      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/aviso-legal`);
+      
+      if (supported) {
+        await Linking.openURL(`${WEB_BASE_URL}/aviso-legal`);
+        console.log('Successfully opened Legal with Linking');
+      } else {
+        Alert.alert("Error", "No se puede abrir el Aviso Legal en este dispositivo.");
+      }
+      
+      setIsLoading(false);
     } catch (error) {
-      // Error opening Legal Notice
-      Alert.alert("", `Error al abrir Aviso Legal: ${error}`);
+      console.error('Error opening Legal Notice:', error);
+      setShowSupportModal(false);
+      setIsLoading(false);
+      Alert.alert("Error", "No se pudo abrir el Aviso Legal.");
     }
   };
 
   const handleTermsPress = async () => {
-    setShowSupportModal(false);
+    console.log('handleTermsPress called');
     try {
-      await WebBrowser.openBrowserAsync(
-        `${WEB_BASE_URL}/condiciones-contratacion`
-      );
+      setShowSupportModal(false);
+      
+      console.log('Opening Terms with Linking...');
+      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/condiciones-contratacion`);
+      
+      if (supported) {
+        await Linking.openURL(`${WEB_BASE_URL}/condiciones-contratacion`);
+        console.log('Successfully opened Terms with Linking');
+      } else {
+        Alert.alert("Error", "No se pueden abrir las Condiciones en este dispositivo.");
+      }
+      
+      setIsLoading(false);
     } catch (error) {
-      // Error opening Terms
-      Alert.alert("", `Error al abrir Condiciones: ${error}`);
+      console.error('Error opening Terms:', error);
+      setShowSupportModal(false);
+      setIsLoading(false);
+      Alert.alert("Error", "No se pudo abrir las Condiciones de Contratación.");
     }
   };
 
@@ -677,7 +788,11 @@ export const LoginScreen: React.FC = () => {
           {/* Support Modal */}
           <SupportOptions
             visible={showSupportModal}
-            onClose={() => setShowSupportModal(false)}
+            onClose={() => {
+              setShowSupportModal(false);
+              // Resetear cualquier estado que pueda estar bloqueando
+              setIsLoading(false);
+            }}
             onFaqsPress={handleFaqsPress}
             onLegalPress={handleLegalPress}
             onTermsPress={handleTermsPress}
