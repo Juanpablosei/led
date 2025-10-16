@@ -2,22 +2,22 @@ import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    ActivityIndicator,
+    Alert,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { colors } from "../../constants/colors";
 import { styles } from "./NewDocumentModal.styles";
 import {
-  NewDocumentData,
-  NewDocumentModalProps,
+    NewDocumentData,
+    NewDocumentModalProps,
 } from "./NewDocumentModal.types";
 
 export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
@@ -47,7 +47,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   // Actualizar formData.type cuando se selecciona un tipo
   useEffect(() => {
     if (selectedTypeId) {
-      console.log("🔄 Actualizando tipo seleccionado:", selectedTypeId);
       handleInputChange("type", selectedTypeId);
     }
   }, [selectedTypeId]);
@@ -63,13 +62,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   };
 
   const handleSave = async () => {
-    console.log("🔍 Validating form data:", {
-      name: formData.name,
-      type: formData.type,
-      file: formData.file,
-      validUntil: formData.validUntil,
-      selectedFile: selectedFile
-    });
     
     if (
       formData.name &&
@@ -78,7 +70,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
       formData.validUntil &&
       selectedFile
     ) {
-      console.log("✅ All fields valid, saving document");
       setIsSaving(true);
       
       try {
@@ -99,12 +90,10 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         setIsSaving(false);
         onClose();
       } catch (error) {
-        console.log("❌ Error saving document:", error);
         setIsSaving(false);
         Alert.alert("Error", "No se pudo guardar el documento. Inténtalo de nuevo.");
       }
     } else {
-      console.log("❌ Validation failed, missing fields");
       Alert.alert("Error", "Por favor completa todos los campos obligatorios");
     }
   };
@@ -140,19 +129,14 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   };
 
   const showDatePicker = () => {
-    console.log("🔄 showDatePicker called");
-    console.log("🔄 Current isDatePickerVisible state:", isDatePickerVisible);
     setDatePickerVisibility(true);
-    console.log("🔄 After setDatePickerVisibility(true)");
   };
 
   const hideDatePicker = () => {
-    console.log("🔄 hideDatePicker called");
     setDatePickerVisibility(false);
   };
 
   const showTypesPicker = () => {
-    console.log("🟡 Abriendo selector de tipos");
     setShowTypesDropdown(true);
   };
 
@@ -161,38 +145,25 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   };
 
   const handleSelectType = (typeId: string, typeName: string) => {
-    console.log("✅ Tipo seleccionado:", typeId, typeName);
     handleInputChange("type", typeId);
     setShowTypesDropdown(false);
   };
 
   const handleConfirm = (date: Date) => {
-    console.log("✅ Date confirmed:", date);
     setSelectedDate(date);
     const formattedDate = date.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
-    console.log("✅ Formatted date:", formattedDate);
     handleInputChange("validUntil", formattedDate);
     hideDatePicker();
   };
 
-  console.log(
-    "🚀 NewDocumentModal render - isDatePickerVisible:",
-    isDatePickerVisible,
-    "selectedDate:",
-    selectedDate
-  );
 
   return (
     <>
       {/* Date Picker Modal - Render first to ensure it appears on top */}
-      {console.log(
-        "🎯 Rendering DateTimePickerModal - isDatePickerVisible:",
-        isDatePickerVisible
-      )}
 
       <Modal
         visible={isVisible}
@@ -313,7 +284,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                       <TouchableOpacity
                         style={styles.dateContainer}
                         onPress={() => {
-                          console.log("📅 Date container pressed");
                           showDatePicker();
                         }}
                       >
@@ -327,7 +297,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                           minimumDate={new Date()}
                           onConfirm={handleConfirm}
                           onCancel={() => {
-                            console.log("❌ Date picker cancelled");
                             hideDatePicker();
                           }}
                           locale="es-ES"

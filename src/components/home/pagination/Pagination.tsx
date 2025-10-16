@@ -11,7 +11,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
 }) => {
   const { t } = useTranslation();
-  console.log('Pagination rendering:', { currentPage, totalPages, totalItems });
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);

@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,13 +13,11 @@ import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
-import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
 import { BuildingDetailData, BuildingDocument, buildingService } from '../services/buildingService';
 import { styles } from './DocumentsScreen.styles';
 
 export const DocumentsScreen: React.FC = () => {
-  const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
   const screenWidth = Dimensions.get('window').width;
   
@@ -37,7 +35,6 @@ export const DocumentsScreen: React.FC = () => {
   // Función para verificar si el usuario puede crear documentos
   const canCreateDocuments = (buildingDetail?: BuildingDetailData): boolean => {
     if (!buildingDetail?.perfil_llibre) {
-      console.log('🔒 No hay datos de perfil_llibre disponibles para crear documentos');
       return false;
     }
     
@@ -46,10 +43,7 @@ export const DocumentsScreen: React.FC = () => {
       allowedIds.includes(profile.id)
     );
     
-    console.log('🔒 Verificando permisos para crear documentos:');
-    console.log('  - Perfil_llibre:', buildingDetail.perfil_llibre);
-    console.log('  - IDs permitidos:', allowedIds);
-    console.log('  - Puede crear documentos:', hasPermission);
+   
     
     return hasPermission;
   };
@@ -62,19 +56,12 @@ export const DocumentsScreen: React.FC = () => {
   const [isNewDocumentModalVisible, setIsNewDocumentModalVisible] = useState(false);
   const [isEditDocumentModalVisible, setIsEditDocumentModalVisible] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<EditDocumentData | null>(null);
-  const [showTypesModal, setShowTypesModal] = useState(false);
   const [documentTypes, setDocumentTypes] = useState<any[]>([]);
   const [isLoadingTypes, setIsLoadingTypes] = useState(false);
   const [selectedTypeName, setSelectedTypeName] = useState<string>('');
   const [tempTypeSelection, setTempTypeSelection] = useState<string>('');
   
-  // Cargar edificio desde el API
-  useEffect(() => {
-    loadBuilding();
-    loadDocuments();
-  }, [buildingId]);
-
-  const loadBuilding = async () => {
+  const loadBuilding = useCallback(async () => {
     if (!buildingId) return;
     
     setIsLoadingBuilding(true);
@@ -82,19 +69,18 @@ export const DocumentsScreen: React.FC = () => {
       const response = await buildingService.getBuildingById(Number(buildingId));
       
       if (response.status && response.data) {
-        console.log('✅ Edificio cargado para biblioteca:', response.data.nom);
         setBuildingDetail(response.data);
       } else {
-        console.error('❌ Error al cargar edificio:', response.message);
+        console.error(' Error al cargar edificio:', response.message);
       }
     } catch (error) {
-      console.error('❌ Error al cargar edificio:', error);
+      console.error(' Error al cargar edificio:', error);
     } finally {
       setIsLoadingBuilding(false);
     }
-  };
+  }, [buildingId]);
 
-  const loadDocuments = async () => {
+  const loadDocuments = useCallback(async () => {
     if (!buildingId) return;
     
     setIsLoadingDocuments(true);
@@ -102,7 +88,6 @@ export const DocumentsScreen: React.FC = () => {
       const response = await buildingService.getBuildingDocuments(Number(buildingId));
       
       if (response.status && 'data' in response) {
-        console.log('✅ Documentos cargados:', response.data);
         
         // Combinar todos los documentos de todas las categorías
         const allDocs: BuildingDocument[] = [];
@@ -120,21 +105,23 @@ export const DocumentsScreen: React.FC = () => {
           allDocs.push(...response.data.edif_doc_otros);
         }
         
-        console.log('📚 Total documentos combinados:', allDocs.length);
-        console.log('📚 Por categoría - Técnica:', response.data.edif_doc_tecnica?.length || 0);
-        console.log('📚 Por categoría - Admin:', response.data.edif_doc_admin?.length || 0);
-        console.log('📚 Por categoría - Jurídica:', response.data.edif_doc_juridica?.length || 0);
         
         setDocuments(allDocs);
       } else {
-        console.error('❌ Error al cargar documentos:', response.message);
+        console.error(' Error al cargar documentos:', response.message);
       }
     } catch (error) {
-      console.error('❌ Error al cargar documentos:', error);
+      console.error(' Error al cargar documentos:', error);
     } finally {
       setIsLoadingDocuments(false);
     }
-  };
+  }, [buildingId]);
+
+  // Cargar edificio desde el API
+  useEffect(() => {
+    loadBuilding();
+    loadDocuments();
+  }, [buildingId, loadBuilding, loadDocuments]);
 
   // Función para formatear la fecha
   const formatDate = (dateString: string | null) => {
@@ -211,7 +198,6 @@ export const DocumentsScreen: React.FC = () => {
 
   const handleNewDocument = () => {
     const category = getCurrentCategory();
-    console.log('📄 Abriendo modal de nuevo documento para categoría:', category);
     loadDocumentTypes(category);
     setIsNewDocumentModalVisible(true);
   };
@@ -220,9 +206,7 @@ export const DocumentsScreen: React.FC = () => {
     setIsLoadingTypes(true);
     try {
       const response = await buildingService.getDocumentTypes(category);
-      
-      console.log('📦 Respuesta completa de tipos:', JSON.stringify(response, null, 2));
-      
+            
       if (response && typeof response === 'object') {
         const categoryData = response[category];
         
@@ -232,40 +216,21 @@ export const DocumentsScreen: React.FC = () => {
             texto: value as string,
           }));
           
-          console.log('✅ Tipos de documentos cargados:', typesArray.length);
           setDocumentTypes(typesArray);
         } else {
-          console.error('❌ No se encontró la categoría en la respuesta:', category);
           setDocumentTypes([]);
         }
       } else {
-        console.error('❌ Respuesta vacía o inválida');
         setDocumentTypes([]);
       }
     } catch (error: any) {
-      console.error('❌ Error al cargar tipos:', error);
+      console.error(' Error al cargar tipos:', error);
       setDocumentTypes([]);
     } finally {
       setIsLoadingTypes(false);
     }
   };
 
-  const handleOpenTypesModal = () => {
-    console.log('🔵 Abriendo modal de tipos - showTypesModal:', showTypesModal);
-    console.log('🔵 Tipos disponibles:', documentTypes.length);
-    setIsNewDocumentModalVisible(false);
-    setShowTypesModal(true);
-    console.log('🔵 Modal abierto - nuevo estado: true');
-  };
-
-  const handleSelectType = (typeId: string, typeName: string) => {
-    console.log('✅ Tipo seleccionado - ID:', typeId, '- Nombre:', typeName);
-    setTempTypeSelection(typeId);
-    setSelectedTypeName(typeName);
-    setShowTypesModal(false);
-    setIsNewDocumentModalVisible(true);
-    console.log('✅ Modal cerrado');
-  };
 
   // Obtener la categoría según el tab activo
   const getCurrentCategory = () => {
@@ -309,7 +274,6 @@ export const DocumentsScreen: React.FC = () => {
       );
 
       if (response.status) {
-        console.log('✅ Documento creado correctamente');
         Alert.alert('Éxito', 'Documento creado correctamente');
         // Recargar documentos
         await loadDocuments();
@@ -319,13 +283,11 @@ export const DocumentsScreen: React.FC = () => {
         // Cerrar modal solo si fue exitoso
         setIsNewDocumentModalVisible(false);
       } else {
-        console.error('❌ Error al crear documento:', response.message);
         Alert.alert('Error', response.message || 'No se pudo crear el documento');
         // Lanzar error para que el modal no se cierre
         throw new Error(response.message || 'No se pudo crear el documento');
       }
     } catch (error: any) {
-      console.error('❌ Error al guardar documento:', error);
       Alert.alert('Error', 'No se pudo guardar el documento');
       // Re-lanzar el error para que el modal no se cierre
       throw error;
@@ -379,16 +341,14 @@ export const DocumentsScreen: React.FC = () => {
       );
 
       if (response.status) {
-        console.log('✅ Documento actualizado correctamente');
         Alert.alert('Éxito', 'Documento actualizado correctamente');
         // Recargar documentos
         await loadDocuments();
       } else {
-        console.error('❌ Error al actualizar documento:', response.message);
         Alert.alert('Error', response.message || 'No se pudo actualizar el documento');
       }
     } catch (error: any) {
-      console.error('❌ Error al guardar documento:', error);
+      console.error(' Error al guardar documento:', error);
       Alert.alert('Error', 'No se pudo guardar el documento');
     } finally {
       setIsEditDocumentModalVisible(false);
@@ -403,16 +363,14 @@ export const DocumentsScreen: React.FC = () => {
       const response = await buildingService.deleteBuildingDocument(Number(documentId));
 
       if (response.status) {
-        console.log('✅ Documento eliminado correctamente');
         Alert.alert('Éxito', 'Documento eliminado correctamente');
         // Recargar documentos
         await loadDocuments();
       } else {
-        console.error('❌ Error al eliminar documento:', response.message);
         Alert.alert('Error', response.message || 'No se pudo eliminar el documento');
       }
     } catch (error: any) {
-      console.error('❌ Error al eliminar documento:', error);
+      console.error(' Error al eliminar documento:', error);
       Alert.alert('Error', 'No se pudo eliminar el documento');
     } finally {
       setIsEditDocumentModalVisible(false);
@@ -535,62 +493,7 @@ export const DocumentsScreen: React.FC = () => {
       />
       </BuildingLayout>
 
-      {/* Modal de selección de tipos - YA NO SE USA, EL DROPDOWN ESTÁ DENTRO DEL MODAL */}
-      {/* {showTypesModal && console.log('📺 Renderizando modal de tipos...')}
-      <Modal
-        visible={showTypesModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => {
-          console.log('🔴 Cerrando modal de tipos');
-          setShowTypesModal(false);
-        }}
-        supportedOrientations={['portrait', 'landscape']}
-        statusBarTranslucent={true}
-        hardwareAccelerated={true}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.selectionModal}>
-            <Text style={styles.selectionModalTitle}>Seleccionar tipo de documento</Text>
-            
-            {isLoadingTypes ? (
-              <View style={styles.selectionLoading}>
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text style={{ marginTop: 12, color: '#666' }}>Cargando tipos...</Text>
-              </View>
-            ) : (
-              <ScrollView 
-                style={styles.selectionScrollView}
-                nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
-              >
-                {documentTypes.map((docType) => (
-                  <TouchableOpacity
-                    key={docType.id}
-                    style={styles.selectionOption}
-                    onPress={() => {
-                      console.log('🟢 Tipo tocado:', docType.texto);
-                      handleSelectType(docType.id, docType.texto);
-                    }}
-                  >
-                    <Text style={styles.selectionOptionText}>{docType.texto}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
-            
-            <TouchableOpacity
-              style={styles.selectionCancelButton}
-              onPress={() => {
-                setShowTypesModal(false);
-                setIsNewDocumentModalVisible(true);
-              }}
-            >
-              <Text style={styles.selectionCancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */}
+     
     </>
   );
 };
