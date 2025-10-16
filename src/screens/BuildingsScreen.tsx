@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, View } from 'react-native';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
+import { Text } from '../components/global';
 import { GlobalHeader } from '../components/global/GlobalHeader';
 import { BuildingCard } from '../components/home/building-card/BuildingCard';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';

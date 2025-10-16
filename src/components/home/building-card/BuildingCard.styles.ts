@@ -43,17 +43,15 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 8,
+    marginTop: 0,
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: colors.text,
     lineHeight: 20,
-    flex: 1,
+    textAlign: 'left',
   },
   titleTag: {
     marginLeft: 8,
@@ -63,8 +61,8 @@ export const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 4,
     lineHeight: 18,
-    textAlign: 'center',
-    alignSelf: 'center',
+    textAlign: 'left',
+    alignSelf: 'flex-start',
   },
   id: {
     fontSize: 14,

@@ -48,14 +48,6 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "fonts": [
-      "./assets/fonts/Aeonik-Regular.otf",
-      "./assets/fonts/Aeonik-Bold.otf",
-      "./assets/fonts/Aeonik-Light.otf",
-      "./assets/fonts/Aeonik-RegularItalic.otf",
-      "./assets/fonts/Aeonik-BoldItalic.otf",
-      "./assets/fonts/Aeonik-LightItalic.otf"
-    ],
     "plugins": [
       "expo-router",
       "expo-navigation-bar",

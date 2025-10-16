@@ -1,37 +1,26 @@
 import React from 'react';
-import { StyleSheet, Text, TextProps } from 'react-native';
-import { getFontFamily } from '../../constants/fonts';
+import { Text as RNText, TextProps as RNTextProps } from 'react-native';
+import { fonts } from '../../constants/fonts';
 
-interface CustomTextProps extends TextProps {
-  weight?: 'regular' | 'bold' | 'light';
-  italic?: boolean;
+interface CustomTextProps extends RNTextProps {
+  fontFamily?: string;
 }
 
-export const CustomText: React.FC<CustomTextProps> = ({
-  weight = 'regular',
-  italic = false,
-  style,
-  children,
-  ...props
+export const CustomText: React.FC<CustomTextProps> = ({ 
+  style, 
+  fontFamily = fonts.aeonik.regular, // Aeonik por defecto
+  ...props 
 }) => {
-  const fontFamily = getFontFamily(weight, italic);
-  
   return (
-    <Text
+    <RNText 
       style={[
-        styles.baseText,
-        { fontFamily },
-        style,
-      ]}
-      {...props}
-    >
-      {children}
-    </Text>
+        { fontFamily }, // Aplicar fuente por defecto
+        style
+      ]} 
+      {...props} 
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  baseText: {
-    // Estilos base que se aplicarán a todos los textos
-  },
-});
+// Exportar como Text por defecto
+export const Text = CustomText;

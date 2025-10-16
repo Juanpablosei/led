@@ -57,6 +57,13 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
 
       {/* Contenido del edificio */}
       <View style={styles.contentContainer}>
+        {/* Título del edificio */}
+        {titleText && (
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{titleText}</Text>
+          </View>
+        )}
+        
         <View style={styles.buildingInfo}>
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
