@@ -4,7 +4,7 @@ import { colors } from '../../constants/colors';
 export const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
-    top: Platform.OS === 'android' ? -10 : 40,
+    top: Platform.OS === 'android' ? -34 : 40,
     left: 0,
     right:-10,
     bottom: 0,
