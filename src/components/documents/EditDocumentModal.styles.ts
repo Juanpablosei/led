@@ -7,25 +7,13 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 9999,
-    elevation: 10, // Para Android - asegura que esté por encima de otros elementos
   },
   modal: {
     backgroundColor: colors.white,
     borderRadius: 12,
     padding: 24,
-    marginHorizontal: 20,
-    maxWidth: 400,
     width: '90%',
-    elevation: 15, // Aumentado para Android
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    zIndex: 10000, // Asegurar que esté por encima del overlay
+    height: '90%',
   },
   header: {
     flexDirection: 'row',
@@ -41,6 +29,9 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 4,
+  },
+  formScroll: {
+    flex: 1,
   },
   form: {
     gap: 16,
@@ -58,15 +49,17 @@ export const styles = StyleSheet.create({
     color: colors.error,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightGray,
-    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     fontSize: 16,
     color: colors.text,
-    backgroundColor: 'transparent',
+    backgroundColor: colors.white,
   },
   inputFocused: {
-    borderBottomColor: colors.primary,
+    borderColor: colors.primary,
   },
   inputReadOnly: {
     backgroundColor: '#F5F5F5',
@@ -93,13 +86,15 @@ export const styles = StyleSheet.create({
     color: colors.text,
   },
   dropdown: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightGray,
-    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: colors.white,
   },
   dropdownText: {
     fontSize: 16,
@@ -133,17 +128,19 @@ export const styles = StyleSheet.create({
     color: colors.text,
   },
   fileContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightGray,
-    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: colors.white,
   },
   fileText: {
     fontSize: 16,
-    color: colors.primary,
+    color: colors.gray,
     flex: 1,
   },
   selectFileButton: {
@@ -178,10 +175,12 @@ export const styles = StyleSheet.create({
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.lightGray,
-    paddingVertical: 8,
-    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: colors.white,
   },
   dateInput: {
     flex: 1,
@@ -251,5 +250,68 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  
+  // Estilos para DateTimePickerModal
+  datePickerModal: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+    margin: 20,
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  datePickerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  datePickerButtons: {
+   
+  },
+  datePickerButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  datePickerButtonCancel: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  datePickerButtonConfirm: {
+    backgroundColor: colors.primary,
+  },
+  datePickerButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  datePickerButtonTextCancel: {
+    color: colors.text,
+  },
+  datePickerButtonTextConfirm: {
+    color: colors.white,
   },
 });

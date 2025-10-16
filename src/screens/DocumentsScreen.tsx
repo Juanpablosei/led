@@ -56,6 +56,7 @@ export const DocumentsScreen: React.FC = () => {
   const [isNewDocumentModalVisible, setIsNewDocumentModalVisible] = useState(false);
   const [isEditDocumentModalVisible, setIsEditDocumentModalVisible] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<EditDocumentData | null>(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [documentTypes, setDocumentTypes] = useState<any[]>([]);
   const [isLoadingTypes, setIsLoadingTypes] = useState(false);
   const [selectedTypeName, setSelectedTypeName] = useState<string>('');
@@ -277,6 +278,10 @@ export const DocumentsScreen: React.FC = () => {
         Alert.alert('Éxito', 'Documento creado correctamente');
         // Recargar documentos
         await loadDocuments();
+        // Seleccionar el documento recién creado si tiene ID
+        if (response.data?.id) {
+          setSelectedDocumentId(String(response.data.id));
+        }
         // Resetear selecciones
         setTempTypeSelection('');
         setSelectedTypeName('');
@@ -299,7 +304,7 @@ export const DocumentsScreen: React.FC = () => {
     const editDocument: EditDocumentData = {
       id: String(document.id),
       name: document.nom,
-      type: document.tipus,
+      type: document.tipus_document || document.tipus, // Usar ID si está disponible, sino el nombre
       file: document.nom_arxiu,
       validUntil: formatDate(document.data_validesa),
       includeInBook: document.afegir_al_libre,
@@ -308,12 +313,14 @@ export const DocumentsScreen: React.FC = () => {
       ruta: document.ruta,
     };
     setSelectedDocument(editDocument);
+    setSelectedDocumentId(String(document.id));
     setIsEditDocumentModalVisible(true);
   };
 
   const handleCloseEditModal = () => {
     setIsEditDocumentModalVisible(false);
     setSelectedDocument(null);
+    setSelectedDocumentId(null);
   };
 
   const handleSaveEditDocument = async (documentData: EditDocumentData) => {
@@ -333,7 +340,7 @@ export const DocumentsScreen: React.FC = () => {
         Number(buildingId),
         {
           nom: documentData.name,
-          tipus_document: documentData.tipusDocument || '',
+          tipus_document: documentData.type || '',
           file: documentData.ruta || documentData.file,
           data_validesa: formattedDate,
           afegir_al_libre: documentData.includeInBook,
@@ -353,6 +360,7 @@ export const DocumentsScreen: React.FC = () => {
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);
+      // Mantener la selección después de editar
     }
   };
 
@@ -375,6 +383,7 @@ export const DocumentsScreen: React.FC = () => {
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);
+      setSelectedDocumentId(null);
     }
   };
 
@@ -393,6 +402,7 @@ export const DocumentsScreen: React.FC = () => {
       <DocumentCard
         key={document.id}
         document={cardDocument}
+        isSelected={selectedDocumentId === String(document.id)}
         onPress={() => handleEditDocument(document)}
       />
     );
@@ -490,6 +500,8 @@ export const DocumentsScreen: React.FC = () => {
         onSave={handleSaveEditDocument}
         onDelete={handleDeleteDocument}
         isReadOnly={!canCreateDocuments(buildingDetail)}
+        documentTypes={documentTypes}
+        isLoadingTypes={isLoadingTypes}
       />
       </BuildingLayout>
 

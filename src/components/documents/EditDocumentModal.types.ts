@@ -16,4 +16,6 @@ export interface EditDocumentModalProps {
   onSave: (documentData: EditDocumentData) => void;
   onDelete: (documentId: string) => void;
   isReadOnly?: boolean; // Para modo solo lectura
+  documentTypes?: any[]; // Tipos de documento del servidor
+  isLoadingTypes?: boolean; // Estado de carga de tipos
 }

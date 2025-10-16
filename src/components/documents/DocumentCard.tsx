@@ -4,13 +4,13 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './DocumentCard.styles';
 import { DocumentCardProps } from './DocumentCard.types';
 
-export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onPress }) => {
+export const DocumentCard: React.FC<DocumentCardProps> = ({ document, isSelected = false, onPress }) => {
   const handlePress = () => {
     onPress?.(document.id);
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <TouchableOpacity style={[styles.container, isSelected && styles.selectedContainer]} onPress={handlePress}>
       <Text style={styles.title}>{document.title}</Text>
       <Text style={styles.type}>Tipo: {document.type}</Text>
       <Text style={[

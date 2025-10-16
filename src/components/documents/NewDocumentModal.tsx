@@ -43,6 +43,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isSaving, setIsSaving] = useState(false);
   const [showTypesDropdown, setShowTypesDropdown] = useState(false);
+  const [internalSelectedTypeName, setInternalSelectedTypeName] = useState(selectedTypeName);
 
   // Actualizar formData.type cuando se selecciona un tipo
   useEffect(() => {
@@ -50,6 +51,11 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
       handleInputChange("type", selectedTypeId);
     }
   }, [selectedTypeId]);
+
+  // Sincronizar el nombre del tipo seleccionado con la prop
+  useEffect(() => {
+    setInternalSelectedTypeName(selectedTypeName);
+  }, [selectedTypeName]);
 
   const handleInputChange = (
     field: keyof NewDocumentData,
@@ -89,7 +95,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         setSelectedFile(null);
         setIsSaving(false);
         onClose();
-      } catch (error) {
+      } catch {
         setIsSaving(false);
         Alert.alert("Error", "No se pudo guardar el documento. Inténtalo de nuevo.");
       }
@@ -146,6 +152,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
 
   const handleSelectType = (typeId: string, typeName: string) => {
     handleInputChange("type", typeId);
+    setInternalSelectedTypeName(typeName);
     setShowTypesDropdown(false);
   };
 
@@ -226,7 +233,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                         <Text style={styles.dropdownText}>
                           {isLoadingTypes
                             ? "Cargando tipos..."
-                            : selectedTypeName || "Seleccionar tipo"}
+                            : internalSelectedTypeName || "Seleccionar tipo"}
                         </Text>
                         <Ionicons
                           name="chevron-down"

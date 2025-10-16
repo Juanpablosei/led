@@ -16,6 +16,11 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },
+  selectedContainer: {
+    backgroundColor: '#E3F2FD',
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
   title: {
     fontSize: 16,
     fontWeight: 'bold',

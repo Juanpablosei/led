@@ -1,15 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as DocumentPicker from 'expo-document-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Alert,
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Alert,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
@@ -23,6 +22,8 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   onSave,
   onDelete,
   isReadOnly = false,
+  documentTypes = [],
+  isLoadingTypes = false,
 }) => {
   const [formData, setFormData] = useState<EditDocumentData>({
     id: '',
@@ -36,19 +37,20 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showTypesDropdown, setShowTypesDropdown] = useState(false);
+  const [selectedTypeName, setSelectedTypeName] = useState('');
 
-  const documentTypes = [
-    'Inspección Técnica de Edificios',
-    'Certificado de Instalaciones',
-    'Informe de Seguridad',
-    'Plano de Instalaciones',
-    'Manual de Mantenimiento',
-  ];
+  // Función para encontrar el nombre del tipo por ID
+  const getTypeNameById = useCallback((typeId: string): string => {
+    const type = documentTypes.find(docType => docType.id === typeId);
+    return type ? type.texto : typeId; // Si no se encuentra, devolver el ID
+  }, [documentTypes]);
 
   // Cargar datos del documento cuando se abre el modal
   useEffect(() => {
     if (document) {
       setFormData(document);
+      // Establecer el nombre del tipo basado en el ID
+      setSelectedTypeName(getTypeNameById(document.type));
       if (document.validUntil) {
         // Parsear la fecha existente
         const dateParts = document.validUntil.split('/');
@@ -60,7 +62,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         }
       }
     }
-  }, [document]);
+  }, [document, getTypeNameById]);
 
   const handleInputChange = (field: keyof EditDocumentData, value: string | boolean) => {
     setFormData((prev: EditDocumentData) => ({
@@ -69,55 +71,37 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
     }));
   };
 
-  const handleSave = () => {
-    if (formData.name && formData.type && formData.file && formData.validUntil) {
-      onSave(formData);
-      onClose();
+  const handleSave = async () => {
+    if (formData.name && formData.type && formData.validUntil) {
+      try {
+        await onSave(formData);
+        onClose();
+      } catch {
+        Alert.alert("Error", "No se pudo guardar el documento. Inténtalo de nuevo.");
+      }
     } else {
-      Alert.alert('Error', 'Por favor completa todos los campos obligatorios');
+      Alert.alert("Error", "Por favor completa todos los campos obligatorios");
     }
   };
 
   const handleDelete = () => {
     Alert.alert(
-      'Eliminar documento',
-      '¿Estás seguro de que quieres eliminar este documento?',
+      "Confirmar eliminación",
+      "¿Estás seguro de que quieres eliminar este documento?",
       [
-        { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Eliminar', 
-          style: 'destructive',
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          style: "destructive",
           onPress: () => {
             onDelete(formData.id);
-            onClose();
-          }
-        }
+          },
+        },
       ]
     );
-  };
-
-  const handleSelectFile = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/pdf',
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const file = result.assets[0];
-        const fileSizeMB = file.size ? file.size / (1024 * 1024) : 0;
-        
-        if (fileSizeMB > 10) {
-          Alert.alert('Error', 'El archivo es demasiado grande. Máximo 10 MB.');
-          return;
-        }
-
-        handleInputChange('file', file.name);
-      }
-    } catch (error) {
-      console.error('Error selecting file:', error);
-      Alert.alert('Error', 'No se pudo seleccionar el archivo');
-    }
   };
 
   const showDatePicker = () => setDatePickerVisibility(true);
@@ -132,9 +116,10 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
     setShowTypesDropdown(false);
   };
 
-  const handleSelectType = (typeName: string) => {
+  const handleSelectType = (typeId: string, typeName: string) => {
     console.log("✅ Tipo seleccionado:", typeName);
-    handleInputChange('type', typeName);
+    handleInputChange('type', typeId);
+    setSelectedTypeName(typeName);
     setShowTypesDropdown(false);
   };
 
@@ -144,14 +129,11 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
     const formattedDate = date.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
-    console.log('Formatted date:', formattedDate);
     handleInputChange('validUntil', formattedDate);
     hideDatePicker();
   };
-
-  if (!document) return null;
 
   return (
     <>
@@ -176,141 +158,124 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                 </View>
 
                 {/* Form */}
-                <View style={styles.form}>
-                  {/* Nombre */}
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>
-                      Nombre: <Text style={styles.required}>*</Text>
-                    </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        focusedField === 'name' && styles.inputFocused,
-                        isReadOnly && styles.inputReadOnly
-                      ]}
-                      value={formData.name}
-                      onChangeText={(value) => handleInputChange('name', value)}
-                      onFocus={() => setFocusedField('name')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Ingrese el nombre del documento"
-                      editable={!isReadOnly}
-                    />
-                  </View>
-
-                  {/* Tipo documento */}
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>
-                      Tipo documento: <Text style={styles.required}>*</Text>
-                    </Text>
-                    <TouchableOpacity 
-                      style={[styles.dropdown, isReadOnly && styles.dropdownReadOnly]} 
-                      onPress={isReadOnly ? undefined : showTypesPicker}
-                      disabled={isReadOnly}
-                    >
-                      <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
-                        {formData.type || 'Seleccionar tipo'}
+                <ScrollView style={styles.formScroll} showsVerticalScrollIndicator={false}>
+                  <View style={styles.form}>
+                    {/* Nombre */}
+                    <View style={styles.fieldContainer}>
+                      <Text style={styles.label}>
+                        Nombre: <Text style={styles.required}>*</Text>
                       </Text>
-                      {!isReadOnly && <Ionicons name="chevron-down" size={20} color={colors.text} />}
-                    </TouchableOpacity>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          focusedField === 'name' && styles.inputFocused,
+                          isReadOnly && styles.inputReadOnly
+                        ]}
+                        value={formData.name}
+                        onChangeText={(text) => handleInputChange('name', text)}
+                        onFocus={() => setFocusedField('name')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Nombre del documento"
+                        editable={!isReadOnly}
+                      />
+                    </View>
 
-                    {/* Dropdown de tipos */}
-                    {showTypesDropdown && !isReadOnly && (
-                      <TouchableWithoutFeedback onPress={hideTypesPicker}>
-                        <View style={styles.dropdownList}>
-                          <ScrollView style={styles.dropdownListScroll}>
-                            {documentTypes.map((docType, index) => (
-                              <TouchableOpacity
-                                key={index}
-                                style={styles.dropdownItem}
-                                onPress={() => handleSelectType(docType)}
-                              >
-                                <Text style={styles.dropdownItemText}>
-                                  {docType}
-                                </Text>
-                              </TouchableOpacity>
-                            ))}
-                          </ScrollView>
-                        </View>
-                      </TouchableWithoutFeedback>
-                    )}
-                  </View>
+                    {/* Tipo documento */}
+                    <View style={styles.fieldContainer}>
+                      <Text style={styles.label}>
+                        Tipo documento: <Text style={styles.required}>*</Text>
+                      </Text>
+                      <TouchableOpacity 
+                        style={[styles.dropdown, isReadOnly && styles.dropdownReadOnly]} 
+                        onPress={isReadOnly ? undefined : showTypesPicker}
+                        disabled={isReadOnly}
+                      >
+                        <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
+                          {isLoadingTypes
+                            ? "Cargando tipos..."
+                            : selectedTypeName || 'Seleccionar tipo'}
+                        </Text>
+                        {!isReadOnly && <Ionicons name="chevron-down" size={20} color={colors.text} />}
+                      </TouchableOpacity>
 
-                  {/* Documento - SOLO LECTURA */}
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>
-                      Documento:
-                    </Text>
-                    <View style={styles.fileContainerReadOnly}>
-                      <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
-                      <Text style={styles.fileTextReadOnly}>
-                        {formData.file || 'Sin archivos seleccionados'}
+                      {/* Dropdown de tipos */}
+                      {showTypesDropdown && !isReadOnly && (
+                        <TouchableWithoutFeedback onPress={hideTypesPicker}>
+                          <View style={styles.dropdownList}>
+                            <ScrollView style={styles.dropdownListScroll}>
+                              {documentTypes.map((docType) => (
+                                <TouchableOpacity
+                                  key={docType.id}
+                                  style={styles.dropdownItem}
+                                  onPress={() => handleSelectType(docType.id, docType.texto)}
+                                >
+                                  <Text style={styles.dropdownItemText}>
+                                    {docType.texto}
+                                  </Text>
+                                </TouchableOpacity>
+                              ))}
+                            </ScrollView>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      )}
+                    </View>
+
+                    {/* Documento - SOLO LECTURA */}
+                    <View style={styles.fieldContainer}>
+                      <Text style={styles.label}>Documento:</Text>
+                      <View style={styles.fileContainerReadOnly}>
+                        <Ionicons name="document-text" size={20} color={colors.primary} />
+                        <Text style={styles.fileTextReadOnly}>
+                          {formData.file || 'Sin archivo'}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* Fecha de validez */}
+                    <View style={styles.fieldContainer}>
+                      <Text style={styles.label}>
+                        Válido hasta: <Text style={styles.required}>*</Text>
+                      </Text>
+                      <TouchableOpacity
+                        style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]}
+                        onPress={isReadOnly ? undefined : showDatePicker}
+                        disabled={isReadOnly}
+                      >
+                        <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
+                          {formData.validUntil || 'dd/mm/aaaa'}
+                        </Text>
+                        {!isReadOnly && (
+                          <Ionicons name="calendar-outline" size={20} color={colors.text} style={styles.dateIcon} />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Checkbox para incluir en libro */}
+                    <View style={styles.fieldContainer}>
+                      <View style={styles.checkboxContainer}>
+                        <TouchableOpacity
+                          style={[styles.checkbox, isReadOnly && styles.checkboxReadOnly]}
+                          onPress={isReadOnly ? undefined : () => handleInputChange('includeInBook', !formData.includeInBook)}
+                          disabled={isReadOnly}
+                        >
+                          <Ionicons
+                            name={formData.includeInBook ? "checkbox" : "square-outline"}
+                            size={20}
+                            color={formData.includeInBook ? colors.primary : colors.gray}
+                          />
+                        </TouchableOpacity>
+                        <Text style={[styles.checkboxText, isReadOnly && styles.checkboxTextReadOnly]}>
+                          Incluir en el Libro del edificio
+                        </Text>
+                      </View>
+
+                      <Text style={styles.infoText}>
+                        Los documentos que se quieran incluir en el Libro del edificio no deben estar bloqueados ni protegidos con contraseña.
                       </Text>
                     </View>
                   </View>
-
-                  {/* Válido hasta */}
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>Válido hasta:</Text>
-                    <TouchableOpacity 
-                      style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]} 
-                      onPress={isReadOnly ? undefined : () => {
-                        console.log("📅 Date container pressed");
-                        showDatePicker();
-                      }}
-                      disabled={isReadOnly}
-                    >
-                      <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
-                        {formData.validUntil || 'dd/mm/aaaa'}
-                      </Text>
-                      <DateTimePickerModal
-                        isVisible={isDatePickerVisible}
-                        mode="date"
-                        date={selectedDate}
-                        onConfirm={handleConfirm}
-                        onCancel={() => {
-                          hideDatePicker();
-                        }}
-                        locale="es-ES"
-                        textColor={colors.text}
-                        accentColor={colors.primary}
-                        display="inline"
-                        isDarkModeEnabled={false}
-                        modalStyleIOS={{
-                          backgroundColor: "transparent",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          paddingBottom: 0,
-                        }}
-                        customCancelButtonIOS={() => null}
-                        confirmTextIOS="Aceptar"
-                        themeVariant="light"
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Checkbox */}
-                  <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
-                      style={[styles.checkbox, isReadOnly && styles.checkboxReadOnly]}
-                      onPress={isReadOnly ? undefined : () => handleInputChange('includeInBook', !formData.includeInBook)}
-                      disabled={isReadOnly}
-                    >
-                      <Ionicons
-                        name={formData.includeInBook ? 'checkbox' : 'square-outline'}
-                        size={20}
-                        color={formData.includeInBook ? colors.primary : colors.text}
-                      />
-                    </TouchableOpacity>
-                    <Text style={[styles.checkboxText, isReadOnly && styles.checkboxTextReadOnly]}>
-                      Incluir en el Libro del edificio (Sólo se admiten documentos en formato pdf)
-                    </Text>
-                  </View>
-
-                  <Text style={styles.infoText}>
-                    Los documentos que se quieran incluir en el Libro del edificio no deben estar bloqueados ni protegidos con contraseña.
-                  </Text>
-                </View>
-
+                </ScrollView>
+                
                 {/* Action Buttons - Solo mostrar si no es modo solo lectura */}
                 {!isReadOnly && (
                   <View style={styles.buttonsContainer}>
@@ -341,6 +306,26 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         </TouchableWithoutFeedback>
       </Modal>
 
+      {/* DateTimePickerModal */}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={selectedDate}
+        onConfirm={handleConfirm}
+        onCancel={() => {
+          hideDatePicker();
+        }}
+        locale="es-ES"
+        textColor={colors.text}
+        accentColor={colors.primary}
+        display="inline"
+        isDarkModeEnabled={false}
+        modalStyleIOS={{
+          backgroundColor: "transparent",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      />
     </>
   );
 };
