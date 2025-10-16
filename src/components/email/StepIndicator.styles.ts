@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 0,
   },
   stepActive: {
     borderColor: colors.primary,
@@ -24,6 +24,10 @@ export const styles = StyleSheet.create({
   stepInactive: {
     borderColor: colors.lightGray,
     backgroundColor: colors.lightGray,
+  },
+  stepCompleted: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
   stepNumber: {
     fontSize: 16,
@@ -35,9 +39,19 @@ export const styles = StyleSheet.create({
   stepNumberInactive: {
     color: colors.white,
   },
+  stepNumberCompleted: {
+    color: colors.white,
+  },
   line: {
     width: 40,
     height: 2,
     backgroundColor: colors.lightGray,
+    marginHorizontal: 0,
+  },
+  lineInactive: {
+    backgroundColor: colors.lightGray,
+  },
+  lineCompleted: {
+    backgroundColor: colors.primary,
   },
 });
