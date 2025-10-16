@@ -6,8 +6,12 @@ import { Platform } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TranslationProvider } from '../src/contexts/TranslationContext';
+import { useGlobalFonts } from '../src/hooks/useGlobalFonts';
 
 export default function RootLayout() {
+  // Aplicar fuentes globalmente
+  useGlobalFonts();
+
   useEffect(() => {
     // Ocultar barra de navegación y estado en Android
     if (Platform.OS === 'android') {

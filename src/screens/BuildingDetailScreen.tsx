@@ -95,14 +95,27 @@ export const BuildingDetailScreen: React.FC = () => {
     );
   }
 
+  // Función para determinar qué texto mostrar en el título
+  const getTitleText = () => {
+    if (buildingDetail.versio_estesa) {
+      return buildingDetail.nom; // Texto actual
+    } else if (buildingDetail.estado === 'estado_activo') {
+      return t('ledLibroEdificio', 'common'); // "Led libro edificio"
+    } else {
+      return ''; // No mostrar nada
+    }
+  };
+
   // Transformar a formato BuildingData para el Layout
   const building: BuildingData = {
     id: String(buildingDetail.id),
-    title: buildingDetail.nom,
+    title: getTitleText(),
     type: buildingDetail.tipus_edifici,
     buildingId: String(buildingDetail.id),
     cadastralReference: buildingDetail.ref_cadastral,
     imageUrl: buildingDetail.imagen || undefined,
+    versio_estesa: buildingDetail.versio_estesa,
+    estado: buildingDetail.estado,
   };
 
   const handleMaintenancePress = () => {

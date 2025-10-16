@@ -67,6 +67,8 @@ export const BuildingsScreen: React.FC = () => {
           buildingId: String(building.id),
           cadastralReference: building.ref_cadastral,
           imageUrl: building.imagen || undefined,
+          versio_estesa: building.versio_estesa,
+          estado: building.estado,
         }));
         
         setFilteredBuildings(buildingsData);

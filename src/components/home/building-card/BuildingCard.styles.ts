@@ -39,6 +39,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  buildingInfo: {
+    alignItems: 'flex-start',
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -60,6 +63,8 @@ export const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 4,
     lineHeight: 18,
+    textAlign: 'center',
+    alignSelf: 'center',
   },
   id: {
     fontSize: 14,
@@ -77,6 +82,7 @@ export const styles = StyleSheet.create({
   maintenanceLink: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   maintenanceIcon: {
     marginRight: 6,

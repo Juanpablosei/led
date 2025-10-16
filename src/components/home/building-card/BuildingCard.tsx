@@ -57,14 +57,7 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
 
       {/* Contenido del edificio */}
       <View style={styles.contentContainer}>
-        <View>
-          {/* Título y tag solo se muestran si hay texto */}
-          {titleText ? (
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{titleText}</Text>
-              <Ionicons name="pricetag" size={16} color="#E95460" style={styles.titleTag} />
-            </View>
-          ) : null}
+        <View style={styles.buildingInfo}>
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
           <Text style={styles.id}>
@@ -82,10 +75,21 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
           style={styles.maintenanceLink}
           onPress={handleMaintenancePress}
         >
-          <Ionicons name="arrow-forward-outline" size={16} color="#E95460" style={styles.maintenanceIcon} />
-          <Text style={styles.maintenanceText}>
-            {t('ledMaintenance', 'navigation')}
-          </Text>
+          {titleText ? (
+            <>
+              <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
+              <Text style={styles.maintenanceText}>
+                {t('ledMaintenance', 'navigation')}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Ionicons name="arrow-forward-outline" size={16} color="#E95460" style={styles.maintenanceIcon} />
+              <Text style={styles.maintenanceText}>
+                {t('ledMaintenance', 'navigation')}
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
