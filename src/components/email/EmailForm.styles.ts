@@ -109,7 +109,7 @@ export const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   sendButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#E53E3E', // Color rojo
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -117,6 +117,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
+  },
+  sendButtonDisabled: {
+    backgroundColor: '#E53E3E', // Mantener rojo incluso cuando está deshabilitado
+    opacity: 0.8, // Solo reducir opacidad ligeramente
   },
   sendButtonText: {
     color: colors.white,

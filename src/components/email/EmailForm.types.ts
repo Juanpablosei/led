@@ -12,4 +12,5 @@ export interface EmailFormData {
 
 export interface EmailFormProps {
   onSubmit: (data: EmailFormData) => void;
+  isLoading?: boolean;
 }

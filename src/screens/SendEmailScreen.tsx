@@ -24,6 +24,7 @@ export const SendEmailScreen: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<ToastType>('success');
@@ -58,12 +59,12 @@ export const SendEmailScreen: React.FC = () => {
       
       if (response.status && 'data' in response) {
         // Mapear usuarios del API al formato UserSelectData
-        // Mantener selecciones previas si el usuario ya estaba seleccionado
+        // NO incluir isSelected aquí para evitar recargas innecesarias
         const usersData: UserSelectData[] = response.data.data.map((user) => ({
           id: String(user.user_id),  // ← Usar user_id en lugar de id
           name: user.first_name,
           surname: user.last_name,
-          isSelected: selectedUserIds.has(String(user.user_id)),
+          isSelected: false, // Se establecerá correctamente en handleToggleUser
         }));
         
         setUsers(usersData);
@@ -77,7 +78,7 @@ export const SendEmailScreen: React.FC = () => {
     } finally {
       setIsLoadingUsers(false);
     }
-  }, [buildingId, itemsPerPage, selectedUserIds]);
+  }, [buildingId, itemsPerPage]);
 
   // Cargar edificio desde el API
   useEffect(() => {
@@ -116,22 +117,15 @@ export const SendEmailScreen: React.FC = () => {
   };
 
   const getCurrentPageUsers = () => {
-    // La paginación la maneja el API, solo devolvemos los usuarios actuales
-    return users;
+    // La paginación la maneja el API, pero necesitamos actualizar el estado de selección
+    return users.map(user => ({
+      ...user,
+      isSelected: selectedUserIds.has(user.id)
+    }));
   };
 
   const handleToggleUser = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    if (!user) return;
-    
-    // Actualizar el estado local de usuarios
-    setUsers(prevUsers =>
-      prevUsers.map(u =>
-        u.id === userId ? { ...u, isSelected: !u.isSelected } : u
-      )
-    );
-    
-    // Actualizar el Set de IDs seleccionados para mantener selecciones entre páginas
+    // Solo actualizar el Set de IDs seleccionados
     setSelectedUserIds(prevIds => {
       const newIds = new Set(prevIds);
       if (newIds.has(userId)) {
@@ -167,9 +161,8 @@ export const SendEmailScreen: React.FC = () => {
       return;
     }
 
+    setIsSendingEmail(true);
     try {
-      setIsLoadingUsers(true);
-      
       // Preparar datos para el API (no incluir adjuntos si está vacío)
       const sendEmailData: any = {
         assumpte: emailData.subject,  // ← Asunto como texto normal
@@ -203,7 +196,7 @@ export const SendEmailScreen: React.FC = () => {
       // Error al enviar email
       showToast('Error de conexión al enviar el email', 'error');
     } finally {
-      setIsLoadingUsers(false);
+      setIsSendingEmail(false);
     }
   };
 
@@ -299,13 +292,23 @@ export const SendEmailScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>{t('completeFields', 'email')}</Text>
             
             {/* Email Form - ahora con ref para acceder al submit */}
-            <EmailForm onSubmit={handleSendEmail} />
+            <EmailForm onSubmit={handleSendEmail} isLoading={isSendingEmail} />
             
             {/* Buttons - movidos aquí para estar dentro del EmailForm context */}
             <View style={styles.buttonsContainer}>
-              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                <Ionicons name="arrow-back" size={20} color="#333333" />
-                <Text style={styles.backButtonText}>{t('back', 'email')}</Text>
+              <TouchableOpacity 
+                style={[styles.backButton, isSendingEmail && styles.backButtonDisabled]} 
+                onPress={handleBack}
+                disabled={isSendingEmail}
+              >
+                <Ionicons 
+                  name="arrow-back" 
+                  size={20} 
+                  color={isSendingEmail ? "#999999" : "#333333"} 
+                />
+                <Text style={[styles.backButtonText, isSendingEmail && styles.backButtonTextDisabled]}>
+                  {t('back', 'email')}
+                </Text>
               </TouchableOpacity>
             </View>
           </>

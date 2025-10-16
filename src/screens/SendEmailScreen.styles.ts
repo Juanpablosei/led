@@ -131,4 +131,11 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 8,
   },
+  backButtonDisabled: {
+    opacity: 0.5,
+    backgroundColor: colors.lightGray,
+  },
+  backButtonTextDisabled: {
+    color: '#999999',
+  },
 });

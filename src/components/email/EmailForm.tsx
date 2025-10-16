@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
-import { Alert, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -10,7 +10,7 @@ import { Toast, ToastType } from '../ui';
 import { styles } from './EmailForm.styles';
 import { EmailAttachment, EmailFormData, EmailFormProps } from './EmailForm.types';
 
-export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
+export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = false }) => {
   const { t } = useTranslation();
   const richText = useRef<RichEditor>(null);
   const [formData, setFormData] = useState<EmailFormData>({
@@ -99,10 +99,10 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
         return;
       }
 
-      // Abrir cámara
+      // Abrir cámara sin recorte para evitar problemas visuales en Android
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'],
-        allowsEditing: true,
+        allowsEditing: false, // Deshabilitado para evitar interfaz oscura en Android
         quality: 0.8,
         base64: true,
       });
@@ -277,9 +277,22 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit }) => {
       </View>
 
         {/* Submit Button */}
-        <TouchableOpacity style={styles.sendButton} onPress={handleSubmit}>
-          <Ionicons name="mail" size={20} color="#FFFFFF" />
-          <Text style={styles.sendButtonText}>{t('sendEmail', 'email')}</Text>
+        <TouchableOpacity 
+          style={[styles.sendButton, isLoading && styles.sendButtonDisabled]} 
+          onPress={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <ActivityIndicator size="small" color="#FFFFFF" />
+              <Text style={styles.sendButtonText}>Enviando...</Text>
+            </>
+          ) : (
+            <>
+              <Ionicons name="mail" size={20} color="#FFFFFF" />
+              <Text style={styles.sendButtonText}>{t('sendEmail', 'email')}</Text>
+            </>
+          )}
         </TouchableOpacity>
 
         {/* Toast notification */}
