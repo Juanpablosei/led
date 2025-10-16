@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Image, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '../../hooks/useTranslation';
 import { colors, styles } from './Header.styles';
 import { HeaderProps } from './Header.types';
@@ -8,6 +9,16 @@ import { HeaderProps } from './Header.types';
 export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
   const { currentLanguage, changeLanguage, availableLanguages } = useTranslation();
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const insets = useSafeAreaInsets();
+  
+  // Calcular posición del dropdown específica por plataforma
+  const getDropdownTopPosition = () => {
+    if (Platform.OS === 'android') {
+      return insets.top + 0; // Android: solo el área segura sin margen adicional
+    } else {
+      return insets.top + 40; // iOS: área segura + margen adicional
+    }
+  };
 
   const handleLanguageSelect = async (language: 'es' | 'ca') => {
     await changeLanguage(language);
@@ -26,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
   };
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: insets.top }]}>
       {/* Logo */}
       <View style={styles.logo}>
         <Image 
@@ -56,11 +67,11 @@ export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
         onRequestClose={() => setShowLanguageModal(false)}
       >
         <TouchableOpacity 
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { paddingTop: insets.top }]}
           activeOpacity={1}
           onPress={() => setShowLanguageModal(false)}
         >
-          <View style={styles.languageDropdownContainer}>
+          <View style={[styles.languageDropdownContainer, { top: getDropdownTopPosition() }]}>
             <View style={styles.languageDropdown}>
             {availableLanguages.map((lang) => (
               <TouchableOpacity

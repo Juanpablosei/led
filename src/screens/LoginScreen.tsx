@@ -687,7 +687,7 @@ export const LoginScreen: React.FC = () => {
             {/* Main Content */}
             <View style={styles.main}>
               {/* Title */}
-              <Text style={styles.title}>Área de acceso</Text>
+              <Text style={styles.title}>{t("accessArea", "common")}</Text>
 
               {/* Login Card */}
               <LoginCard

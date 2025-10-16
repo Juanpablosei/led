@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 export const colors = {
   white: '#FFFFFF',
   lightGray: '#CCCCCC',
@@ -28,9 +28,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-   
+    // paddingTop se aplicará dinámicamente desde el componente
   },
   logo: {
     flexDirection: 'row',
@@ -56,13 +55,13 @@ export const styles = StyleSheet.create({
   languageSelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
    
   },
   body: {
     ...typography.body,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600' as const,
   },
   modalOverlay: {
@@ -70,21 +69,19 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
-    paddingTop: 60,
     paddingRight: 16,
+    // paddingTop se aplicará dinámicamente desde el componente
   },
   languageDropdownContainer: {
     alignItems: 'flex-end',
     position: 'absolute',
-      top: Platform.OS === 'android' ? 5 : 50, 
-
     right: 16,
   },
   languageDropdown: {
     backgroundColor: colors.white,
-    borderRadius: 8,
-    paddingVertical: 12,
-    width: 140,
+    borderRadius: 6,
+    paddingVertical: 8,
+    width: 120,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -95,8 +92,8 @@ export const styles = StyleSheet.create({
     elevation: 5,
   },
   languageOption: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -104,7 +101,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   languageOptionText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#333',
     textAlign: 'center',
     fontWeight: '500',
