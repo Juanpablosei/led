@@ -23,6 +23,19 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
     onBuildingPress?.(building.id);
   };
 
+  // Función para determinar qué texto mostrar en el título
+  const getTitleText = () => {
+    if (building.versio_estesa) {
+      return building.title; // Texto actual
+    } else if (building.estado === 'estado_activo') {
+      return t('ledLibroEdificio', 'common'); // "Led libro edificio"
+    } else {
+      return ''; // No mostrar nada
+    }
+  };
+
+  const titleText = getTitleText();
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleBuildingPress}>
       {/* Imagen del edificio */}
@@ -45,7 +58,13 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
       {/* Contenido del edificio */}
       <View style={styles.contentContainer}>
         <View>
-          <Text style={styles.title}>{building.title}</Text>
+          {/* Título y tag solo se muestran si hay texto */}
+          {titleText ? (
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{titleText}</Text>
+              <Ionicons name="pricetag" size={16} color="#E95460" style={styles.titleTag} />
+            </View>
+          ) : null}
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
           <Text style={styles.id}>

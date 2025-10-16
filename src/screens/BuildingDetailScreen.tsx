@@ -138,7 +138,7 @@ export const BuildingDetailScreen: React.FC = () => {
             style={styles.maintenanceLink}
             onPress={handleMaintenancePress}
           >
-            <Ionicons name="diamond" size={16} color="#E95460" style={styles.maintenanceIcon} />
+            <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
             <Text style={styles.maintenanceText}>
               {t('ledMaintenance', 'navigation')}
             </Text>

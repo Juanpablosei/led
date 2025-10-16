@@ -191,9 +191,9 @@ export const DocumentsScreen: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'tecnica', label: 'Doc. Técnica' },
-    { id: 'administrativa', label: 'Doc. Administrativa' },
-    { id: 'juridica', label: 'Doc. jurídica' },
+    { id: 'tecnica', label: 'Técnica' },
+    { id: 'administrativa', label: 'Administrativa' },
+    { id: 'juridica', label: 'Jurídica' },
   ];
 
   const handleNewDocument = () => {

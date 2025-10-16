@@ -9,6 +9,7 @@ export const ResetCodeModal: React.FC<ResetCodeModalProps> = ({
   visible,
   onClose,
   onResetCode,
+  isLoading = false,
 }) => {
   const { t } = useTranslation();
   const [nif, setNif] = useState('');
@@ -171,14 +172,23 @@ export const ResetCodeModal: React.FC<ResetCodeModalProps> = ({
             <TouchableOpacity 
               style={[
                 styles.resetButton, 
-                (selectedBuildingId === null || !nif.trim()) && styles.resetButtonDisabled
+                (selectedBuildingId === null || !nif.trim() || isLoading) && styles.resetButtonDisabled
               ]}
               onPress={handleResetCode}
-              disabled={selectedBuildingId === null || !nif.trim()}
+              disabled={selectedBuildingId === null || !nif.trim() || isLoading}
             >
-              <Text style={styles.resetButtonText}>
-                {t('resetCodeButton', 'auth')}
-              </Text>
+              {isLoading ? (
+                <>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <Text style={styles.resetButtonText}>
+                    Restableciendo código...
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.resetButtonText}>
+                  {t('resetCodeButton', 'auth')}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

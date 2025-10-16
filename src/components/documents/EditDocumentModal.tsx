@@ -2,14 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
+    Alert,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
@@ -266,10 +266,8 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                         isVisible={isDatePickerVisible}
                         mode="date"
                         date={selectedDate}
-                        minimumDate={new Date()}
                         onConfirm={handleConfirm}
                         onCancel={() => {
-                          console.log("❌ Date picker cancelled");
                           hideDatePicker();
                         }}
                         locale="es-ES"

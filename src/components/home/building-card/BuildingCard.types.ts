@@ -5,6 +5,8 @@ export interface BuildingData {
   buildingId: string;
   cadastralReference: string;
   imageUrl?: string;
+  versio_estesa?: boolean;
+  estado?: string;
 }
 
 export interface BuildingCardProps {

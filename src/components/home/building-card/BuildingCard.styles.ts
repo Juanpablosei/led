@@ -39,13 +39,21 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 4,
+  },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: colors.text,
-    marginBottom: 10,
-    marginTop: 4,
     lineHeight: 20,
+    flex: 1,
+  },
+  titleTag: {
+    marginLeft: 8,
   },
   type: {
     fontSize: 14,

@@ -111,6 +111,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
     marginTop: 10,
   },
   resetButtonText: {
@@ -118,6 +120,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     letterSpacing: 0.5,
+    marginLeft: 8,
   },
   resetButtonDisabled: {
     backgroundColor: colors.gray,

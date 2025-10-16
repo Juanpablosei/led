@@ -52,6 +52,7 @@ export const LoginScreen: React.FC = () => {
   const [createAccountStep, setCreateAccountStep] = useState(1);
   const [activeTab, setActiveTab] = useState("general");
   const [isLoading, setIsLoading] = useState(false);
+  const [isResettingCode, setIsResettingCode] = useState(false);
   const [rememberedNif, setRememberedNif] = useState<string | null>(null);
   const [showProfessionalDataModal, setShowProfessionalDataModal] =
     useState(false);
@@ -456,7 +457,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   const handleResetCode = async (edificioId: number) => {
-    setIsLoading(true);
+    setIsResettingCode(true);
 
     try {
       const response = await authService.sendCodeToBuilding(edificioId);
@@ -471,7 +472,7 @@ export const LoginScreen: React.FC = () => {
         // Error sending code
         Alert.alert("", `Error de conexión: ${error}`);
       } finally {
-      setIsLoading(false);
+      setIsResettingCode(false);
     }
   };
 
@@ -745,6 +746,7 @@ export const LoginScreen: React.FC = () => {
             visible={showResetCodeModal}
             onClose={() => setShowResetCodeModal(false)}
             onResetCode={handleResetCode}
+            isLoading={isResettingCode}
           />
 
           {/* Building Acceptance Modal */}
