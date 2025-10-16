@@ -1,15 +1,5 @@
 import { StyleSheet } from 'react-native';
-
-export const colors = {
-  white: '#FFFFFF',
-  black: '#000000',
-  red: '#E53E3E',
-  gray: '#999999',
-  lightGray: '#F5F5F5',
-  borderGray: '#E0E0E0',
-  blue: '#007AFF',
-  darkGray: '#666666',
-};
+import { colors } from '../../constants/colors';
 
 export const styles = StyleSheet.create({
   modalOverlay: {
@@ -33,6 +23,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 8,
+    flex: 1,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -42,7 +33,7 @@ export const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderGray,
+    borderBottomColor: colors.border,
   },
   modalTitle: {
     fontSize: 18,
@@ -65,6 +56,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalContent: {
+    flex: 1,
     padding: 20,
   },
   buildingInfo: {
@@ -111,7 +103,7 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: colors.borderGray,
+    borderColor: colors.border,
     borderRadius: 4,
     marginRight: 10,
     justifyContent: 'center',
@@ -119,8 +111,8 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   checkboxChecked: {
-    backgroundColor: colors.red,
-    borderColor: colors.red,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   checkmark: {
     color: colors.white,
@@ -134,37 +126,39 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
   },
   linkText: {
-    color: colors.red,
+    color: colors.primary,
     textDecorationLine: 'underline',
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.white,
   },
   rejectButton: {
-    flex: 0.3,
     backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: colors.red,
+    borderColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 4,
     marginRight: 10,
     alignItems: 'center',
   },
   rejectButtonText: {
-    color: colors.red,
+    color: colors.primary,
     fontSize: 10,
     fontWeight: 'bold',
   },
   acceptButton: {
-    flex: 0.7,
-    backgroundColor: colors.red,
+    backgroundColor: colors.primary,
+    
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 10,
-    marginLeft: 60,
     alignItems: 'center',
     justifyContent: 'center',
   },

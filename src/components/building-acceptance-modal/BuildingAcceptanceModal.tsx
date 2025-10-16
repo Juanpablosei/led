@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './BuildingAcceptanceModal.styles';
 import { BuildingAcceptanceModalProps } from './BuildingAcceptanceModal.types';
@@ -9,6 +9,8 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
   onClose,
   onAccept,
   onReject,
+  building,
+  roles = [],
 }) => {
   const { t } = useTranslation();
   const [contractAccepted, setContractAccepted] = useState(false);
@@ -65,26 +67,39 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
           </View>
 
           {/* Content */}
-          <View style={styles.modalContent}>
+          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
             {/* Building Information */}
             <View style={styles.buildingInfo}>
               <Text style={styles.infoLabel}>{t('buildingName', 'auth')}</Text>
-              <Text style={styles.infoValue}>{t('buildingNameValue', 'auth')}</Text>
+              <Text style={styles.infoValue}>{building?.nom || '-'}</Text>
               
               <Text style={styles.infoLabel}>{t('cadastralRef', 'auth')}</Text>
-              <Text style={styles.infoValue}>{t('cadastralRefValue', 'auth')}</Text>
+              <Text style={styles.infoValue}>{building?.ref_cadastral || '-'}</Text>
               
               <Text style={styles.infoLabel}>{t('creationDate', 'auth')}</Text>
-              <Text style={styles.infoValue}>{t('creationDateValue', 'auth')}</Text>
+              <Text style={styles.infoValue}>
+                {building?.created_at ? new Date(building.created_at).toLocaleDateString() : '-'}
+              </Text>
+              
+              <Text style={styles.infoLabel}>{t('contractDate', 'auth')}</Text>
+              <Text style={styles.infoValue}>
+                {building?.fecha_contratacion ? new Date(building.fecha_contratacion).toLocaleDateString() : '-'}
+              </Text>
             </View>
 
             {/* Assigned Profiles */}
             <View style={styles.profilesSection}>
               <Text style={styles.profilesTitle}>{t('assignedProfiles', 'auth')}</Text>
               <View style={styles.profilesList}>
-                <Text style={styles.profileItem}>• {t('propertyAdministrator', 'auth')}</Text>
-                <Text style={styles.profileItem}>• {t('maintenanceManager', 'auth')}</Text>
-                <Text style={styles.profileItem}>• {t('communityBoard', 'auth')}</Text>
+                {roles.length > 0 ? (
+                  roles.map((role, index) => (
+                    <Text key={index} style={styles.profileItem}>
+                      • {role.role_idioma.nom}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={styles.profileItem}>• {t('noProfilesAssigned', 'auth')}</Text>
+                )}
               </View>
             </View>
 
@@ -126,31 +141,31 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
                 </Text>
               </TouchableOpacity>
             </View>
+          </ScrollView>
 
-            {/* Action Buttons */}
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity 
-                style={styles.rejectButton}
-                onPress={handleReject}
-              >
-                <Text style={styles.rejectButtonText}>
-                  {t('rejectButton', 'auth')}
-                </Text>
-              </TouchableOpacity>
+          {/* Action Buttons - Fixed at bottom */}
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity 
+              style={styles.rejectButton}
+              onPress={handleReject}
+            >
+              <Text style={styles.rejectButtonText}>
+                {t('rejectButton', 'auth')}
+              </Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity 
-                style={[
-                  styles.acceptButton,
-                  (!contractAccepted || !dataProtectionAccepted) && styles.acceptButtonDisabled
-                ]}
-                onPress={handleAccept}
-                disabled={!contractAccepted || !dataProtectionAccepted}
-              >
-                <Text style={styles.acceptButtonText}>
-                  {t('acceptButton', 'auth')}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              style={[
+                styles.acceptButton,
+                (!contractAccepted || !dataProtectionAccepted) && styles.acceptButtonDisabled
+              ]}
+              onPress={handleAccept}
+              disabled={!contractAccepted || !dataProtectionAccepted}
+            >
+              <Text style={styles.acceptButtonText}>
+                {t('acceptButton', 'auth')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

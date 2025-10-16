@@ -22,10 +22,16 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
 
   // Función para obtener el título dinámico del header
   const getHeaderTitle = () => {
-    if (pathname === '/building-detail') {
-      return t('myBuildings', 'navigation'); // "Mis Edificios" (solo en detalle del edificio)
+    if (isBuildingLogin) {
+      // Login con código de acceso: siempre mostrar "Edificio"
+      return t('building', 'navigation');
     } else {
-      return t('building', 'navigation'); // "Edificio" (en todas las demás pantallas)
+      // Login normal: mostrar "Mis edificios" en detalle, "Edificio" en otras pantallas
+      if (pathname === '/building-detail') {
+        return t('myBuildings', 'navigation'); // "Mis Edificios" (solo en detalle del edificio)
+      } else {
+        return t('building', 'navigation'); // "Edificio" (en todas las demás pantallas)
+      }
     }
   };
 
@@ -62,6 +68,11 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
   useEffect(() => {
     checkLoginType();
   }, []);
+
+  // Actualizar título cuando cambie el tipo de login
+  useEffect(() => {
+    // El título se actualizará automáticamente cuando isBuildingLogin cambie
+  }, [isBuildingLogin, pathname]);
 
   // Cargar datos completos del edificio cuando cambie
   useEffect(() => {

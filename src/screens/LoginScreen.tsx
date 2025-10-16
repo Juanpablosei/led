@@ -48,6 +48,8 @@ export const LoginScreen: React.FC = () => {
     useState(false);
   const [showBuildingRejectedModal, setShowBuildingRejectedModal] =
     useState(false);
+  const [buildingData, setBuildingData] = useState<any>(null);
+  const [rolesData, setRolesData] = useState<any[]>([]);
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
   const [createAccountStep, setCreateAccountStep] = useState(1);
   const [activeTab, setActiveTab] = useState("general");
@@ -167,6 +169,9 @@ export const LoginScreen: React.FC = () => {
 
           // Verificar el campo activ para determinar el flujo
           if (response.activ === null) {
+            // Almacenar datos del edificio y roles
+            setBuildingData(response.edificio);
+            setRolesData(response.roles || []);
             // Mostrar modal de confirmación
             setShowBuildingAcceptanceModal(true);
           } else if (response.activ === true) {
@@ -755,6 +760,8 @@ export const LoginScreen: React.FC = () => {
             onClose={() => setShowBuildingAcceptanceModal(false)}
             onAccept={handleBuildingAcceptance}
             onReject={handleBuildingRejection}
+            building={buildingData}
+            roles={rolesData}
           />
 
           {/* Building Rejected Modal */}
