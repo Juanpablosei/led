@@ -504,13 +504,19 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
 
   const handleAccountFoundClose = () => {
     setShowAccountFoundModal(false);
-    handleClose(); // Cerrar todo el modal de registro y volver al login
+    // Cerrar el modal principal con un pequeño delay para evitar conflictos
+    setTimeout(() => {
+      handleClose(); // Cerrar todo el modal de registro y volver al login
+    }, 100);
   };
 
   const handleRegistrationSuccessClose = () => {
     setShowRegistrationSuccessModal(false);
     setRegistrationSuccessMessage('');
-    handleClose(); // Cerrar todo el modal de registro y volver al login
+    // Cerrar el modal principal con un pequeño delay para evitar conflictos
+    setTimeout(() => {
+      handleClose(); // Cerrar todo el modal de registro y volver al login
+    }, 100);
   };
 
   const handleProfessionSelect = (id: string, name: string) => {

@@ -495,6 +495,11 @@ export const LoginScreen: React.FC = () => {
   const handleCreateAccountClose = () => {
     setShowCreateAccountModal(false);
     setCreateAccountStep(1);
+    setIsLoading(false); // Reset loading state when closing registration modal
+    setActiveTab("general"); // Reset to default tab
+    // Reset any pending navigation state
+    setPendingNavigation(null);
+    setCurrentLoginNif(null);
   };
 
   const handleCreateAccountStepChange = (step: number) => {
@@ -504,6 +509,11 @@ export const LoginScreen: React.FC = () => {
   const handleCreateAccountFinish = (data: CreateAccountCompleteData) => {
     setShowCreateAccountModal(false);
     setCreateAccountStep(1);
+    setIsLoading(false); // Reset loading state when finishing registration
+    setActiveTab("general"); // Reset to default tab
+    // Reset any pending navigation state
+    setPendingNavigation(null);
+    setCurrentLoginNif(null);
   };
 
   const handleProfessionalDataClose = () => {

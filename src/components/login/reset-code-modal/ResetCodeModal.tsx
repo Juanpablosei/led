@@ -97,67 +97,76 @@ export const ResetCodeModal: React.FC<ResetCodeModalProps> = ({
               <TextInput
                 style={styles.textInput}
                 value={nif}
-                onChangeText={setNif}
+                onChangeText={(text) => {
+                  // Convertir a mayúsculas y permitir solo letras y números
+                  const cleanText = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                  setNif(cleanText);
+                }}
                 placeholder={t('nifPlaceholder', 'auth')}
                 placeholderTextColor="#999"
-                autoCapitalize="none"
+                autoCapitalize="characters"
                 autoCorrect={false}
+                maxLength={9}
               />
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>{t('buildingNumber', 'auth')} *</Text>
-              
-              {isLoadingBuildings && (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="small" color="#E53E3E" />
-                  <Text style={styles.loadingText}>Buscando edificios...</Text>
-                </View>
-              )}
+            {/* Solo mostrar el campo de edificio cuando se estén cargando o hay edificios/error */}
+            {(isLoadingBuildings || buildings.length > 0 || buildingsError) && (
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>{t('buildingNumber', 'auth')} *</Text>
+                
+                {isLoadingBuildings && (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="small" color="#E53E3E" />
+                    <Text style={styles.loadingText}>Buscando edificios...</Text>
+                  </View>
+                )}
 
-              {buildingsError && !isLoadingBuildings && (
-                <Text style={styles.errorText}>{buildingsError}</Text>
-              )}
+                {buildingsError && !isLoadingBuildings && (
+                  <Text style={styles.errorText}>{buildingsError}</Text>
+                )}
 
-              {buildings.length > 0 && !isLoadingBuildings && (
-                <View style={styles.buildingsListContainer}>
-                  <Text style={styles.buildingsCountText}>
-                    {buildings.length} {buildings.length === 1 ? 'edificio encontrado' : 'edificios encontrados'}
-                  </Text>
-                  <ScrollView 
-                    style={styles.buildingsList}
-                    nestedScrollEnabled={true}
-                  >
-                    {buildings.map((building) => (
-                      <TouchableOpacity
-                        key={building.id}
-                        style={[
-                          styles.buildingItem,
-                          selectedBuildingId === building.id && styles.buildingItemSelected
-                        ]}
-                        onPress={() => setSelectedBuildingId(building.id)}
-                      >
-                        <View style={styles.radioCircle}>
-                          {selectedBuildingId === building.id && (
-                            <View style={styles.radioCircleInner} />
-                          )}
-                        </View>
-                        <View style={styles.buildingInfo}>
-                          <Text style={styles.buildingName}>{building.nom}</Text>
-                          <Text style={styles.buildingRef}>{building.ref_cadastral}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
+                {buildings.length > 0 && !isLoadingBuildings && (
+                  <View style={styles.buildingsListContainer}>
+                    <Text style={styles.buildingsCountText}>
+                      {buildings.length} {buildings.length === 1 ? 'edificio encontrado' : 'edificios encontrados'}
+                    </Text>
+                    <ScrollView 
+                      style={styles.buildingsList}
+                      nestedScrollEnabled={true}
+                    >
+                      {buildings.map((building) => (
+                        <TouchableOpacity
+                          key={building.id}
+                          style={[
+                            styles.buildingItem,
+                            selectedBuildingId === building.id && styles.buildingItemSelected
+                          ]}
+                          onPress={() => setSelectedBuildingId(building.id)}
+                        >
+                          <View style={styles.radioCircle}>
+                            {selectedBuildingId === building.id && (
+                              <View style={styles.radioCircleInner} />
+                            )}
+                          </View>
+                          <View style={styles.buildingInfo}>
+                            <Text style={styles.buildingName}>{building.nom}</Text>
+                            <Text style={styles.buildingRef}>{building.ref_cadastral}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </View>
+                )}
+              </View>
+            )}
 
-              {nif.length > 0 && nif.length < 8 && (
-                <Text style={styles.hintText}>
-                  Ingrese al menos 8 caracteres del NIF
-                </Text>
-              )}
-            </View>
+            {/* Mensaje de ayuda solo cuando no hay edificios cargados */}
+            {nif.length > 0 && nif.length < 8 && !isLoadingBuildings && buildings.length === 0 && !buildingsError && (
+              <Text style={styles.hintText}>
+                Ingrese al menos 8 caracteres del NIF para buscar edificios
+              </Text>
+            )}
 
             <TouchableOpacity 
               style={[
