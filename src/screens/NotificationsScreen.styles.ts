@@ -12,6 +12,10 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingBottom: 70,
   },
+  scrollContent: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   header: {
     backgroundColor: colors.primary,
     paddingHorizontal: 20,

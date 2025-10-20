@@ -1,6 +1,7 @@
 {
   "title": "Notificacions",
   "communications": "Comunicacions",
+  "alerts": "Alertes",
   "buildings": "Edificis",
   "homes": "Habitatges",
   "activities": "Activitats",
@@ -9,6 +10,16 @@
   "noNotifications": "No hi ha notificacions",
   "markAsRead": "Marcar com a llegida",
   "markAllAsRead": "Marcar totes com a llegides",
+  "tabs": {
+    "communications": "Comunicacions",
+    "alerts": "Alertes"
+  },
+  "alertsMenu": {
+    "title": "Categories d'Alertes",
+    "buildings": "Edificis",
+    "homes": "Habitatges",
+    "activities": "Activitats"
+  },
   "notificationTypes": {
     "billingUpdate": "Actualització de Dades de Facturació de l'Edifici",
     "maintenanceReminder": "Recordatori de Manteniment",

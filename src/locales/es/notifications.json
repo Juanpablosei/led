@@ -1,6 +1,7 @@
 {
   "title": "Notificaciones",
   "communications": "Comunicaciones",
+  "alerts": "Alertas",
   "buildings": "Edificios",
   "homes": "Viviendas",
   "activities": "Actividades",
@@ -9,6 +10,16 @@
   "noNotifications": "No hay notificaciones",
   "markAsRead": "Marcar como leída",
   "markAllAsRead": "Marcar todas como leídas",
+  "tabs": {
+    "communications": "Comunicaciones",
+    "alerts": "Alertas"
+  },
+  "alertsMenu": {
+    "title": "Categorías de Alertas",
+    "buildings": "Edificios",
+    "homes": "Viviendas", 
+    "activities": "Actividades"
+  },
   "notificationTypes": {
     "billingUpdate": "Actualización de Datos de Facturación del Edificio",
     "maintenanceReminder": "Recordatorio de Mantenimiento",
