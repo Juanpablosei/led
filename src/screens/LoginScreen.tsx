@@ -26,6 +26,7 @@ import BuildingRejectedModal from "../components/modals/BuildingRejectedModal";
 import ProfessionalDataModal from "../components/modals/ProfessionalDataModal";
 import { ProfessionalDataFormData } from "../components/modals/ProfessionalDataModal.types";
 import { SupportOptions } from "../components/support-options/SupportOptions";
+import { config } from "../config/environment";
 import { colors } from "../constants/colors";
 import { useBiometricAuth } from "../hooks/useBiometricAuth";
 import { useTranslation } from "../hooks/useTranslation";
@@ -34,8 +35,6 @@ import { buildingService } from "../services/buildingService";
 import { notificationService } from "../services/notificationService";
 import { storageService } from "../services/storageService";
 import { styles } from "./LoginScreen.styles";
-
-const WEB_BASE_URL = "https://desarrollo.arescoop.es/libro-edificio";
 
 export const LoginScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -364,10 +363,10 @@ export const LoginScreen: React.FC = () => {
     try {
       setShowSupportModal(false);
       
-      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/faqs`);
+      const supported = await Linking.canOpenURL(`${config.WEB_BASE_URL}/faqs`);
       
       if (supported) {
-        await Linking.openURL(`${WEB_BASE_URL}/faqs`);
+        await Linking.openURL(`${config.WEB_BASE_URL}/faqs`);
       } else {
         Alert.alert("Error", "No se puede abrir la página de FAQs en este dispositivo.");
       }
@@ -384,10 +383,10 @@ export const LoginScreen: React.FC = () => {
     try {
       setShowSupportModal(false);
       
-      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/aviso-legal`);
+      const supported = await Linking.canOpenURL(`${config.WEB_BASE_URL}/aviso-legal`);
       
       if (supported) {
-        await Linking.openURL(`${WEB_BASE_URL}/aviso-legal`);
+        await Linking.openURL(`${config.WEB_BASE_URL}/aviso-legal`);
       } else {
         Alert.alert("Error", "No se puede abrir el Aviso Legal en este dispositivo.");
       }
@@ -404,10 +403,10 @@ export const LoginScreen: React.FC = () => {
     try {
       setShowSupportModal(false);
       
-      const supported = await Linking.canOpenURL(`${WEB_BASE_URL}/condiciones-contratacion`);
+      const supported = await Linking.canOpenURL(`${config.WEB_BASE_URL}/condiciones-contratacion`);
       
       if (supported) {
-        await Linking.openURL(`${WEB_BASE_URL}/condiciones-contratacion`);
+        await Linking.openURL(`${config.WEB_BASE_URL}/condiciones-contratacion`);
       } else {
         Alert.alert("Error", "No se pueden abrir las Condiciones en este dispositivo.");
       }

@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.lightGray,
   },
   title: {
     fontSize: 18,
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    borderTopColor: colors.lightGray,
   },
   closeButton: {
     padding: 8,
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.lightGray,
   },
   categoryContent: {
     flexDirection: 'row',

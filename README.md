@@ -988,7 +988,76 @@ Accept-Language: es|ca
 }
 ```
 
-### 3. Marcar Comunicación como Leída
+### 3. Mostrar Comunicación Específica
+**Endpoint:** `GET /comunicaciones/comunicaciones_edificios/{id_edificio}/comunicacion/{id_comunicacion}/show`
+
+**Path Parameters:**
+- `id_edificio` (number): ID del edificio
+- `id_comunicacion` (number): ID de la comunicación
+
+**Response Success (200):**
+```json
+{
+  "status": true,
+  "message": "Comunicación obtenida",
+  "data": {
+    "id": 789,
+    "assumpte": "Recordatorio ITE",
+    "cos": "<p>Se recuerda que la Inspección Técnica de Edificios caduca el 31 de diciembre de 2024.</p>",
+    "data_enviament": "2024-01-01T10:00:00Z",
+    "emisor": "Juan Pérez",
+    "edifici_id": 123,
+    "edifici_nom": "Edificio Ejemplo",
+    "leido": "2024-01-01T10:05:00Z"
+  }
+}
+```
+
+### 4. Lista de Destinatarios de Comunicación
+**Endpoint:** `GET /comunicaciones/comunicaciones_edificios/{id_edificio}/comunicacion/{id_comunicacion}/destinatarios?page={page}&limit={limit}`
+
+**Path Parameters:**
+- `id_edificio` (number): ID del edificio
+- `id_comunicacion` (number): ID de la comunicación
+
+**Query Parameters:**
+- `page` (number): Página de resultados (default: 1)
+- `limit` (number): Límite de elementos por página (default: 15)
+
+**Response Success (200):**
+```json
+{
+  "status": true,
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "user_id": 101,
+        "first_name": "Juan",
+        "last_name": "Pérez",
+        "nif": "12345678A",
+        "email": "juan.perez@email.com",
+        "telefon": "612345678",
+        "roles": ["propietario"],
+        "verificado": true
+      }
+    ],
+    "first_page_url": "https://api.ledat.com/comunicaciones/comunicaciones_edificios/123/comunicacion/789/destinatarios?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https://api.ledat.com/comunicaciones/comunicaciones_edificios/123/comunicacion/789/destinatarios?page=1",
+    "next_page_url": null,
+    "path": "https://api.ledat.com/comunicaciones/comunicaciones_edificios/123/comunicacion/789/destinatarios",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+  }
+}
+```
+
+### 5. Marcar Comunicación como Leída
 **Endpoint:** `PATCH /comunicaciones/mensaje_leido?id={id}&leido={leido}`
 
 **Query Parameters:**
@@ -1003,7 +1072,7 @@ Accept-Language: es|ca
 }
 ```
 
-### 4. Enviar Email del Edificio
+### 6. Enviar Email del Edificio
 **Endpoint:** `POST /comunicaciones/comunicacion_edificio`
 
 **Request Body:**
@@ -1365,6 +1434,71 @@ httpClient.interceptors.request.use((config) => {
 Authorization: Bearer {token}
 Accept-Language: es|ca
 Content-Type: application/json|multipart/form-data
+```
+
+## 📚 **FUNCIONES DEL SERVICIO buildingService**
+
+### Comunicaciones
+```typescript
+// Obtener comunicaciones de un edificio
+await buildingService.getBuildingCommunications(edificiId, page, limit);
+
+// Obtener detalle de comunicación (endpoint anterior)
+await buildingService.getComunicacionDetail(id);
+
+// Mostrar comunicación específica (nuevo endpoint)
+await buildingService.getComunicacionShow(edificiId, comunicacionId);
+
+// Obtener destinatarios de una comunicación específica
+await buildingService.getComunicacionDestinatarios(edificiId, comunicacionId, page, limit);
+
+// Marcar comunicación como leída
+await buildingService.markComunicacionAsRead(id, leido);
+
+// Enviar email del edificio
+await buildingService.sendBuildingEmail(emailData);
+```
+
+### Edificios
+```typescript
+// Obtener lista de edificios
+await buildingService.getBuildings(page, searchText);
+
+// Obtener detalle de edificio
+await buildingService.getBuildingById(id);
+
+// Obtener usuarios del edificio
+await buildingService.getBuildingUsers(edificiId, page, limit);
+```
+
+### Documentos
+```typescript
+// Obtener documentos del edificio
+await buildingService.getBuildingDocuments(edificiId);
+
+// Crear documento
+await buildingService.createBuildingDocument(edificiId, data);
+
+// Actualizar documento
+await buildingService.updateBuildingDocument(documentId, edificiId, data);
+
+// Eliminar documento
+await buildingService.deleteBuildingDocument(documentId);
+
+// Obtener tipos de documentos
+await buildingService.getDocumentTypes(parametroPadre);
+```
+
+### Notificaciones
+```typescript
+// Obtener notificaciones
+await buildingService.getNotifications(limit, full);
+
+// Ocultar notificación de actividad
+await buildingService.hideActivityNotification(id);
+
+// Ocultar notificación de documento
+await buildingService.hideDocumentNotification(id, type);
 ```
 
 ## 🧪 Testing

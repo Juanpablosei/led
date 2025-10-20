@@ -88,7 +88,12 @@
       "router": {},
       "eas": {
         "projectId": "da21058d-d19b-4eab-85da-39bb32e96140"
-      }
+      },
+      "API_BASE_URL": "https://librodigitalws.arescoop.es/api",
+      "WEB_BASE_URL": "https://desarrollo.arescoop.es/libro-edificio",
+      "NODE_ENV": "development",
+      "APP_NAME": "LEDAT",
+      "APP_VERSION": "1.0.0"
     },
     "owner": "pablosei",
     "runtimeVersion": {

@@ -1,18 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { config } from '../config/environment';
 import { TRANSLATION_CONFIG } from '../utils/translationConfig';
 import { storageService } from './storageService';
 
-const API_BASE_URL = 'https://librodigitalws.arescoop.es/api';
-
 // Crear instancia de Axios
 export const httpClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: config.API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  timeout: 30000, // 30 segundos
+  timeout: config.API_TIMEOUT,
 });
 
 // Rutas públicas que NO requieren token
