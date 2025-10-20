@@ -740,6 +740,50 @@ export const buildingService = {
       // Error de red o sin respuesta del servidor
       throw error;
     }
+  },
+
+  async getComunicacionDestinatarios(
+    edificiId: number, 
+    comunicacionId: number, 
+    page: number = 1, 
+    limit: number = 15
+  ): Promise<any> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      const response = await httpClient.get(
+        `/comunicaciones/comunicaciones_edificios/${edificiId}/comunicacion/${comunicacionId}/destinatarios?page=${page}&limit=${limit}`
+      );
+      
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
+  },
+
+  async getComunicacionShow(
+    edificiId: number, 
+    comunicacionId: number
+  ): Promise<any> {
+    try {
+      // El interceptor agrega automáticamente el token y el idioma
+      const response = await httpClient.get(
+        `/comunicaciones/comunicaciones_edificios/${edificiId}/comunicacion/${comunicacionId}/show`
+      );
+      
+      return response.data;
+    } catch (error: any) {
+      // Si axios devuelve un error con respuesta, devolver esa data
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      // Error de red o sin respuesta del servidor
+      throw error;
+    }
   }
 };
 

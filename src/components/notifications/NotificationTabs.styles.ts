@@ -5,9 +5,8 @@ export const styles = StyleSheet.create({
   tabsContainer: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: 12,
     padding: 4,
-    marginHorizontal: 16,
+    marginHorizontal: 0,
     marginVertical: 12,
     shadowColor: colors.black,
     shadowOffset: {
