@@ -66,12 +66,15 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalContent: {
-    flexGrow: 0,
-    flexShrink: 1,
+    maxHeight: '100%',
   },
   modalContentContainer: {
     padding: 20,
-    flexGrow: 0,
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  step2Container: {
+    minHeight: '100%',
   },
   stepIndicator: {
     marginBottom: 20,
@@ -128,6 +131,11 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 0,
     fontSize: 16,
     color: colors.black,
+  },
+  readOnlyInput: {
+    backgroundColor: colors.lightGray,
+    color: colors.darkGray,
+    borderBottomColor: colors.borderGray,
   },
   infoText: {
     fontSize: 14,

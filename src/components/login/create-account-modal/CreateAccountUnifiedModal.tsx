@@ -357,8 +357,13 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       return false;
     }
 
-    // Si es propietario, puede continuar
+    // Si es propietario, validar solo datos básicos + paso 3
     if (step2Data.userType === 'propertyOwner') {
+      // Validaciones del paso 3 (ahora parte del paso 2)
+      if (!step3Data.email.trim() || !step3Data.password.trim() || !step3Data.confirmPassword.trim() || 
+          !step3Data.acceptTerms || !step3Data.acceptDataProtection) {
+        return false;
+      }
       return true;
     }
 
@@ -390,12 +395,19 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       // Convenio es OPCIONAL para todos los profesionales
     }
 
+    // Validaciones del paso 3 (ahora parte del paso 2)
+    if (!step3Data.email.trim() || !step3Data.password.trim() || !step3Data.confirmPassword.trim() || 
+        !step3Data.acceptTerms || !step3Data.acceptDataProtection) {
+      return false;
+    }
+
     return true;
   };
 
-  const handleStep2Continue = () => {
+  const handleStep2Continue = async () => {
     if (canContinueStep2()) {
-      onStepChange(3);
+      // Ahora el paso 2 incluye el registro completo
+      await handleStep3Finish();
     }
   };
 
@@ -589,10 +601,6 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
         <View style={[styles.stepCircle, currentStep === 2 ? styles.stepCircleActive : styles.stepCircleInactive]}>
           <Text style={[styles.stepNumber, currentStep === 2 ? styles.stepNumberActive : styles.stepNumberInactive]}>2</Text>
         </View>
-        <View style={styles.stepLine} />
-        <View style={[styles.stepCircle, currentStep === 3 ? styles.stepCircleActive : styles.stepCircleInactive]}>
-          <Text style={[styles.stepNumber, currentStep === 3 ? styles.stepNumberActive : styles.stepNumberInactive]}>3</Text>
-        </View>
       </View>
     </View>
   );
@@ -694,9 +702,9 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>{t('nif', 'auth')}</Text>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, styles.readOnlyInput]}
             value={step2Data.nif}
-            onChangeText={(value) => handleInputChange(2, 'nif', value)}
+            editable={false}
             placeholder={t('nifPlaceholder', 'auth')}
             placeholderTextColor="#999"
             autoCapitalize="characters"
@@ -851,36 +859,11 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
         )}
       </View>
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={handleStep2Back}
-        >
-          <Text style={styles.backButtonText}>
-            {t('backButton', 'auth')}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.finishButton,
-            !canContinueStep2() && styles.finishButtonDisabled
-          ]}
-          onPress={handleStep2Continue}
-          disabled={!canContinueStep2()}
-        >
-          <Text style={styles.finishButtonText}>
-            {t('continueButton', 'auth')}
-          </Text>
-        </TouchableOpacity>
-      </View>
     </>
   );
 
   const renderStep3 = () => (
     <>
-      <Text style={styles.stepInstruction}>{t('step3Title', 'auth')}</Text>
-
       <View style={styles.formContainer}>
         {/* Email */}
         <View style={styles.inputGroup}>
@@ -957,35 +940,6 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
         </View>
       </View>
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={handleStep3Back}
-        >
-          <Text style={styles.backButtonText}>
-            REGRESAR
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.finishButton,
-            (!step3Data.email.trim() || !step3Data.password.trim() || !step3Data.confirmPassword.trim() || 
-             !step3Data.acceptTerms || !step3Data.acceptDataProtection || isLoading) && styles.finishButtonDisabled
-          ]}
-          onPress={handleStep3Finish}
-          disabled={!step3Data.email.trim() || !step3Data.password.trim() || !step3Data.confirmPassword.trim() || 
-                   !step3Data.acceptTerms || !step3Data.acceptDataProtection || isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text style={styles.finishButtonText}>
-              FINALIZAR
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
     </>
   );
 
@@ -1004,8 +958,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>
                   {currentStep === 1 ? t('createAccountTitle', 'auth') : 
-                   currentStep === 2 ? t('step2Title', 'auth') : 
-                   t('step3Title', 'auth')}
+                   t('step2Title', 'auth')}
                 </Text>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                   <Text style={styles.closeButtonText}>×</Text>
@@ -1018,14 +971,46 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
                 contentContainerStyle={styles.modalContentContainer}
                 showsVerticalScrollIndicator={true}
                 nestedScrollEnabled={true}
+                keyboardShouldPersistTaps="handled"
+                bounces={true}
+                alwaysBounceVertical={false}
               >
                 {/* Step Indicator */}
                 {renderStepIndicator()}
 
                 {/* Dynamic Content Based on Step */}
                 {currentStep === 1 && renderStep1()}
-                {currentStep === 2 && renderStep2()}
-                {currentStep === 3 && renderStep3()}
+                {currentStep === 2 && (
+                  <View style={styles.step2Container}>
+                    {renderStep2()}
+                    {renderStep3()}
+                    
+                    {/* Botones al final del paso 2 */}
+                    <View style={styles.buttonsContainer}>
+                      <TouchableOpacity 
+                        style={styles.backButton}
+                        onPress={handleStep2Back}
+                      >
+                        <Text style={styles.backButtonText}>
+                          {t('backButton', 'auth')}
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity 
+                        style={[
+                          styles.finishButton,
+                          !canContinueStep2() && styles.finishButtonDisabled
+                        ]}
+                        onPress={handleStep2Continue}
+                        disabled={!canContinueStep2()}
+                      >
+                        <Text style={styles.finishButtonText}>
+                          {t('finishButton', 'auth')}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
@@ -1189,19 +1174,19 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       >
         <View style={styles.modalOverlay}>
           <View style={styles.accountFoundModal}>
-            <Text style={styles.accountFoundTitle}>Cuenta encontrada</Text>
+            <Text style={styles.accountFoundTitle}>{t('accountFoundTitle', 'auth')}</Text>
             
             <Text style={styles.accountFoundSubtitle}>
-              Este NIF ya se encuentra asociado a una cuenta
+              {t('accountFoundSubtitle', 'auth')}
             </Text>
             
             <View style={styles.accountFoundContent}>
               <Text style={styles.accountFoundText}>
-                En caso de ser un usuario ya registrado y haber olvidado la contraseña, es necesario restablecerla.
+                {t('accountFoundText1', 'auth')}
               </Text>
               
               <Text style={styles.accountFoundText}>
-                En caso de tener acceso a un edificio con código, puede terminar el registro mediante el proceso de restablecer contraseña.
+                {t('accountFoundText2', 'auth')}
               </Text>
             </View>
             
@@ -1209,7 +1194,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               style={styles.accountFoundButton}
               onPress={handleAccountFoundClose}
             >
-              <Text style={styles.accountFoundButtonText}>SALIR</Text>
+              <Text style={styles.accountFoundButtonText}>{t('accountFoundButton', 'auth')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1224,7 +1209,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       >
         <View style={styles.modalOverlay}>
           <View style={styles.registrationSuccessModal}>
-            <Text style={styles.registrationSuccessTitle}>✓ Registro exitoso</Text>
+            <Text style={styles.registrationSuccessTitle}>{t('registrationSuccessTitle', 'auth')}</Text>
             
             <View style={styles.registrationSuccessContent}>
               <Text style={styles.registrationSuccessText}>
@@ -1236,7 +1221,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               style={styles.registrationSuccessButton}
               onPress={handleRegistrationSuccessClose}
             >
-              <Text style={styles.registrationSuccessButtonText}>SALIR</Text>
+              <Text style={styles.registrationSuccessButtonText}>{t('registrationSuccessButton', 'auth')}</Text>
             </TouchableOpacity>
           </View>
         </View>
