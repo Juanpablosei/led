@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Keyboard, Modal, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Toast, ToastType } from '../components/ui';
 import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
@@ -17,6 +17,7 @@ interface SelectOption {
 export const MyDataScreen: React.FC = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [userData, setUserData] = useState<StoredUserData | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -85,7 +86,7 @@ export const MyDataScreen: React.FC = () => {
         }
       } else {
         // No se pudieron obtener los datos del usuario desde el servidor
-        showToast('No se encontraron datos del usuario', 'error');
+        showToast(t('myData.noDataFound', 'user'), 'error');
       }
     } catch {
       // Error al cargar datos del usuario
@@ -93,7 +94,7 @@ export const MyDataScreen: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const loadPublicParameters = async () => {
     try {
@@ -294,6 +295,8 @@ export const MyDataScreen: React.FC = () => {
       return;
     }
     
+    setIsSaving(true);
+    
     try {
       // Crear objeto con datos para enviar al API
       const dataToUpdate: any = {
@@ -346,11 +349,6 @@ export const MyDataScreen: React.FC = () => {
         setNewPassword('');
         setConfirmPassword('');
         setPasswordError('');
-        
-        // Volver a la pantalla anterior después de 1.5 segundos
-        setTimeout(() => {
-          router.back();
-        }, 1500);
       } else {
         // Error del servidor
         // Extraer mensaje correctamente (puede venir como objeto o string)
@@ -360,6 +358,8 @@ export const MyDataScreen: React.FC = () => {
     } catch {
       // Error al guardar datos
       showToast('Error al guardar los datos', 'error');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -382,7 +382,7 @@ export const MyDataScreen: React.FC = () => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#E53E3E" />
           <Text style={{ marginTop: 12, fontSize: 16, color: '#666' }}>
-            Cargando datos...
+            {t('myData.loading', 'user')}
           </Text>
         </View>
       </View>
@@ -401,7 +401,7 @@ export const MyDataScreen: React.FC = () => {
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <Text style={{ fontSize: 16, color: '#666', textAlign: 'center' }}>
-            No se encontraron datos del usuario
+            {t('myData.noDataFound', 'user')}
           </Text>
         </View>
       </View>
@@ -430,22 +430,22 @@ export const MyDataScreen: React.FC = () => {
 
   const getProfessionName = () => {
     const prof = professionOptions.find(p => p.id === profession);
-    return prof?.name || 'Seleccionar profesión';
+    return prof?.name || t('myData.selectProfession', 'user');
   };
 
   const getComunidadName = () => {
     const com = comunidadAutonomaOptions.find(c => c.id === comunidadAutonoma);
-    return com?.name || 'Seleccionar comunidad';
+    return com?.name || t('myData.selectCommunity', 'user');
   };
 
   const getColegioName = () => {
     const col = colegioProfesionalOptions.find(c => c.id === colegioProfesional);
-    return col?.name || 'Seleccionar colegio';
+    return col?.name || t('myData.selectCollege', 'user');
   };
 
   const getAgreementName = () => {
     const agr = agreementOptions.find(a => a.id === agreement);
-    return agr?.name || 'Seleccionar convenio';
+    return agr?.name || t('myData.selectAgreement', 'user');
   };
 
   // Función para ocultar el teclado
@@ -464,9 +464,17 @@ export const MyDataScreen: React.FC = () => {
       </View>
 
       {/* Content */}
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <View style={styles.content}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView 
+        style={styles.content} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.scrollContent}
+          >
         <View style={styles.formContainer}>
           {/* Nombre y Apellidos en la misma fila - SOLO LECTURA */}
           <View style={styles.rowContainer}>
@@ -565,12 +573,12 @@ export const MyDataScreen: React.FC = () => {
               {/* Otra Profesión - si profesión === 10 */}
               {showOtraProfesion && (
                 <View style={styles.fieldContainer}>
-                  <Text style={styles.label}>Otra Profesión</Text>
+                  <Text style={styles.label}>{t('myData.otherProfession', 'user')}</Text>
                   <TextInput
                     style={styles.input}
                     value={otraProfesion}
                     onChangeText={setOtraProfesion}
-                    placeholder="Especifique su profesión"
+                    placeholder={t('myData.otherProfessionPlaceholder', 'user')}
                   />
                 </View>
               )}
@@ -585,7 +593,7 @@ export const MyDataScreen: React.FC = () => {
                     disabled={isLoadingComunidades || comunidadAutonomaOptions.length === 0}
                   >
                     <Text style={comunidadAutonoma ? styles.dropdownText : styles.dropdownPlaceholder}>
-                      {isLoadingComunidades ? 'Cargando...' : getComunidadName()}
+                      {isLoadingComunidades ? t('myData.loadingText', 'user') : getComunidadName()}
                     </Text>
                     <Ionicons name="chevron-down" size={20} color={colors.text} />
                   </TouchableOpacity>
@@ -616,7 +624,7 @@ export const MyDataScreen: React.FC = () => {
                     disabled={isLoadingColegios || colegioProfesionalOptions.length === 0}
                   >
                     <Text style={colegioProfesional ? styles.dropdownText : styles.dropdownPlaceholder}>
-                      {isLoadingColegios ? 'Cargando...' : getColegioName()}
+                      {isLoadingColegios ? t('myData.loadingText', 'user') : getColegioName()}
                     </Text>
                     <Ionicons name="chevron-down" size={20} color={colors.text} />
                   </TouchableOpacity>
@@ -641,7 +649,7 @@ export const MyDataScreen: React.FC = () => {
 
           {/* Campos de cambio de contraseña */}
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Contraseña nueva (opcional)</Text>
+            <Text style={styles.label}>{t('myData.newPassword', 'user')}</Text>
             <TextInput
               style={styles.input}
               value={newPassword}
@@ -653,14 +661,14 @@ export const MyDataScreen: React.FC = () => {
                   validatePasswordsInRealTime(text, confirmPassword);
                 }
               }}
-              placeholder="Nueva contraseña"
+              placeholder={t('myData.newPasswordPlaceholder', 'user')}
               secureTextEntry
               autoCapitalize="none"
             />
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Confirmar contraseña</Text>
+            <Text style={styles.label}>{t('myData.confirmPassword', 'user')}</Text>
             <TextInput
               style={styles.input}
               value={confirmPassword}
@@ -672,7 +680,7 @@ export const MyDataScreen: React.FC = () => {
                   validatePasswordsInRealTime(newPassword, text);
                 }
               }}
-              placeholder="Confirmar nueva contraseña"
+              placeholder={t('myData.confirmPasswordPlaceholder', 'user')}
               secureTextEntry
               autoCapitalize="none"
             />
@@ -682,13 +690,19 @@ export const MyDataScreen: React.FC = () => {
           </View>
 
           {/* Botón Guardar */}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>{t('myData.save', 'user')}</Text>
+          <TouchableOpacity 
+            style={[styles.saveButton, isSaving && styles.saveButtonDisabled]} 
+            onPress={handleSave}
+            disabled={isSaving}
+          >
+            <Text style={styles.saveButtonText}>
+              {isSaving ? t('myData.saving', 'user') : t('myData.save', 'user')}
+            </Text>
           </TouchableOpacity>
-        </View>
-        </ScrollView>
-        </View>
-      </TouchableWithoutFeedback>
+          </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
 
       {/* Toast notification */}
       <Toast
@@ -711,7 +725,7 @@ export const MyDataScreen: React.FC = () => {
           onPress={() => setShowProfessionModal(false)}
         >
           <View style={styles.selectionModal}>
-            <Text style={styles.selectionTitle}>Seleccionar Profesión</Text>
+            <Text style={styles.selectionTitle}>{t('myData.selectProfessionTitle', 'user')}</Text>
             <ScrollView style={styles.selectionScrollView}>
               {professionOptions.map((option) => (
                 <TouchableOpacity
@@ -748,7 +762,7 @@ export const MyDataScreen: React.FC = () => {
           onPress={() => setShowComunidadModal(false)}
         >
           <View style={styles.selectionModal}>
-            <Text style={styles.selectionTitle}>Seleccionar Comunidad Autónoma</Text>
+            <Text style={styles.selectionTitle}>{t('myData.selectCommunityTitle', 'user')}</Text>
             <ScrollView style={styles.selectionScrollView}>
               {comunidadAutonomaOptions.map((option) => (
                 <TouchableOpacity
@@ -784,7 +798,7 @@ export const MyDataScreen: React.FC = () => {
           onPress={() => setShowColegioModal(false)}
         >
           <View style={styles.selectionModal}>
-            <Text style={styles.selectionTitle}>Seleccionar Colegio Profesional</Text>
+            <Text style={styles.selectionTitle}>{t('myData.selectCollegeTitle', 'user')}</Text>
             <ScrollView style={styles.selectionScrollView}>
               {colegioProfesionalOptions.map((option) => (
                 <TouchableOpacity
@@ -819,7 +833,7 @@ export const MyDataScreen: React.FC = () => {
           onPress={() => setShowAgreementModal(false)}
         >
           <View style={styles.selectionModal}>
-            <Text style={styles.selectionTitle}>Seleccionar Convenio</Text>
+            <Text style={styles.selectionTitle}>{t('myData.selectAgreementTitle', 'user')}</Text>
             <ScrollView style={styles.selectionScrollView}>
               {agreementOptions.map((option) => (
                 <TouchableOpacity

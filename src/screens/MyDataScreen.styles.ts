@@ -12,6 +12,10 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingTop: 5,
   },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
   header: {
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
@@ -75,6 +79,10 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  saveButtonDisabled: {
+    backgroundColor: colors.gray,
+    opacity: 0.7,
   },
   separator: {
     height: 1,
