@@ -80,11 +80,6 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
               <Text style={styles.infoValue}>
                 {building?.created_at ? new Date(building.created_at).toLocaleDateString() : '-'}
               </Text>
-              
-              <Text style={styles.infoLabel}>{t('contractDate', 'auth')}</Text>
-              <Text style={styles.infoValue}>
-                {building?.fecha_contratacion ? new Date(building.fecha_contratacion).toLocaleDateString() : '-'}
-              </Text>
             </View>
 
             {/* Assigned Profiles */}
