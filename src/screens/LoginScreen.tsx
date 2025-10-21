@@ -457,6 +457,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   const handleCatebLinkPress = () => {
+    Linking.openURL(config.CATEB_RESET_PASSWORD_URL);
     setShowResetPasswordModal(false);
   };
 

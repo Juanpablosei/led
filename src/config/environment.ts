@@ -21,6 +21,9 @@ export const config = {
   // Pagination
   DEFAULT_PAGE_SIZE: 15,
   MAX_PAGE_SIZE: 100,
+  
+  // Cateb Configuration
+  CATEB_RESET_PASSWORD_URL: Constants.expoConfig?.extra?.CATEB_RESET_PASSWORD_URL || 'https://caateebcn.my.site.com/SiteLogin',
 };
 
 // Función para obtener la URL completa de la API

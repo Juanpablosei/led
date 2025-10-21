@@ -62,10 +62,13 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
               <TextInput
                 style={styles.textInput}
                 value={nif}
-                onChangeText={setNif}
+                onChangeText={(text) => {
+                  // Convertir a mayúsculas automáticamente
+                  setNif(text.toUpperCase());
+                }}
                 placeholder={t('nifPlaceholder', 'auth')}
                 placeholderTextColor="#999"
-                autoCapitalize="none"
+                autoCapitalize="characters"
                 autoCorrect={false}
               />
             </View>
