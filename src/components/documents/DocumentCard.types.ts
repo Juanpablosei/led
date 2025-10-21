@@ -9,6 +9,5 @@ export interface DocumentData {
 
 export interface DocumentCardProps {
   document: DocumentData;
-  isSelected?: boolean;
   onPress?: (documentId: string) => void;
 }

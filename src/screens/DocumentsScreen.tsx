@@ -13,11 +13,13 @@ import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
 import { BuildingData } from '../components/home/building-card/BuildingCard.types';
 import { Pagination } from '../components/home/pagination/Pagination';
+import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
 import { BuildingDetailData, BuildingDocument, buildingService } from '../services/buildingService';
 import { styles } from './DocumentsScreen.styles';
 
 export const DocumentsScreen: React.FC = () => {
+  const { t } = useTranslation();
   const { buildingId } = useLocalSearchParams<{ buildingId: string }>();
   const screenWidth = Dimensions.get('window').width;
   
@@ -56,7 +58,6 @@ export const DocumentsScreen: React.FC = () => {
   const [isNewDocumentModalVisible, setIsNewDocumentModalVisible] = useState(false);
   const [isEditDocumentModalVisible, setIsEditDocumentModalVisible] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<EditDocumentData | null>(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [documentTypes, setDocumentTypes] = useState<any[]>([]);
   const [isLoadingTypes, setIsLoadingTypes] = useState(false);
   const [selectedTypeName, setSelectedTypeName] = useState<string>('');
@@ -192,9 +193,9 @@ export const DocumentsScreen: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'tecnica', label: 'Técnica' },
-    { id: 'administrativa', label: 'Administrativa' },
-    { id: 'juridica', label: 'Jurídica' },
+    { id: 'tecnica', label: t('technical', 'documents') },
+    { id: 'administrativa', label: t('administrative', 'documents') },
+    { id: 'juridica', label: t('legal', 'documents') },
   ];
 
   const handleNewDocument = () => {
@@ -250,6 +251,8 @@ export const DocumentsScreen: React.FC = () => {
 
   const handleSaveDocument = async (documentData: any) => {
     console.log('Guardar documento:', documentData);
+    console.log('buildingId:', buildingId);
+    console.log('tempTypeSelection:', tempTypeSelection);
     
     if (!buildingId) return;
     
@@ -262,7 +265,8 @@ export const DocumentsScreen: React.FC = () => {
 
       // Usar el tipo seleccionado del estado temporal
       const typeToSave = tempTypeSelection || documentData.type;
-
+      
+  
       const response = await buildingService.createBuildingDocument(
         Number(buildingId),
         {
@@ -273,15 +277,13 @@ export const DocumentsScreen: React.FC = () => {
           afegir_al_libre: documentData.includeInBook,
         }
       );
+      
+      console.log('Respuesta del servidor:', response);
 
       if (response.status) {
         Alert.alert('Éxito', 'Documento creado correctamente');
         // Recargar documentos
         await loadDocuments();
-        // Seleccionar el documento recién creado si tiene ID
-        if (response.data?.id) {
-          setSelectedDocumentId(String(response.data.id));
-        }
         // Resetear selecciones
         setTempTypeSelection('');
         setSelectedTypeName('');
@@ -293,7 +295,8 @@ export const DocumentsScreen: React.FC = () => {
         throw new Error(response.message || 'No se pudo crear el documento');
       }
     } catch (error: any) {
-      Alert.alert('Error', 'No se pudo guardar el documento');
+      console.error('Error al guardar documento:', error);
+      Alert.alert('Error', `No se pudo guardar el documento: ${error.message || 'Error desconocido'}`);
       // Re-lanzar el error para que el modal no se cierre
       throw error;
     }
@@ -313,14 +316,17 @@ export const DocumentsScreen: React.FC = () => {
       ruta: document.ruta,
     };
     setSelectedDocument(editDocument);
-    setSelectedDocumentId(String(document.id));
+    
+    // Cargar tipos de documentos para el modal de editar
+    const category = getCurrentCategory();
+    loadDocumentTypes(category);
+    
     setIsEditDocumentModalVisible(true);
   };
 
   const handleCloseEditModal = () => {
     setIsEditDocumentModalVisible(false);
     setSelectedDocument(null);
-    setSelectedDocumentId(null);
   };
 
   const handleSaveEditDocument = async (documentData: EditDocumentData) => {
@@ -360,7 +366,6 @@ export const DocumentsScreen: React.FC = () => {
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);
-      // Mantener la selección después de editar
     }
   };
 
@@ -383,7 +388,6 @@ export const DocumentsScreen: React.FC = () => {
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);
-      setSelectedDocumentId(null);
     }
   };
 
@@ -402,7 +406,6 @@ export const DocumentsScreen: React.FC = () => {
       <DocumentCard
         key={document.id}
         document={cardDocument}
-        isSelected={selectedDocumentId === String(document.id)}
         onPress={() => handleEditDocument(document)}
       />
     );
@@ -415,7 +418,7 @@ export const DocumentsScreen: React.FC = () => {
       <BuildingLayout building={building}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Título de la sección */}
-        <Text style={styles.sectionTitle}>Biblioteca de documentos</Text>
+        <Text style={styles.sectionTitle}>{t('libraryTitle', 'documents')}</Text>
 
         {/* Pestañas */}
         <View style={styles.tabsContainer}>
@@ -441,10 +444,14 @@ export const DocumentsScreen: React.FC = () => {
 
         {/* Subtítulo y botón NUEVO */}
         <View style={styles.subtitleContainer}>
-          <Text style={styles.subtitle}>Documentación técnica</Text>
+          <Text style={styles.subtitle}>
+            {activeTab === 'tecnica' && t('technicalDocumentation', 'documents')}
+            {activeTab === 'administrativa' && t('administrativeDocumentation', 'documents')}
+            {activeTab === 'juridica' && t('legalDocumentation', 'documents')}
+          </Text>
           {canCreateDocuments(buildingDetail) && (
             <TouchableOpacity style={styles.newButton} onPress={handleNewDocument}>
-              <Text style={styles.newButtonText}>+ NUEVO</Text>
+              <Text style={styles.newButtonText}>+ {t('new', 'documents')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -454,7 +461,7 @@ export const DocumentsScreen: React.FC = () => {
           <View style={{ padding: 40, alignItems: 'center' }}>
             <ActivityIndicator size="large" color="#E53E3E" />
             <Text style={{ marginTop: 12, fontSize: 14, color: '#666' }}>
-              Cargando documentos...
+              {t('loadingDocuments', 'documents')}
             </Text>
           </View>
         ) : filteredDocuments.length > 0 ? (
@@ -474,7 +481,7 @@ export const DocumentsScreen: React.FC = () => {
         ) : (
           <View style={{ padding: 40, alignItems: 'center' }}>
             <Text style={{ fontSize: 16, color: '#999' }}>
-              No hay documentos en esta categoría
+              {t('noDocuments', 'documents')}
             </Text>
           </View>
         )}

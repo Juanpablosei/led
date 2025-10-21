@@ -1,17 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Alert,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
+    Alert,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
+import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './EditDocumentModal.styles';
 import { EditDocumentData, EditDocumentModalProps } from './EditDocumentModal.types';
 
@@ -25,6 +26,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   documentTypes = [],
   isLoadingTypes = false,
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<EditDocumentData>({
     id: '',
     name: '',
@@ -77,24 +79,24 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         await onSave(formData);
         onClose();
       } catch {
-        Alert.alert("Error", "No se pudo guardar el documento. Inténtalo de nuevo.");
+        Alert.alert("Error", t('errors.saveError', 'documents'));
       }
     } else {
-      Alert.alert("Error", "Por favor completa todos los campos obligatorios");
+      Alert.alert("Error", t('errors.missingFields', 'documents'));
     }
   };
 
   const handleDelete = () => {
     Alert.alert(
-      "Confirmar eliminación",
-      "¿Estás seguro de que quieres eliminar este documento?",
+      t('confirmDelete', 'documents'),
+      t('confirmDeleteMessage', 'documents'),
       [
         {
-          text: "Cancelar",
+          text: t('cancel', 'documents'),
           style: "cancel",
         },
         {
-          text: "Eliminar",
+          text: t('deleteButton', 'documents'),
           style: "destructive",
           onPress: () => {
             onDelete(formData.id);
@@ -151,7 +153,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
               <View style={styles.modal}>
                 {/* Header */}
                 <View style={styles.header}>
-                  <Text style={styles.title}>Editar documento</Text>
+                  <Text style={styles.title}>{t('editDocument', 'documents')}</Text>
                   <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                     <Ionicons name="close" size={24} color={colors.text} />
                   </TouchableOpacity>
@@ -175,7 +177,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                         onChangeText={(text) => handleInputChange('name', text)}
                         onFocus={() => setFocusedField('name')}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="Nombre del documento"
+                        placeholder={t('documentName', 'documents')}
                         editable={!isReadOnly}
                       />
                     </View>
@@ -192,8 +194,8 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                       >
                         <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
                           {isLoadingTypes
-                            ? "Cargando tipos..."
-                            : selectedTypeName || 'Seleccionar tipo'}
+                            ? t('loadingTypes', 'documents')
+                            : selectedTypeName || t('selectType', 'documents')}
                         </Text>
                         {!isReadOnly && <Ionicons name="chevron-down" size={20} color={colors.text} />}
                       </TouchableOpacity>
@@ -226,7 +228,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                       <View style={styles.fileContainerReadOnly}>
                         <Ionicons name="document-text" size={20} color={colors.primary} />
                         <Text style={styles.fileTextReadOnly}>
-                          {formData.file || 'Sin archivo'}
+                          {formData.file || t('noFile', 'documents')}
                         </Text>
                       </View>
                     </View>
@@ -234,7 +236,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     {/* Fecha de validez */}
                     <View style={styles.fieldContainer}>
                       <Text style={styles.label}>
-                        Válido hasta: <Text style={styles.required}>*</Text>
+                        {t('validUntil', 'documents')}: <Text style={styles.required}>{t('required', 'documents')}</Text>
                       </Text>
                       <TouchableOpacity
                         style={[styles.dateContainer, isReadOnly && styles.dateContainerReadOnly]}
@@ -242,11 +244,34 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                         disabled={isReadOnly}
                       >
                         <Text style={[styles.dateInput, isReadOnly && styles.dateInputReadOnly]}>
-                          {formData.validUntil || 'dd/mm/aaaa'}
+                          {formData.validUntil || t('datePlaceholder', 'documents')}
                         </Text>
                         {!isReadOnly && (
                           <Ionicons name="calendar-outline" size={20} color={colors.text} style={styles.dateIcon} />
                         )}
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="date"
+                          date={selectedDate}
+                          onConfirm={handleConfirm}
+                          onCancel={() => {
+                            hideDatePicker();
+                          }}
+                          locale="es-ES"
+                          textColor={colors.text}
+                          accentColor={colors.primary}
+                          display="inline"
+                          isDarkModeEnabled={false}
+                          modalStyleIOS={{
+                            backgroundColor: "transparent",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            paddingBottom: 0,
+                          }}
+                          customCancelButtonIOS={() => null}
+                          confirmTextIOS="Aceptar"
+                          themeVariant="light"
+                        />
                       </TouchableOpacity>
                     </View>
 
@@ -265,12 +290,12 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                           />
                         </TouchableOpacity>
                         <Text style={[styles.checkboxText, isReadOnly && styles.checkboxTextReadOnly]}>
-                          Incluir en el Libro del edificio
+                          {t('includeInBookLabel', 'documents')}
                         </Text>
                       </View>
 
                       <Text style={styles.infoText}>
-                        Los documentos que se quieran incluir en el Libro del edificio no deben estar bloqueados ni protegidos con contraseña.
+                        {t('bookInfo', 'documents')}
                       </Text>
                     </View>
                   </View>
@@ -281,12 +306,12 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                   <View style={styles.buttonsContainer}>
                     <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
                       <Ionicons name="trash-outline" size={20} color={colors.error} />
-                      <Text style={styles.deleteButtonText}>ELIMINAR</Text>
+                      <Text style={styles.deleteButtonText}>{t('delete', 'documents')}</Text>
                     </TouchableOpacity>
                     
                     <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                       <Ionicons name="lock-closed" size={20} color={colors.white} />
-                      <Text style={styles.saveButtonText}>GUARDAR</Text>
+                      <Text style={styles.saveButtonText}>{t('save', 'documents')}</Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -296,7 +321,7 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                   <View style={styles.buttonsContainer}>
                     <TouchableOpacity style={styles.saveButton} onPress={onClose}>
                       <Ionicons name="close" size={20} color={colors.white} />
-                      <Text style={styles.saveButtonText}>CERRAR</Text>
+                      <Text style={styles.saveButtonText}>{t('close', 'documents')}</Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -306,26 +331,6 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* DateTimePickerModal */}
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={selectedDate}
-        onConfirm={handleConfirm}
-        onCancel={() => {
-          hideDatePicker();
-        }}
-        locale="es-ES"
-        textColor={colors.text}
-        accentColor={colors.primary}
-        display="inline"
-        isDarkModeEnabled={false}
-        modalStyleIOS={{
-          backgroundColor: "transparent",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      />
     </>
   );
 };

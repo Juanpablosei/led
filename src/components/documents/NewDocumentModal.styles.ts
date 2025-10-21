@@ -111,15 +111,15 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     backgroundColor: colors.white,
+    alignItems: 'center',
   },
   fileText: {
     fontSize: 16,
     color: colors.gray,
-    flex: 1,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: 8,
   },
   selectFileButton: {
     borderWidth: 1,
@@ -127,7 +127,6 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    marginLeft: 12,
   },
   selectFileButtonText: {
     color: colors.primary,

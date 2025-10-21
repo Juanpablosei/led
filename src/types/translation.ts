@@ -13,6 +13,7 @@ export interface Translations {
   user: TranslationData;
   sidebar: TranslationData;
   communications: TranslationData;
+  documents: TranslationData;
 }
 
 export interface TranslationContextType {

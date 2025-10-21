@@ -13,6 +13,7 @@ const translations: Record<Language, Translations> = {
     user: require('../locales/es/user.json'),
     sidebar: require('../locales/es/sidebar.json'),
     communications: require('../locales/es/communications.json'),
+    documents: require('../locales/es/documents.json'),
   },
   ca: {
     common: require('../locales/ca/common.json'),
@@ -23,6 +24,7 @@ const translations: Record<Language, Translations> = {
     user: require('../locales/ca/user.json'),
     sidebar: require('../locales/ca/sidebar.json'),
     communications: require('../locales/ca/communications.json'),
+    documents: require('../locales/ca/documents.json'),
   },
 };
 

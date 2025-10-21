@@ -2,22 +2,23 @@ import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    ActivityIndicator,
+    Alert,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { colors } from "../../constants/colors";
+import { useTranslation } from "../../hooks/useTranslation";
 import { styles } from "./NewDocumentModal.styles";
 import {
-  NewDocumentData,
-  NewDocumentModalProps,
+    NewDocumentData,
+    NewDocumentModalProps,
 } from "./NewDocumentModal.types";
 
 export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
@@ -30,6 +31,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   selectedTypeName = "",
   selectedTypeId = "",
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<NewDocumentData>({
     name: "",
     type: "",
@@ -97,10 +99,10 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         onClose();
       } catch {
         setIsSaving(false);
-        Alert.alert("Error", "No se pudo guardar el documento. Inténtalo de nuevo.");
+        Alert.alert("Error", t('errors.saveError', 'documents'));
       }
     } else {
-      Alert.alert("Error", "Por favor completa todos los campos obligatorios");
+      Alert.alert("Error", t('errors.missingFields', 'documents'));
     }
   };
 
@@ -116,7 +118,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         const fileSizeMB = file.size ? file.size / (1024 * 1024) : 0;
 
         if (fileSizeMB > 10) {
-          Alert.alert("Error", "El archivo es demasiado grande. Máximo 10 MB.");
+          Alert.alert("Error", t('errors.fileTooBig', 'documents'));
           return;
         }
 
@@ -130,7 +132,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
       }
     } catch (error) {
       console.error("Error selecting file:", error);
-      Alert.alert("Error", "No se pudo seleccionar el archivo");
+      Alert.alert("Error", t('errors.fileSelectionError', 'documents'));
     }
   };
 
@@ -186,7 +188,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
               <View style={styles.modal}>
                 {/* Header */}
                 <View style={styles.header}>
-                  <Text style={styles.title}>Nuevo documento</Text>
+                  <Text style={styles.title}>{t('newDocument', 'documents')}</Text>
                   <TouchableOpacity
                     style={styles.closeButton}
                     onPress={onClose}
@@ -204,7 +206,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                     {/* Nombre */}
                     <View style={styles.fieldContainer}>
                       <Text style={styles.label}>
-                        Nombre: <Text style={styles.required}>*</Text>
+                        {t('name', 'documents')}: <Text style={styles.required}>{t('required', 'documents')}</Text>
                       </Text>
                       <TextInput
                         style={[
@@ -217,14 +219,14 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                         }
                         onFocus={() => setFocusedField("name")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="Ingrese el nombre del documento"
+                        placeholder={t('namePlaceholder', 'documents')}
                       />
                     </View>
 
                     {/* Tipo documento */}
                     <View style={styles.fieldContainer}>
                       <Text style={styles.label}>
-                        Tipo documento: <Text style={styles.required}>*</Text>
+                        {t('documentType', 'documents')}: <Text style={styles.required}>{t('required', 'documents')}</Text>
                       </Text>
                       <TouchableOpacity
                         style={styles.dropdown}
@@ -232,8 +234,8 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                       >
                         <Text style={styles.dropdownText}>
                           {isLoadingTypes
-                            ? "Cargando tipos..."
-                            : internalSelectedTypeName || "Seleccionar tipo"}
+                            ? t('loadingTypes', 'documents')
+                            : internalSelectedTypeName || t('selectType', 'documents')}
                         </Text>
                         <Ionicons
                           name="chevron-down"
@@ -267,19 +269,19 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                     {/* Documento */}
                     <View style={styles.fieldContainer}>
                       <Text style={styles.label}>
-                        Documento (Máx. 10 MB):{" "}
-                        <Text style={styles.required}>*</Text>
+                        {t('document', 'documents')} ({t('maxSize', 'documents')}):{" "}
+                        <Text style={styles.required}>{t('required', 'documents')}</Text>
                       </Text>
                       <View style={styles.fileContainer}>
                         <Text style={styles.fileText}>
-                          {formData.file || "Sin archivos seleccionados"}
+                          {formData.file || t('noFilesSelected', 'documents')}
                         </Text>
                         <TouchableOpacity
                           style={styles.selectFileButton}
                           onPress={handleSelectFile}
                         >
                           <Text style={styles.selectFileButtonText}>
-                            SELECCIONAR ARCHIVO
+                            {t('selectFile', 'documents')}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -287,7 +289,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
 
                     {/* Válido hasta */}
                     <View style={styles.fieldContainer}>
-                      <Text style={styles.label}>Válido hasta:</Text>
+                      <Text style={styles.label}>{t('validUntil', 'documents')}:</Text>
                       <TouchableOpacity
                         style={styles.dateContainer}
                         onPress={() => {
@@ -295,7 +297,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                         }}
                       >
                         <Text style={styles.dateInput}>
-                          {formData.validUntil || "dd/mm/aaaa"}
+                          {formData.validUntil || t('datePlaceholder', 'documents')}
                         </Text>
                         <DateTimePickerModal
                           isVisible={isDatePickerVisible}
@@ -349,15 +351,12 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                         />
                       </TouchableOpacity>
                       <Text style={styles.checkboxText}>
-                        Incluir en el Libro del edificio (Sólo se admiten
-                        documentos en formato pdf)
+                        {t('includeInBook', 'documents')}
                       </Text>
                     </View>
 
                     <Text style={styles.infoText}>
-                      Los documentos que se quieran incluir en el Libro del
-                      edificio no deben estar bloqueados ni protegidos con
-                      contraseña.
+                      {t('bookInfo', 'documents')}
                     </Text>
                   </View>
                 </ScrollView>
@@ -374,12 +373,12 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                   {isSaving ? (
                     <>
                       <ActivityIndicator size="small" color={colors.white} />
-                      <Text style={styles.saveButtonText}>GUARDANDO...</Text>
+                      <Text style={styles.saveButtonText}>{t('saving', 'documents')}</Text>
                     </>
                   ) : (
                     <>
                       <Ionicons name="lock-closed" size={20} color={colors.white} />
-                      <Text style={styles.saveButtonText}>GUARDAR</Text>
+                      <Text style={styles.saveButtonText}>{t('save', 'documents')}</Text>
                     </>
                   )}
                 </TouchableOpacity>
