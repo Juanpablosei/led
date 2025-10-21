@@ -141,6 +141,50 @@ npm run ios
 npm run web
 ```
 
+## ⚡ Comandos Rápidos
+
+### Desarrollo
+```bash
+# Iniciar servidor
+npm start
+
+# Ejecutar en dispositivos
+npm run android    # Android
+npm run ios        # iOS  
+npm run web        # Web
+
+# Limpiar cache
+npx expo start --clear
+```
+
+### EAS Updates
+```bash
+# Instalar EAS CLI
+npm install -g eas-cli
+
+# Login en EAS
+eas login
+
+# Enviar update
+npx eas update --branch preview --message "1.4"
+npx eas update --branch production --message "1.4"
+
+# Ver updates
+eas update:list
+```
+
+### Builds
+```bash
+# Build para producción
+eas build --platform all
+
+# Ver builds
+eas build:list
+
+# Submit a stores
+eas submit --platform all
+```
+
 ## 🎨 Sistema de Diseño
 
 ### Colores
@@ -1396,58 +1440,7 @@ Accept-Language: es|ca
 ```json
 {
   "status": false,
-  "message": "Descripción del error",
-  "code": 400,
-  "errors": {
-    "campo": ["El campo es obligatorio"]
-  }
-}
-```
-
----
-
-## 🔧 **CONFIGURACIÓN HTTP**
-
-### Cliente HTTP Base
-```typescript
-const httpClient = axios.create({
-  baseURL: 'https://api.ledat.com',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept-Language': 'es'
-  }
-});
-
-// Interceptor para agregar token automáticamente
-httpClient.interceptors.request.use((config) => {
-  const token = AsyncStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-```
-
-### Headers Requeridos
-```
-Authorization: Bearer {token}
-Accept-Language: es|ca
-Content-Type: application/json|multipart/form-data
-```
-
-## 📚 **FUNCIONES DEL SERVICIO buildingService**
-
-### Comunicaciones
-```typescript
-// Obtener comunicaciones de un edificio
-await buildingService.getBuildingCommunications(edificiId, page, limit);
-
-// Obtener detalle de comunicación (endpoint anterior)
-await buildingService.getComunicacionDetail(id);
-
-// Mostrar comunicación específica (nuevo endpoint)
-await buildingService.getComunicacionShow(edificiId, comunicacionId);
+  "message": "Descripción del error"}
 
 // Obtener destinatarios de una comunicación específica
 await buildingService.getComunicacionDestinatarios(edificiId, comunicacionId, page, limit);
@@ -1531,18 +1524,52 @@ __tests__/
 # Servidor de desarrollo
 npm start
 
-# Build de desarrollo
-expo build:android
-expo build:ios
+# Ejecutar en dispositivos
+npm run android    # Android
+npm run ios        # iOS
+npm run web        # Web
 ```
 
-### Producción
+### EAS Updates (Over-The-Air)
 ```bash
-# Build de producción
+# Instalar EAS CLI
+npm install -g eas-cli
+
+# Login en EAS
+eas login
+
+# Enviar update a preview
+npx eas update --branch preview --message "1.4"
+
+# Enviar update a production
+npx eas update --branch production --message "1.4"
+
+# Ver updates disponibles
+eas update:list
+```
+
+### Builds de Producción
+```bash
+# Build para Android
+eas build --platform android
+
+# Build para iOS
+eas build --platform ios
+
+# Build para ambas plataformas
 eas build --platform all
 
-# Despliegue
+# Ver builds
+eas build:list
+```
+
+### Despliegue
+```bash
+# Submit a stores
 eas submit --platform all
+
+# Ver configuración EAS
+eas config
 ```
 
 ### Configuración EAS
