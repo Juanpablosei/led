@@ -15,7 +15,7 @@ interface SelectOption {
 }
 
 export const MyDataScreen: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, currentLanguage, changeLanguage } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [userData, setUserData] = useState<StoredUserData | null>(null);
@@ -687,6 +687,41 @@ export const MyDataScreen: React.FC = () => {
             {passwordError ? (
               <Text style={styles.errorText}>{passwordError}</Text>
             ) : null}
+          </View>
+
+          {/* Idioma */}
+          <View style={styles.fieldContainer}>
+            <Text style={styles.label}>{t('myData.language', 'user')}:</Text>
+            <View style={styles.languageToggleContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.languageToggle,
+                  currentLanguage === 'es' && styles.languageToggleActive
+                ]}
+                onPress={() => changeLanguage('es')}
+              >
+                <Text style={[
+                  styles.languageToggleText,
+                  currentLanguage === 'es' && styles.languageToggleTextActive
+                ]}>
+                  {t('myData.languageSpanish', 'user')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.languageToggle,
+                  currentLanguage === 'ca' && styles.languageToggleActive
+                ]}
+                onPress={() => changeLanguage('ca')}
+              >
+                <Text style={[
+                  styles.languageToggleText,
+                  currentLanguage === 'ca' && styles.languageToggleTextActive
+                ]}>
+                  {t('myData.languageCatalan', 'user')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           {/* Botón Guardar */}

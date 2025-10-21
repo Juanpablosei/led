@@ -33,8 +33,11 @@
     "selectProfessionTitle": "Seleccionar Profesión",
     "selectCommunityTitle": "Seleccionar Comunidad Autónoma",
     "selectCollegeTitle": "Seleccionar Colegio Profesional",
-    "selectAgreementTitle": "Seleccionar Convenio"
-  },
+  "selectAgreementTitle": "Seleccionar Convenio",
+  "language": "Idioma",
+  "languageSpanish": "Español",
+  "languageCatalan": "Català"
+},
   "userType": {
     "title": "Tipo de usuario",
     "userTypeLabel": "Tipo de usuario:",

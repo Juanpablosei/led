@@ -195,5 +195,32 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: 4,
   },
+  languageToggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.lightGray,
+    borderRadius: 6,
+    padding: 2,
+    marginTop: 6,
+  },
+  languageToggle: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  languageToggleActive: {
+    backgroundColor: colors.primary,
+  },
+  languageToggleText: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  languageToggleTextActive: {
+    color: colors.white,
+    fontWeight: '600',
+  },
 });
 

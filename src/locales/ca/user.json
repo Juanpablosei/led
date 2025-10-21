@@ -33,8 +33,11 @@
     "selectProfessionTitle": "Seleccionar Professió",
     "selectCommunityTitle": "Seleccionar Comunitat Autònoma",
     "selectCollegeTitle": "Seleccionar Col·legi Professional",
-    "selectAgreementTitle": "Seleccionar Conveni"
-  },
+  "selectAgreementTitle": "Seleccionar Conveni",
+  "language": "Idioma",
+  "languageSpanish": "Español",
+  "languageCatalan": "Català"
+},
   "userType": {
     "title": "Tipus d'usuari",
     "userTypeLabel": "Tipus d'usuari:",
