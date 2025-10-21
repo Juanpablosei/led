@@ -9,5 +9,13 @@
   "next": "Següent",
   "pageInfo": "Pàgina {{current}} de {{total}}",
   "export": "Exportar",
-  "filter": "Filtrar"
+  "filter": "Filtrar",
+  "viewMessage": "Veure missatge",
+  "recipients": "Destinataris",
+  "messageDetails": "Detalls del missatge",
+  "subject": "Assumpte",
+  "sendDate": "Data d'enviament",
+  "sentBy": "Enviat per",
+  "message": "Missatge",
+  "attachments": "Fitxers adjunts"
 }

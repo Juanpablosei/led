@@ -81,7 +81,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
           attachments: [...prev.attachments, ...files],
         }));
         
-        showToast(`${files.length} archivo(s) agregado(s)`, 'success');
+        showToast(t('filesAdded', 'email').replace('{{count}}', files.length.toString()), 'success');
       }
     } catch (error) {
       console.error('Error selecting files:', error);
@@ -122,7 +122,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
             attachments: [...prev.attachments, attachment],
           }));
           
-          showToast('Foto agregada', 'success');
+          showToast(t('photoAdded', 'email'), 'success');
         }
       }
     } catch (error) {
@@ -184,12 +184,12 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
           <View style={styles.attachmentButtons}>
             <TouchableOpacity style={styles.attachmentButton} onPress={handleSelectFiles}>
               <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
-              <Text style={styles.attachmentButtonText}>Adjuntar archivo</Text>
+              <Text style={styles.attachmentButtonText}>{t('attachFile', 'email')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.attachmentButton} onPress={handleTakePhoto}>
               <Ionicons name="camera-outline" size={20} color={colors.primary} />
-              <Text style={styles.attachmentButtonText}>Tomar foto</Text>
+              <Text style={styles.attachmentButtonText}>{t('takePhoto', 'email')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -197,7 +197,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
           {formData.attachments.length > 0 && (
             <View style={styles.attachmentsList}>
               <Text style={styles.attachmentsListTitle}>
-                {formData.attachments.length} archivo(s) adjunto(s):
+                {formData.attachments.length} {t('filesAttached', 'email')}
               </Text>
               {formData.attachments.map((file, index) => (
                 <View key={index} style={styles.attachmentItem}>
@@ -285,7 +285,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
           {isLoading ? (
             <>
               <ActivityIndicator size="small" color="#FFFFFF" />
-              <Text style={styles.sendButtonText}>Enviando...</Text>
+              <Text style={styles.sendButtonText}>{t('sending', 'email')}</Text>
             </>
           ) : (
             <>

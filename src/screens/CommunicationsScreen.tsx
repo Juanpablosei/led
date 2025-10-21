@@ -159,10 +159,6 @@ export const CommunicationsScreen: React.FC = () => {
                 index % 2 === 1 && styles.cardContainerEven,
               ]}
             >
-              {/* Icono de tipo de comunicación */}
-              <View style={styles.cardIconContainer}>
-                <Ionicons name="mail" size={24} color={colors.primary} />
-              </View>
 
               {/* Contenido principal */}
               <View style={styles.cardContent}>
@@ -185,7 +181,7 @@ export const CommunicationsScreen: React.FC = () => {
                   </View>
                   <View style={styles.cardFooterItem}>
                     <Ionicons name="people-outline" size={14} color="#666" />
-                    <Text style={styles.cardFooterText}>{comm.total_comunicacions} destinatarios</Text>
+                    <Text style={styles.cardFooterText}>{comm.total_comunicacions} {t('recipients', 'communications').toLowerCase()}</Text>
                   </View>
                 </View>
 
@@ -196,14 +192,14 @@ export const CommunicationsScreen: React.FC = () => {
                     onPress={() => handleViewDetails(comm.id)}
                   >
                     <Ionicons name="document-text-outline" size={18} color="#FFFFFF" />
-                    <Text style={styles.actionButtonText}>Ver mensaje</Text>
+                    <Text style={styles.actionButtonText}>{t('viewMessage', 'communications')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.actionButtonSecondary]}
                     onPress={() => handleViewRecipients(comm.id)}
                   >
                     <Ionicons name="people-outline" size={18} color="#FFFFFF" />
-                    <Text style={styles.actionButtonText}>Destinatarios</Text>
+                    <Text style={styles.actionButtonText}>{t('recipients', 'communications')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -272,7 +268,7 @@ export const CommunicationsScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Detalles del mensaje</Text>
+              <Text style={styles.modalTitle}>{t('messageDetails', 'communications')}</Text>
               <TouchableOpacity onPress={() => setShowDetailsModal(false)}>
                 <Ionicons name="close" size={28} color="#333" />
               </TouchableOpacity>
@@ -282,24 +278,24 @@ export const CommunicationsScreen: React.FC = () => {
               {selectedCommunication && (
                 <>
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Asunto:</Text>
+                    <Text style={styles.modalLabel}>{t('subject', 'communications')}:</Text>
                     <Text style={styles.modalValue}>{selectedCommunication.assumpte}</Text>
                   </View>
 
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Fecha de envío:</Text>
+                    <Text style={styles.modalLabel}>{t('sendDate', 'communications')}:</Text>
                     <Text style={styles.modalValue}>{formatDate(selectedCommunication.data_enviada)}</Text>
                   </View>
 
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Enviado por:</Text>
+                    <Text style={styles.modalLabel}>{t('sentBy', 'communications')}:</Text>
                     <Text style={styles.modalValue}>
                       {`${selectedCommunication.first_name} ${selectedCommunication.last_name}`}
                     </Text>
                   </View>
 
                   <View style={styles.modalField}>
-                    <Text style={styles.modalLabel}>Mensaje:</Text>
+                    <Text style={styles.modalLabel}>{t('message', 'communications')}:</Text>
                     <RenderHTML
                       contentWidth={width - 80}
                       source={{ html: selectedCommunication.message }}
@@ -313,7 +309,7 @@ export const CommunicationsScreen: React.FC = () => {
 
                   {selectedCommunication.adjuntos && selectedCommunication.adjuntos.length > 0 && (
                     <View style={styles.modalField}>
-                      <Text style={styles.modalLabel}>Archivos adjuntos:</Text>
+                      <Text style={styles.modalLabel}>{t('attachments', 'communications')}:</Text>
                       {selectedCommunication.adjuntos.map((adjunto, index) => (
                         <View key={index} style={styles.attachmentItem}>
                           <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
@@ -339,7 +335,7 @@ export const CommunicationsScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Destinatarios ({selectedCommunication?.total_comunicacions || 0})</Text>
+              <Text style={styles.modalTitle}>{t('recipients', 'communications')} ({selectedCommunication?.total_comunicacions || 0})</Text>
               <TouchableOpacity onPress={() => setShowRecipientsModal(false)}>
                 <Ionicons name="close" size={28} color="#333" />
               </TouchableOpacity>

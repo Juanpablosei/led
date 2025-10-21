@@ -39,8 +39,7 @@ export const styles = StyleSheet.create({
     color: colors.text,
   },
   logoutText: {
-    color: colors.primary,
-    fontWeight: 'bold',
+    color: colors.text,
   },
 });
 

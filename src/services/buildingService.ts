@@ -282,9 +282,9 @@ export type SendEmailApiResponse = SendEmailResponse | SendEmailError;
 export interface ComunicacionDetailData {
   id: number;
   assumpte: string;
-  cos: string;
-  data_enviament: string;
-  emisor: string;
+  message: string;
+  data_enviada: string;
+  remitent_nom: string;
   edifici_id?: number | null;
   edifici_nom?: string | null;
   leido: string | null;
