@@ -3,12 +3,12 @@ import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import {
-    AlertCategory,
-    AlertsSideMenu,
-    NotificationDetailModal,
-    NotificationItem,
-    NotificationTabs,
-    TabType
+  AlertCategory,
+  AlertsSideMenu,
+  NotificationDetailModal,
+  NotificationItem,
+  NotificationTabs,
+  TabType
 } from '../components/notifications';
 import { NotificationDetailData } from '../components/notifications/NotificationDetailModal.types';
 import { NotificationData } from '../components/notifications/NotificationItem.types';
@@ -155,13 +155,18 @@ export const NotificationsScreen: React.FC = () => {
           const comunicacion = response.data;
           
           // Mapear a formato del modal
+          console.log('Comunicacion data:', comunicacion);
+          console.log('Message content:', comunicacion.message);
+          
           const notificationDetail: NotificationDetailData = {
             id: String(comunicacion.id),
             subject: comunicacion.assumpte,
-            dateSent: comunicacion.data_enviament || null,
-            sender: comunicacion.emisor || null,
-            message: comunicacion.cos,
+            dateSent: comunicacion.data_enviada || null,
+            sender: comunicacion.remitent_nom || null,
+            message: comunicacion.message,
           };
+          
+          console.log('Notification detail:', notificationDetail);
           
           setSelectedNotification(notificationDetail);
           setCurrentNotificationId(String(comunicacion.id));

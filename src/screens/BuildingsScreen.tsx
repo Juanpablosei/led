@@ -194,7 +194,7 @@ export const BuildingsScreen: React.FC = () => {
         {isLoadingBuildings ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#E53E3E" />
-            <Text style={styles.loadingText}>Cargando edificios...</Text>
+            <Text style={styles.loadingText}>{t('loadingBuildings', 'common')}</Text>
           </View>
         ) : (
           <FlatList

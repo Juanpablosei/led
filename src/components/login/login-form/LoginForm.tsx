@@ -213,7 +213,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
       {/* Login Button */}
       <Button
-        title={isLoading ? 'Iniciando sesión...' : t('loginButton', 'auth')}
+        title={isLoading ? t('loggingIn', 'auth') : t('loginButton', 'auth')}
         onPress={handleLogin}
         variant="primary"
         disabled={isLoading}

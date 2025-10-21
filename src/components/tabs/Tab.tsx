@@ -28,7 +28,7 @@ export const Tab: React.FC<TabProps> = ({ tab, onPress }) => {
   };
 
   const dynamicTabTextStyle = {
-    ...styles.tabText,
+    ...(tab.active ? styles.tabTextActive : styles.tabText),
     fontSize: getFontSize(),
   };
 

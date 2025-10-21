@@ -52,11 +52,11 @@ export const Header: React.FC<HeaderProps> = ({ onLanguageChange }) => {
         style={styles.languageSelector}
         onPress={() => setShowLanguageModal(true)}
       >
-        <Ionicons name="globe-outline" size={26} color={colors.white} />
-        <Text style={[styles.body, { color: colors.white, marginLeft: 12, marginRight: 12, fontSize: 26 }]}>
+        <Ionicons name="globe-outline" size={18} color={colors.white} />
+        <Text style={[styles.body, { color: colors.white, marginLeft: 6, marginRight: 6, fontSize: 16 }]}>
           {getLanguageCode(currentLanguage)}
         </Text>
-        <Ionicons name="chevron-down" size={26} color={colors.white} />
+        <Ionicons name="chevron-down" size={18} color={colors.white} />
       </TouchableOpacity>
 
       {/* Language Selection Modal */}

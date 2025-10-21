@@ -55,9 +55,8 @@ export const styles = StyleSheet.create({
   languageSelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-   
+    paddingHorizontal: 4,
+    paddingVertical: 2,
   },
   body: {
     ...typography.body,
@@ -79,21 +78,21 @@ export const styles = StyleSheet.create({
   },
   languageDropdown: {
     backgroundColor: colors.white,
-    borderRadius: 6,
-    paddingVertical: 8,
-    width: 120,
+    borderRadius: 4,
+    paddingVertical: 4,
+    width: 100,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
   },
   languageOption: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -101,7 +100,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   languageOptionText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#333',
     textAlign: 'center',
     fontWeight: '500',

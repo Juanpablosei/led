@@ -87,6 +87,7 @@ export const styles = StyleSheet.create({
   title: {
     ...typography.title,
     textAlign: 'center',
+    marginTop: spacing.lg,
     marginBottom: spacing.lg,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },

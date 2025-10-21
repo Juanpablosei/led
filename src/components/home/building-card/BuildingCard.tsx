@@ -68,11 +68,11 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
           <Text style={styles.id}>
-            <Text style={styles.label}>ID Edificio: </Text>
+            <Text style={styles.label}>{t('buildingId', 'common')} </Text>
             <Text style={styles.value}>{building.buildingId}</Text>
           </Text>
           <Text style={styles.cadastralRef}>
-            <Text style={styles.label}>Ref. Catastral: </Text>
+            <Text style={styles.label}>{t('cadastralRef', 'common')} </Text>
             <Text style={styles.value}>{building.cadastralReference}</Text>
           </Text>
         </View>

@@ -69,6 +69,7 @@ export const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     marginBottom: spacing.lg,
   },
   checkbox: {

@@ -49,30 +49,11 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
 
               {/* Content */}
               <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/* Asunto y Fecha en la misma fila */}
-                <View style={styles.rowContainer}>
-                  {/* Asunto */}
-                  <View style={styles.fieldContainerHalf}>
-                    <Text style={styles.label}>{t('detail.subject', 'notifications')}:</Text>
-                    <Text style={styles.value}>{notification.subject}</Text>
-                  </View>
-
-                  {/* Fecha enviado - Solo mostrar si existe */}
-                  {notification.dateSent && (
-                    <View style={styles.fieldContainerHalf}>
-                      <Text style={styles.label}>{t('detail.dateSent', 'notifications')}:</Text>
-                      <Text style={styles.value}>{notification.dateSent}</Text>
-                    </View>
-                  )}
+                {/* Asunto */}
+                <View style={styles.fieldContainer}>
+                  <Text style={styles.label}>{t('detail.subject', 'notifications')}:</Text>
+                  <Text style={styles.value}>{notification.subject}</Text>
                 </View>
-
-                {/* Remitente - Solo mostrar si existe */}
-                {notification.sender && (
-                  <View style={styles.fieldContainer}>
-                    <Text style={styles.label}>{t('detail.sender', 'notifications')}:</Text>
-                    <Text style={styles.value}>{notification.sender}</Text>
-                  </View>
-                )}
 
                 <View style={styles.divider} />
 

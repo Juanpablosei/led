@@ -35,5 +35,11 @@ export const styles = StyleSheet.create({
   tabText: {
     ...typography.body,
     marginLeft: spacing.xs,
+    color: '#333333',
+  },
+  tabTextActive: {
+    ...typography.body,
+    marginLeft: spacing.xs,
+    color: colors.primary,
   },
 });

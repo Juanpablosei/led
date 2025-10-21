@@ -134,12 +134,12 @@ export const BuildingDetailScreen: React.FC = () => {
           
           <View style={styles.buildingDetails}>
             <Text style={styles.detailRow}>
-              <Text style={styles.detailLabel}>ID Edificio: </Text>
+              <Text style={styles.detailLabel}>{t('buildingId', 'common')} </Text>
               <Text style={styles.detailValue}>{buildingDetail.id}</Text>
             </Text>
             
             <Text style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Ref. Catastral: </Text>
+              <Text style={styles.detailLabel}>{t('cadastralRef', 'common')} </Text>
               <Text style={styles.detailValue}>{buildingDetail.ref_cadastral}</Text>
             </Text>
             
