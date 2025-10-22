@@ -146,6 +146,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
       case 'listado-comunicaciones':
         router.push(`/communications?buildingId=${building.id}`);
         break;
+      case 'mis-edificios':
+        router.push('/buildings');
+        break;
       default:
         break;
     }

@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
+import { storageService } from '../../services/storageService';
 import { styles } from './Sidebar.styles';
 import { SidebarItem, SidebarProps } from './Sidebar.types';
 
 export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPress, currentRoute, buildingData }) => {
   const { t } = useTranslation();
+  const [isGeneralAccess, setIsGeneralAccess] = useState(false);
   
   // Función para determinar qué sección debe estar expandida basándose en la ruta
   const getExpandedSection = (route: string): string => {
@@ -25,6 +27,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set([getExpandedSection(currentRoute || '')])
   );
+
+  // Verificar el tipo de acceso al cargar el componente
+  useEffect(() => {
+    const checkAccessType = async () => {
+      try {
+        const isBuildingLogin = await storageService.isBuildingLogin();
+        setIsGeneralAccess(!isBuildingLogin); // Si no es building login, es general access
+      } catch (error) {
+        console.error('Error checking access type:', error);
+        setIsGeneralAccess(false);
+      }
+    };
+    
+    checkAccessType();
+  }, []);
 
   // Actualizar las secciones expandidas cuando cambie la ruta
   useEffect(() => {
@@ -63,6 +80,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
         // Temporarily hidden
         // { id: 'listado-usuarios', title: t('userList', 'sidebar'), icon: 'list-outline' },
         { id: 'enviar-email', title: t('sendEmail', 'sidebar'), icon: 'mail-outline' },
+        // Solo mostrar "Mis edificios" si es acceso general
+        ...(isGeneralAccess ? [{ id: 'mis-edificios', title: t('myBuildings', 'sidebar'), icon: 'business-outline' }] : []),
       ],
     },
     {
@@ -118,6 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isVisible, onClose, onItemPres
       '/documents': 'biblioteca',
       '/communications': 'listado-comunicaciones',
       '/users': 'listado-usuarios',
+      '/buildings': 'mis-edificios',
     };
     
     return routeMap[currentRoute] === itemId;
