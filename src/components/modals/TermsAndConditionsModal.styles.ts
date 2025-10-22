@@ -1,0 +1,157 @@
+import { StyleSheet } from 'react-native';
+import { colors } from '../../constants/colors';
+
+export const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    width: '100%',
+    maxHeight: '90%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    flex: 1,
+    marginRight: 10,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalContent: {
+    padding: 20,
+  },
+  section: {
+    marginBottom: 8,
+    paddingBottom: 8,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    backgroundColor: colors.lightGray,
+    borderRadius: 8,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    flex: 1,
+  },
+  sectionContent: {
+    marginTop: 12,
+    paddingHorizontal: 8,
+  },
+  sectionText: {
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 20,
+  },
+  subsection: {
+    marginBottom: 16,
+    paddingLeft: 12,
+  },
+  subsectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  subsectionContent: {
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 20,
+  },
+  linkText: {
+    color: colors.primary,
+    textDecorationLine: 'underline',
+  },
+  primaryText: {
+    color: colors.primary,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  downloadContainer: {
+    padding: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightGray,
+  },
+  downloadButton: {
+    backgroundColor: colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    gap: 6,
+    alignSelf: 'center',
+    minWidth: 120,
+  },
+  downloadButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    gap: 8,
+  },
+  rejectButton: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rejectButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  acceptButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  acceptButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+});

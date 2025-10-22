@@ -504,7 +504,7 @@ export const authService = {
     try {
       // El interceptor agrega automáticamente el token y el idioma
       // Ya no necesitas pasar el token como parámetro
-      const response = await httpClient.post(`/edificio_usuarios/comprobacion/aprobar/id:${edificio_id}`);
+      const response = await httpClient.patch(`/edificio_usuarios/comprobacion/aprobar/${edificio_id}`);
       return response.data;
     } catch (error: any) {
       // Si axios devuelve un error con respuesta, devolver esa data
@@ -520,7 +520,7 @@ export const authService = {
     try {
       // El interceptor agrega automáticamente el token y el idioma
       // Ya no necesitas pasar el token como parámetro
-      const response = await httpClient.post(`/edificio_usuarios/comprobacion/rechazar/id:${edificio_id}`);
+      const response = await httpClient.patch(`/edificio_usuarios/comprobacion/rechazar/${edificio_id}`);
       return response.data;
     } catch (error: any) {
       // Si axios devuelve un error con respuesta, devolver esa data

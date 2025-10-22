@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from '../../hooks/useTranslation';
+import { TermsAndConditionsModal } from '../modals/TermsAndConditionsModal';
 import { styles } from './BuildingAcceptanceModal.styles';
 import { BuildingAcceptanceModalProps } from './BuildingAcceptanceModal.types';
 
@@ -15,13 +16,13 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
   const { t } = useTranslation();
   const [contractAccepted, setContractAccepted] = useState(false);
   const [dataProtectionAccepted, setDataProtectionAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [currentTermsType, setCurrentTermsType] = useState<'contract' | 'dataProtection' | null>(null);
 
   const handleAccept = () => {
     if (contractAccepted && dataProtectionAccepted) {
       onAccept();
-      // Reset checkboxes
-      setContractAccepted(false);
-      setDataProtectionAccepted(false);
+      // No resetear checkboxes aquí, se hará cuando se cierre el modal
     }
   };
 
@@ -40,13 +41,28 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
   };
 
   const handleContractLinkPress = () => {
-    console.log('Abrir condiciones de contratación');
-    // Aquí iría la navegación a las condiciones de contratación
+    setCurrentTermsType('contract');
+    setShowTermsModal(true);
   };
 
   const handleDataProtectionLinkPress = () => {
-    console.log('Abrir protección de datos');
-    // Aquí iría la navegación a la protección de datos
+    setCurrentTermsType('dataProtection');
+    setShowTermsModal(true);
+  };
+
+  const handleTermsAccept = () => {
+    if (currentTermsType === 'contract') {
+      setContractAccepted(true);
+    } else if (currentTermsType === 'dataProtection') {
+      setDataProtectionAccepted(true);
+    }
+    setShowTermsModal(false);
+    setCurrentTermsType(null);
+  };
+
+  const handleTermsReject = () => {
+    setShowTermsModal(false);
+    setCurrentTermsType(null);
   };
 
   return (
@@ -164,6 +180,14 @@ export const BuildingAcceptanceModal: React.FC<BuildingAcceptanceModalProps> = (
           </View>
         </View>
       </View>
+
+      {/* Terms and Conditions Modal */}
+      <TermsAndConditionsModal
+        visible={showTermsModal}
+        onClose={handleTermsReject}
+        onAccept={handleTermsAccept}
+        onReject={handleTermsReject}
+      />
     </Modal>
   );
 };

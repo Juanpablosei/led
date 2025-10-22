@@ -25,6 +25,7 @@ import { BiometricSetupModal } from "../components/modals/BiometricSetupModal";
 import BuildingRejectedModal from "../components/modals/BuildingRejectedModal";
 import ProfessionalDataModal from "../components/modals/ProfessionalDataModal";
 import { ProfessionalDataFormData } from "../components/modals/ProfessionalDataModal.types";
+import { TermsAndConditionsModal } from "../components/modals/TermsAndConditionsModal";
 import { SupportOptions } from "../components/support-options/SupportOptions";
 import { config } from "../config/environment";
 import { colors } from "../constants/colors";
@@ -47,6 +48,7 @@ export const LoginScreen: React.FC = () => {
     useState(false);
   const [showBuildingRejectedModal, setShowBuildingRejectedModal] =
     useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [buildingData, setBuildingData] = useState<any>(null);
   const [rolesData, setRolesData] = useState<any[]>([]);
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
@@ -491,12 +493,20 @@ export const LoginScreen: React.FC = () => {
       if (buildingData?.id) {
         const response = await authService.approveBuilding(buildingData.id);
 
+        console.log('Response from approveBuilding:', response);
+        
         if ("success" in response && response.success) {
           setShowBuildingAcceptanceModal(false);
           // Login de edificio: ir directo al detalle del edificio (no a la lista)
           router.replace(`/building-detail?buildingId=${buildingData.id}`);
         } else {
-          Alert.alert("", response.message || "Error al aprobar el edificio");
+          // Mostrar el mensaje de la respuesta pero continuar si es exitoso
+          if (response.message && response.message.includes('actualizados correctamente')) {
+            setShowBuildingAcceptanceModal(false);
+            router.replace(`/building-detail?buildingId=${buildingData.id}`);
+          } else {
+            Alert.alert("", response.message || "Error al aprobar el edificio");
+          }
         }
       } else {
         Alert.alert("", "Error: datos de autenticación no disponibles");
@@ -792,6 +802,12 @@ export const LoginScreen: React.FC = () => {
             biometricType={getBiometricLabel()}
             onAccept={handleBiometricSetupAccept}
             onReject={handleBiometricSetupReject}
+          />
+
+          {/* Terms and Conditions Modal */}
+          <TermsAndConditionsModal
+            visible={showTermsModal}
+            onClose={() => setShowTermsModal(false)}
           />
         </View>
       </View>
