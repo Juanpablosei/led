@@ -92,59 +92,43 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   }, []);
 
   const loadAutonomousCommunities = useCallback(async () => {
-    console.log('loadAutonomousCommunities called with:', {
-      profession: formData.profession,
-      userType: formData.userType
-    });
-    
     if (!formData.profession || formData.userType !== 'profesional') {
-      console.log('loadAutonomousCommunities: conditions not met, returning');
       return;
     }
     
     setIsLoadingCommunities(true);
     try {
       const professionId = parseInt(formData.profession);
-      console.log('Profession ID:', professionId);
       
       // Arquitectura técnica (4) o Arquitectura (5)
       if (professionId === 4 || professionId === 5) {
-        console.log('Loading communities for architecture profession');
         const apiResponse = await authService.getComunidadesAutonomas(professionId);
         const response = (apiResponse as any).comunidadautonoma || apiResponse;
-        
-        console.log('Communities API response:', response);
         
         if (response && typeof response === 'object') {
           const communities = Object.entries(response).map(([key, value]) => ({
             value: key,
             label: String(value)
           }));
-          console.log('Communities loaded:', communities);
           setAutonomousCommunityOptions(communities);
         }
       } 
       // Altres/Otras (10) - usar parámetros públicos
       else if (professionId === 10) {
-        console.log('Loading communities for "Altres" profession');
         const paramResponse = await authService.getPublicParameters([
           { parametroPadre: 'comunidadautonoma' }
         ]);
-        
-        console.log('Public parameters response:', paramResponse);
         
         if (paramResponse.comunidadautonoma && typeof paramResponse.comunidadautonoma === 'object') {
           const communities = Object.entries(paramResponse.comunidadautonoma).map(([key, value]) => ({
             value: key,
             label: String(value)
           }));
-          console.log('Communities loaded from public params:', communities);
           setAutonomousCommunityOptions(communities);
         }
       }
       // Otras profesiones - no tienen comunidades
       else {
-        console.log('No communities for this profession');
         setAutonomousCommunityOptions([]);
       }
     } catch (error) {
@@ -155,24 +139,14 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   }, [formData.profession, formData.userType]);
 
   const loadProfessionalColleges = useCallback(async () => {
-    console.log('loadProfessionalColleges called with:', {
-      autonomousCommunity: formData.autonomousCommunity,
-      profession: formData.profession,
-      userType: formData.userType
-    });
-    
     if (!formData.autonomousCommunity || !formData.profession || formData.userType !== 'profesional') {
-      console.log('loadProfessionalColleges: conditions not met, returning');
       return;
     }
     
     setIsLoadingColleges(true);
     try {
       const professionId = parseInt(formData.profession);
-      console.log('Calling getColegiosProfesionales with:', formData.autonomousCommunity, professionId);
       const apiResponse = await authService.getColegiosProfesionales(formData.autonomousCommunity, professionId);
-      
-      console.log('API response:', apiResponse);
       
       // La respuesta viene con estructura {status, message, data: [...]}
       if (apiResponse.data && Array.isArray(apiResponse.data)) {
@@ -180,10 +154,8 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
           value: String(colegio.id), // Usar el ID del colegio
           label: colegio.nombre
         }));
-        console.log('Colleges loaded:', colleges);
         setProfessionalCollegeOptions(colleges);
       } else {
-        console.log('No data array in response or unexpected format');
         setProfessionalCollegeOptions([]);
       }
     } catch (error) {

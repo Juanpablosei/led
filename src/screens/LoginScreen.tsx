@@ -599,15 +599,10 @@ export const LoginScreen: React.FC = () => {
         politica_privacitat_acceptada_en: data.acceptDataProtection,
       };
 
-      console.log('Enviando datos profesionales:', dataToUpdate);
-
       // Llamar a la API para actualizar los datos profesionales
       const response = await authService.updateProfessionalData(dataToUpdate);
       
-      console.log('Respuesta del servidor:', response);
-      
       if (response.success) {
-        console.log('Datos profesionales actualizados correctamente:', response.message);
         setShowProfessionalDataModal(false);
         router.replace("/buildings");
       } else {
