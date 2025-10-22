@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Linking, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { config } from '../../config/environment';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
 import { styles } from './TermsAndConditionsModal.styles';
@@ -31,7 +32,8 @@ export const TermsAndConditionsModal: React.FC<TermsAndConditionsModalProps> = (
   const isExpanded = (sectionId: string) => expandedSections.has(sectionId);
 
   const handleFormDownload = () => {
-    Linking.openURL('https://onedrive.live.com/personal/f4477f79fcb59fe8/_layouts/15/Doc.aspx?sourcedoc=%7B09dbc52c-ec9a-4204-a121-2ef8c427876a%7D&action=default&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy9mNDQ3N2Y3OWZjYjU5ZmU4L0VTekYyd21hN0FSQ29TRXUtTVFuaDJvQmpOeFRkd0lVd0JaRzl3NHFsYjQzZmc_ZT1ZbDJ5NGI&slrid=4be3d1a1-0019-a000-8cf3-82dc8071e290&originalPath=aHR0cHM6Ly8xZHJ2Lm1zL3cvYy9mNDQ3N2Y3OWZjYjU5ZmU4L0VTekYyd21hN0FSQ29TRXUtTVFuaDJvQmpOeFRkd0lVd0JaRzl3NHFsYjQzZmc_cnRpbWU9TmM2YTZtc1Iza2c&CID=027e9569-61ad-4737-a36e-0086c15331fc&_SRM=0:G:121');
+    const downloadUrl = `${config.WEB_BASE_URL}/files/ES/Formulario%20de%20desistimiento%20LED%20032024.docx`;
+    Linking.openURL(downloadUrl);
   };
 
   const renderTextWithLinks = (text: string) => {
