@@ -65,6 +65,7 @@ export const LoginScreen: React.FC = () => {
     route: string;
     params?: any;
   } | null>(null);
+  const [isUpdatingProfessionalData, setIsUpdatingProfessionalData] = useState(false);
 
   // Cargar NIF recordado al iniciar
   useEffect(() => {
@@ -582,9 +583,43 @@ export const LoginScreen: React.FC = () => {
     router.replace("/buildings");
   };
 
-  const handleProfessionalDataFinish = (data: ProfessionalDataFormData) => {
-    setShowProfessionalDataModal(false);
-    router.replace("/buildings");
+  const handleProfessionalDataFinish = async (data: ProfessionalDataFormData) => {
+    setIsUpdatingProfessionalData(true);
+    
+    try {
+      // Crear objeto con datos para enviar al API
+      const dataToUpdate = {
+        professio: data.profession,
+        colegiado_externo_num_colegiado: data.collegiateNumber,
+        collegi_professional: data.professionalCollege,
+        role_altres: '',
+        comunitat_autonoma: data.autonomousCommunity,
+        tipo_usuario: data.userType,
+        idioma_preferencia_comunicacion: 'es', // Por defecto español
+        politica_privacitat_acceptada_en: data.acceptDataProtection,
+      };
+
+      console.log('Enviando datos profesionales:', dataToUpdate);
+
+      // Llamar a la API para actualizar los datos profesionales
+      const response = await authService.updateProfessionalData(dataToUpdate);
+      
+      console.log('Respuesta del servidor:', response);
+      
+      if (response.success) {
+        console.log('Datos profesionales actualizados correctamente:', response.message);
+        setShowProfessionalDataModal(false);
+        router.replace("/buildings");
+      } else {
+        console.error('Error al actualizar datos profesionales:', response.message);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error('Error al actualizar datos profesionales:', error);
+      // Aquí podrías mostrar un mensaje de error al usuario
+    } finally {
+      setIsUpdatingProfessionalData(false);
+    }
   };
 
   // Funciones para manejar la configuración de Face ID/Touch ID
@@ -794,6 +829,7 @@ export const LoginScreen: React.FC = () => {
             visible={showProfessionalDataModal}
             onClose={handleProfessionalDataClose}
             onFinish={handleProfessionalDataFinish}
+            isLoading={isUpdatingProfessionalData}
           />
 
           {/* Biometric Setup Modal */}

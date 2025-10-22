@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.darkGray,
+    color: colors.text,
   },
   closeButton: {
     padding: 4,
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.darkGray,
+    color: colors.text,
     marginBottom: 15,
   },
   rowContainer: {
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.darkGray,
+    color: colors.text,
     marginBottom: 8,
   },
   required: {
@@ -72,11 +72,16 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 14,
-    color: colors.darkGray,
+    color: colors.text,
     backgroundColor: 'white',
   },
   inputFocused: {
     borderColor: colors.primary,
+  },
+  inputDisabled: {
+    backgroundColor: colors.lightGray,
+    color: colors.text,
+    opacity: 0.7,
   },
   radioGroup: {
     flexDirection: 'row',
@@ -107,7 +112,7 @@ export const styles = StyleSheet.create({
   },
   radioText: {
     fontSize: 14,
-    color: colors.darkGray,
+    color: colors.text,
   },
   dropdown: {
     borderWidth: 1,
@@ -118,7 +123,7 @@ export const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 14,
-    color: colors.darkGray,
+    color: colors.text,
   },
   dropdownPlaceholder: {
     fontSize: 14,
@@ -147,7 +152,7 @@ export const styles = StyleSheet.create({
   checkboxText: {
     flex: 1,
     fontSize: 14,
-    color: colors.darkGray,
+    color: colors.text,
     lineHeight: 20,
   },
   linkText: {
@@ -175,7 +180,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.lightGray,
   },
   exitButtonText: {
-    color: colors.darkGray,
+    color: colors.text,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -186,5 +191,48 @@ export const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  // Estilos para modales de selección
+  selectionModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectionModal: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    width: '90%',
+    maxHeight: '70%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  selectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+  },
+  selectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  selectionList: {
+    maxHeight: 300,
+  },
+  selectionItem: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+  },
+  selectionItemText: {
+    fontSize: 16,
+    color: colors.text,
   },
 });

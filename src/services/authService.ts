@@ -571,6 +571,27 @@ export const authService = {
     }
   },
 
+  async updateProfessionalData(data: {
+    professio: string;
+    colegiado_externo_num_colegiado: string;
+    collegi_professional: string;
+    role_altres: string;
+    comunitat_autonoma: string;
+    tipo_usuario: 'propietario' | 'profesional';
+    idioma_preferencia_comunicacion?: string;
+    politica_privacitat_acceptada_en?: boolean;
+  }): Promise<any> {
+    try {
+      const response = await httpClient.patch('/auth/actualizar_datos_profesionales?_method=PATCH', data);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.data) {
+        return error.response.data;
+      }
+      throw error;
+    }
+  },
+
 
   async registerDevice(data: RegisterDeviceRequest): Promise<RegisterDeviceApiResponse> {
     try {      

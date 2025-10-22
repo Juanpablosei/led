@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useTranslation } from '../../hooks/useTranslation';
 import { authService } from '../../services/authService';
+import { storageService } from '../../services/storageService';
 import { styles } from './ProfessionalDataModal.styles';
 import {
   AutonomousCommunityOption,
@@ -24,7 +26,9 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   onClose,
   onFinish,
   initialData,
+  isLoading = false,
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<ProfessionalDataFormData>({
     nombre: '',
     userType: 'propietario',
@@ -43,6 +47,28 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   const [isLoadingProfessions, setIsLoadingProfessions] = useState(false);
   const [isLoadingCommunities, setIsLoadingCommunities] = useState(false);
   const [isLoadingColleges, setIsLoadingColleges] = useState(false);
+  const [showProfessionModal, setShowProfessionModal] = useState(false);
+  const [showCommunityModal, setShowCommunityModal] = useState(false);
+  const [showCollegeModal, setShowCollegeModal] = useState(false);
+
+  // Cargar nombre del usuario del token
+  useEffect(() => {
+    const loadUserName = async () => {
+      try {
+        const userData = await storageService.getUserData();
+        if (userData) {
+          const fullName = `${userData.first_name} ${userData.last_name}`.trim();
+          setFormData(prev => ({ ...prev, nombre: fullName }));
+        }
+      } catch (error) {
+        console.error('Error loading user name:', error);
+      }
+    };
+
+    if (visible) {
+      loadUserName();
+    }
+  }, [visible]);
 
   const loadProfessions = useCallback(async () => {
     setIsLoadingProfessions(true);
@@ -66,41 +92,59 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   }, []);
 
   const loadAutonomousCommunities = useCallback(async () => {
-    if (!formData.profession) return;
+    console.log('loadAutonomousCommunities called with:', {
+      profession: formData.profession,
+      userType: formData.userType
+    });
+    
+    if (!formData.profession || formData.userType !== 'profesional') {
+      console.log('loadAutonomousCommunities: conditions not met, returning');
+      return;
+    }
     
     setIsLoadingCommunities(true);
     try {
       const professionId = parseInt(formData.profession);
+      console.log('Profession ID:', professionId);
       
       // Arquitectura técnica (4) o Arquitectura (5)
       if (professionId === 4 || professionId === 5) {
+        console.log('Loading communities for architecture profession');
         const apiResponse = await authService.getComunidadesAutonomas(professionId);
         const response = (apiResponse as any).comunidadautonoma || apiResponse;
         
-        if (response) {
-          const communities = Object.entries(response).map(([id, name]) => ({
-            value: id,
-            label: name as string
+        console.log('Communities API response:', response);
+        
+        if (response && typeof response === 'object') {
+          const communities = Object.entries(response).map(([key, value]) => ({
+            value: key,
+            label: String(value)
           }));
+          console.log('Communities loaded:', communities);
           setAutonomousCommunityOptions(communities);
         }
       } 
       // Altres/Otras (10) - usar parámetros públicos
       else if (professionId === 10) {
+        console.log('Loading communities for "Altres" profession');
         const paramResponse = await authService.getPublicParameters([
           { parametroPadre: 'comunidadautonoma' }
         ]);
         
-        if (paramResponse.comunidadautonoma) {
-          const communities = Object.entries(paramResponse.comunidadautonoma).map(([id, name]) => ({
-            value: id,
-            label: name as string
+        console.log('Public parameters response:', paramResponse);
+        
+        if (paramResponse.comunidadautonoma && typeof paramResponse.comunidadautonoma === 'object') {
+          const communities = Object.entries(paramResponse.comunidadautonoma).map(([key, value]) => ({
+            value: key,
+            label: String(value)
           }));
+          console.log('Communities loaded from public params:', communities);
           setAutonomousCommunityOptions(communities);
         }
       }
       // Otras profesiones - no tienen comunidades
       else {
+        console.log('No communities for this profession');
         setAutonomousCommunityOptions([]);
       }
     } catch (error) {
@@ -108,29 +152,46 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
     } finally {
       setIsLoadingCommunities(false);
     }
-  }, [formData.profession]);
+  }, [formData.profession, formData.userType]);
 
   const loadProfessionalColleges = useCallback(async () => {
-    if (!formData.autonomousCommunity || !formData.profession) return;
+    console.log('loadProfessionalColleges called with:', {
+      autonomousCommunity: formData.autonomousCommunity,
+      profession: formData.profession,
+      userType: formData.userType
+    });
+    
+    if (!formData.autonomousCommunity || !formData.profession || formData.userType !== 'profesional') {
+      console.log('loadProfessionalColleges: conditions not met, returning');
+      return;
+    }
     
     setIsLoadingColleges(true);
     try {
       const professionId = parseInt(formData.profession);
+      console.log('Calling getColegiosProfesionales with:', formData.autonomousCommunity, professionId);
       const apiResponse = await authService.getColegiosProfesionales(formData.autonomousCommunity, professionId);
       
-      if (apiResponse && apiResponse.colegioprofesional) {
-        const colleges = Object.entries(apiResponse.colegioprofesional).map(([id, name]) => ({
-          value: id,
-          label: name as string
+      console.log('API response:', apiResponse);
+      
+      // La respuesta viene con estructura {status, message, data: [...]}
+      if (apiResponse.data && Array.isArray(apiResponse.data)) {
+        const colleges = apiResponse.data.map((colegio: any) => ({
+          value: String(colegio.id), // Usar el ID del colegio
+          label: colegio.nombre
         }));
+        console.log('Colleges loaded:', colleges);
         setProfessionalCollegeOptions(colleges);
+      } else {
+        console.log('No data array in response or unexpected format');
+        setProfessionalCollegeOptions([]);
       }
     } catch (error) {
       console.error('Error loading professional colleges:', error);
     } finally {
       setIsLoadingColleges(false);
     }
-  }, [formData.autonomousCommunity, formData.profession]);
+  }, [formData.autonomousCommunity, formData.profession, formData.userType]);
 
   useEffect(() => {
     if (initialData) {
@@ -145,19 +206,19 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
     }
   }, [visible, loadProfessions]);
 
-  // Cargar comunidades cuando cambia la profesión
+  // Cargar comunidades cuando cambia la profesión (solo si es profesional)
   useEffect(() => {
-    if (formData.profession) {
+    if (formData.profession && formData.userType === 'profesional') {
       loadAutonomousCommunities();
     }
-  }, [formData.profession, loadAutonomousCommunities]);
+  }, [formData.profession, formData.userType, loadAutonomousCommunities]);
 
-  // Cargar colegios cuando cambia la comunidad autónoma
+  // Cargar colegios cuando cambia la comunidad autónoma (solo si es profesional)
   useEffect(() => {
-    if (formData.autonomousCommunity && formData.profession) {
+    if (formData.autonomousCommunity && formData.profession && formData.userType === 'profesional') {
       loadProfessionalColleges();
     }
-  }, [formData.autonomousCommunity, formData.profession, loadProfessionalColleges]);
+  }, [formData.autonomousCommunity, formData.profession, formData.userType, loadProfessionalColleges]);
 
   const userTypeOptions: UserTypeOption[] = [
     { value: 'propietario', label: 'Propietario' },
@@ -187,10 +248,24 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
   };
 
   const handleFinish = () => {
+    // Validaciones básicas (siempre requeridas)
     if (!formData.acceptRegistrationConditions || !formData.acceptDataProtection) {
       // Aquí podrías mostrar un mensaje de error
       return;
     }
+
+    // Validaciones específicas para profesionales
+    if (formData.userType === 'profesional') {
+      if (!formData.profession) {
+        // Mostrar error: profesión requerida
+        return;
+      }
+      if (!formData.autonomousCommunity) {
+        // Mostrar error: comunidad autónoma requerida
+        return;
+      }
+    }
+
     onFinish(formData);
   };
 
@@ -199,13 +274,19 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
     options: { value: string; label: string }[],
     onSelect: (value: string) => void,
     placeholder: string,
-    isLoading: boolean = false
+    isLoading: boolean = false,
+    modalType: 'profession' | 'community' | 'college'
   ) => (
     <TouchableOpacity
       style={styles.dropdown}
       onPress={() => {
-        // Aquí implementarías un picker nativo o modal
-        console.log('Open dropdown for:', placeholder);
+        if (modalType === 'profession') {
+          setShowProfessionModal(true);
+        } else if (modalType === 'community') {
+          setShowCommunityModal(true);
+        } else if (modalType === 'college') {
+          setShowCollegeModal(true);
+        }
       }}
       disabled={isLoading}
     >
@@ -240,12 +321,11 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
                 <TextInput
                   style={[
                     styles.input,
-                    focusedField === 'nombre' && styles.inputFocused,
+                    styles.inputDisabled,
                   ]}
                   value={formData.nombre}
-                  onChangeText={(value) => handleInputChange('nombre', value)}
-                  onFocus={() => setFocusedField('nombre')}
-                  onBlur={() => setFocusedField(null)}
+                  editable={false}
+                  placeholder="Nombre obtenido del token"
                 />
               </View>
             </View>
@@ -275,32 +355,36 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
               </View>
             </View>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Profesión</Text>
-              <View style={styles.fieldContainer}>
+            {/* Profesión - Solo si es profesional */}
+            {formData.userType === 'profesional' && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Profesión</Text>
+                <View style={styles.fieldContainer}>
                 <Text style={styles.label}>
                   Profesión: <Text style={styles.required}>*</Text>
                 </Text>
-                {renderDropdown(
-                  formData.profession,
-                  professionOptions,
-                  (value) => handleInputChange('profession', value),
-                  'Seleccionar profesión',
-                  isLoadingProfessions
-                )}
+            {renderDropdown(
+              formData.profession,
+              professionOptions,
+              (value) => handleInputChange('profession', value),
+              'Seleccionar profesión',
+              isLoadingProfessions,
+              'profession'
+            )}
               </View>
 
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>
                   Comunidad autónoma: <Text style={styles.required}>*</Text>
                 </Text>
-                {renderDropdown(
-                  formData.autonomousCommunity,
-                  autonomousCommunityOptions,
-                  (value) => handleInputChange('autonomousCommunity', value),
-                  'Seleccionar comunidad',
-                  isLoadingCommunities
-                )}
+            {renderDropdown(
+              formData.autonomousCommunity,
+              autonomousCommunityOptions,
+              (value) => handleInputChange('autonomousCommunity', value),
+              'Seleccionar comunidad',
+              isLoadingCommunities,
+              'community'
+            )}
               </View>
 
               <View style={styles.fieldContainer}>
@@ -319,15 +403,17 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
 
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Colegio profesional:</Text>
-                {renderDropdown(
-                  formData.professionalCollege,
-                  professionalCollegeOptions,
-                  (value) => handleInputChange('professionalCollege', value),
-                  'Seleccionar colegio',
-                  isLoadingColleges
-                )}
+            {renderDropdown(
+              formData.professionalCollege,
+              professionalCollegeOptions,
+              (value) => handleInputChange('professionalCollege', value),
+              'Seleccionar colegio',
+              isLoadingColleges,
+              'college'
+            )}
               </View>
-            </View>
+              </View>
+            )}
 
             <View style={styles.section}>
               <View style={styles.checkboxContainer}>
@@ -372,12 +458,125 @@ const ProfessionalDataModal: React.FC<ProfessionalDataModalProps> = ({
             <TouchableOpacity style={[styles.button, styles.exitButton]} onPress={onClose}>
               <Text style={styles.exitButtonText}>SALIR</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.finishButton]} onPress={handleFinish}>
-              <Text style={styles.finishButtonText}>FINALIZAR</Text>
+            <TouchableOpacity 
+              style={[styles.button, styles.finishButton]} 
+              onPress={handleFinish}
+              disabled={isLoading}
+            >
+              <Text style={styles.finishButtonText}>
+                {isLoading ? t('updatingData', 'auth') : 'FINALIZAR'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
+
+      {/* Modal de selección de profesión */}
+      <Modal
+        visible={showProfessionModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowProfessionModal(false)}
+      >
+        <View style={styles.selectionModalOverlay}>
+          <View style={styles.selectionModal}>
+            <View style={styles.selectionHeader}>
+              <Text style={styles.selectionTitle}>Seleccionar profesión</Text>
+              <TouchableOpacity onPress={() => setShowProfessionModal(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.selectionList}>
+              {professionOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={styles.selectionItem}
+                  onPress={() => {
+                    handleInputChange('profession', option.value);
+                    setShowProfessionModal(false);
+                  }}
+                >
+                  <Text style={styles.selectionItemText}>{option.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de selección de comunidad */}
+      <Modal
+        visible={showCommunityModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCommunityModal(false)}
+      >
+        <View style={styles.selectionModalOverlay}>
+          <View style={styles.selectionModal}>
+            <View style={styles.selectionHeader}>
+              <Text style={styles.selectionTitle}>Seleccionar comunidad</Text>
+              <TouchableOpacity onPress={() => setShowCommunityModal(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.selectionList}>
+              {autonomousCommunityOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={styles.selectionItem}
+                  onPress={() => {
+                    handleInputChange('autonomousCommunity', option.value);
+                    setShowCommunityModal(false);
+                  }}
+                >
+                  <Text style={styles.selectionItemText}>{option.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de selección de colegio */}
+      <Modal
+        visible={showCollegeModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCollegeModal(false)}
+      >
+        <View style={styles.selectionModalOverlay}>
+          <View style={styles.selectionModal}>
+            <View style={styles.selectionHeader}>
+              <Text style={styles.selectionTitle}>Seleccionar colegio</Text>
+              <TouchableOpacity onPress={() => setShowCollegeModal(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.selectionList}>
+              {professionalCollegeOptions.length > 0 ? (
+                professionalCollegeOptions.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={styles.selectionItem}
+                    onPress={() => {
+                      handleInputChange('professionalCollege', option.value);
+                      setShowCollegeModal(false);
+                    }}
+                  >
+                    <Text style={styles.selectionItemText}>{option.label}</Text>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.selectionItem}>
+                  <Text style={styles.selectionItemText}>
+                    {isLoadingColleges ? 'Cargando colegios...' : 'No hay colegios disponibles'}
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </Modal>
   );
 };

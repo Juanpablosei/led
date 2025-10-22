@@ -3,6 +3,7 @@ export interface ProfessionalDataModalProps {
   onClose: () => void;
   onFinish: (data: ProfessionalDataFormData) => void;
   initialData?: Partial<ProfessionalDataFormData>;
+  isLoading?: boolean;
 }
 
 export interface ProfessionalDataFormData {
