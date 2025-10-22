@@ -146,14 +146,17 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   useEffect(() => {
     const loadComunidadesAutonomas = async () => {
       if (!step2Data.profession || step2Data.userType !== 'professional') {
-        setComunidadAutonomaOptions([]);
+        // Solo limpiar opciones si no es profesional, pero mantener la selección
+        if (step2Data.userType !== 'professional') {
+          setComunidadAutonomaOptions([]);
+        }
         return;
       }
 
       const professionId = parseInt(step2Data.profession);
       setIsLoadingComunidades(true);
       setComunidadAutonomaOptions([]);
-      setStep2Data(prev => ({ ...prev, comunidadAutonoma: '' })); // Limpiar selección
+      // No limpiar la selección automáticamente
 
       try {
         let response: any;
@@ -215,7 +218,10 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   useEffect(() => {
     const loadColegiosProfesionales = async () => {
       if (!step2Data.comunidadAutonoma || !step2Data.profession || step2Data.userType !== 'professional') {
-        setColegioProfesionalOptions([]);
+        // Solo limpiar opciones si no es profesional, pero mantener la selección
+        if (step2Data.userType !== 'professional') {
+          setColegioProfesionalOptions([]);
+        }
         return;
       }
 
@@ -263,22 +269,11 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
     if (step === 1) {
       setStep1Data(prev => ({ ...prev, [field]: value }));
     } else if (step === 2) {
-      // Si cambia el tipo de usuario a propietario, limpiar todos los campos relacionados
-      if (field === 'userType' && value === 'propertyOwner') {
-        setStep2Data(prev => ({ 
-          ...prev, 
-          [field]: value,
-          profession: '',
-          otraProfesion: '',
-          numeroColegiado: '',
-          comunidadAutonoma: '',
-          colegioProfesionalId: '',
-          colegioProfesionalSlug: '',
-          agreement: ''
-        }));
-      } else {
-        setStep2Data(prev => ({ ...prev, [field]: value }));
-      }
+      // Solo actualizar el campo sin limpiar otros datos
+      setStep2Data(prev => ({ 
+        ...prev, 
+        [field]: value
+      }));
     } else if (step === 3) {
       setStep3Data(prev => ({ ...prev, [field]: value }));
     }
