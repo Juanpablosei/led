@@ -113,7 +113,7 @@ export const BuildingDetailScreen: React.FC = () => {
     type: buildingDetail.tipus_edifici,
     buildingId: String(buildingDetail.id),
     cadastralReference: buildingDetail.ref_cadastral,
-    imageUrl: buildingDetail.imagen || undefined,
+    imageUrl: buildingDetail.imagen?.ruta || undefined,
     versio_estesa: buildingDetail.versio_estesa,
     estado: buildingDetail.estado,
   };
@@ -159,12 +159,12 @@ export const BuildingDetailScreen: React.FC = () => {
 
           {/* Imagen del edificio DENTRO de la card */}
           <View style={styles.imageContainer}>
-            {buildingDetail.imagen ? (
-              <Image
-                source={{ uri: buildingDetail.imagen }}
-                style={styles.buildingImage}
-                resizeMode="contain"
-              />
+          {buildingDetail.imagen?.ruta ? (
+            <Image
+              source={{ uri: buildingDetail.imagen.ruta }}
+              style={styles.buildingImage}
+              resizeMode="contain"
+            />
             ) : (
               <Image
                 source={DEFAULT_IMAGE}

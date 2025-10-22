@@ -51,7 +51,13 @@ export interface Building {
     direccion: string;
   }[];
   propiedad: any[];
-  imagen: string | null;
+  imagen: {
+    id: number;
+    imatge: string;
+    titulo: string | null;
+    esportada: boolean;
+    ruta: string;
+  } | null;
   planos: any[];
 }
 

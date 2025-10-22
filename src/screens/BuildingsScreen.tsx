@@ -67,7 +67,7 @@ export const BuildingsScreen: React.FC = () => {
           type: building.tipus_edifici,
           buildingId: String(building.id),
           cadastralReference: building.ref_cadastral,
-          imageUrl: building.imagen || undefined,
+          imageUrl: building.imagen?.ruta || undefined,
           versio_estesa: building.versio_estesa,
           estado: building.estado,
         }));
