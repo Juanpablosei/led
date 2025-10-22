@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
   maintenanceLink: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   maintenanceIcon: {
     marginRight: 6,

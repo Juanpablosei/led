@@ -23,18 +23,18 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
     onBuildingPress?.(building.id);
   };
 
-  // Función para determinar qué texto mostrar en el título
-  const getTitleText = () => {
+  // Función para determinar qué texto mostrar en el link
+  const getLinkText = () => {
     if (building.versio_estesa) {
-      return building.title; // Texto actual
+      return t('ledMaintenance', 'navigation'); // "LED Gestión del mantenimiento"
     } else if (building.estado === 'estado_activo') {
-      return t('ledLibroEdificio', 'common'); // "Led libro edificio"
+      return t('ledLibroDiario', 'common'); // "LED libro diario"
     } else {
       return ''; // No mostrar nada
     }
   };
 
-  const titleText = getTitleText();
+  const linkText = getLinkText();
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleBuildingPress}>
@@ -57,13 +57,6 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
 
       {/* Contenido del edificio */}
       <View style={styles.contentContainer}>
-        {/* Título del edificio */}
-        {titleText && (
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{titleText}</Text>
-          </View>
-        )}
-        
         <View style={styles.buildingInfo}>
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
@@ -78,26 +71,17 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
         </View>
 
         {/* Enlace a gestión de mantenimiento */}
-        <TouchableOpacity
-          style={styles.maintenanceLink}
-          onPress={handleMaintenancePress}
-        >
-          {titleText ? (
-            <>
-              <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
-              <Text style={styles.maintenanceText}>
-                {t('ledMaintenance', 'navigation')}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Ionicons name="arrow-forward-outline" size={16} color="#E95460" style={styles.maintenanceIcon} />
-              <Text style={styles.maintenanceText}>
-                {t('ledMaintenance', 'navigation')}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
+        {linkText && (
+          <TouchableOpacity
+            style={styles.maintenanceLink}
+            onPress={handleMaintenancePress}
+          >
+            <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
+            <Text style={styles.maintenanceText}>
+              {linkText}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );

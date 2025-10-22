@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { Text } from '../components/global';
 import { GlobalHeader } from '../components/global/GlobalHeader';
@@ -106,6 +106,10 @@ export const BuildingsScreen: React.FC = () => {
     setSearchText(text);
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   const handlePageChange = (page: number) => {
     // Cargar edificios de la página seleccionada con el texto de búsqueda actual
     loadBuildings(page, searchText);
@@ -143,7 +147,8 @@ export const BuildingsScreen: React.FC = () => {
   };
 
   const handleMaintenancePress = (buildingId: string) => {
-    Alert.alert('Gestión de Mantenimiento', `Acceder a mantenimiento del edificio ${buildingId}`);
+    // Navegar al detalle del edificio
+    router.push(`/building-detail?buildingId=${buildingId}`);
   };
 
   const handleBuildingPress = (buildingId: string) => {
@@ -179,7 +184,8 @@ export const BuildingsScreen: React.FC = () => {
               />
 
       {/* Contenido principal */}
-      <View style={styles.content}>
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <View style={styles.content}>
         {/* Título */}
         <Text style={styles.title}>{t('myBuildings', 'navigation')}</Text>
 
@@ -216,7 +222,8 @@ export const BuildingsScreen: React.FC = () => {
             onPageChange={handlePageChange}
           />
         )}
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
 
       {/* Menú de usuario */}
       <UserMenu

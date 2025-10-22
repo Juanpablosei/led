@@ -119,7 +119,8 @@ export const BuildingDetailScreen: React.FC = () => {
   };
 
   const handleMaintenancePress = () => {
-    // Aquí puedes implementar la navegación a la gestión de mantenimiento
+    // Navegar a la gestión de mantenimiento (puede ser la misma pantalla o una específica)
+    // Por ahora mantenemos en la misma pantalla pero se puede cambiar
   };
 
   return (
