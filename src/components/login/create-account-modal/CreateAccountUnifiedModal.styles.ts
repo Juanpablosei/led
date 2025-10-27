@@ -121,6 +121,14 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.black,
+    marginTop: 20,
+    marginBottom: 15,
+    textAlign: 'left',
+  },
   inputContainer: {
     marginBottom: 20,
   },

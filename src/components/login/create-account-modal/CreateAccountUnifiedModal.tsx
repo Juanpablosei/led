@@ -665,32 +665,35 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       <Text style={styles.stepInstruction}>{t('step2Instruction', 'auth')}</Text>
 
       <View style={styles.formContainer}>
-        {/* Nombre y Apellidos */}
-        <View style={styles.inputRow}>
-          <View style={styles.inputGroupHalf}>
-            <Text style={styles.inputLabel}>{t('firstName', 'auth')}</Text>
-            <TextInput
-              style={styles.textInput}
-              value={step2Data.firstName}
-              onChangeText={(value) => handleInputChange(2, 'firstName', value)}
-              placeholder={t('firstNamePlaceholder', 'auth')}
-              placeholderTextColor="#999"
-              autoCapitalize="words"
-              autoCorrect={false}
-            />
-          </View>
-          <View style={styles.inputGroupHalf}>
-            <Text style={styles.inputLabel}>{t('lastName', 'auth')}</Text>
-            <TextInput
-              style={styles.textInput}
-              value={step2Data.lastName}
-              onChangeText={(value) => handleInputChange(2, 'lastName', value)}
-              placeholder={t('lastNamePlaceholder', 'auth')}
-              placeholderTextColor="#999"
-              autoCapitalize="words"
-              autoCorrect={false}
-            />
-          </View>
+        {/* Subtítulo: Datos personales */}
+        <Text style={styles.sectionTitle}>{t('personalDataTitle', 'auth')}</Text>
+
+        {/* Nombre */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>{t('firstName', 'auth')}</Text>
+          <TextInput
+            style={styles.textInput}
+            value={step2Data.firstName}
+            onChangeText={(value) => handleInputChange(2, 'firstName', value)}
+            placeholder={t('firstNamePlaceholder', 'auth')}
+            placeholderTextColor="#999"
+            autoCapitalize="words"
+            autoCorrect={false}
+          />
+        </View>
+
+        {/* Apellidos */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>{t('lastName', 'auth')}</Text>
+          <TextInput
+            style={styles.textInput}
+            value={step2Data.lastName}
+            onChangeText={(value) => handleInputChange(2, 'lastName', value)}
+            placeholder={t('lastNamePlaceholder', 'auth')}
+            placeholderTextColor="#999"
+            autoCapitalize="words"
+            autoCorrect={false}
+          />
         </View>
 
         {/* NIF */}
@@ -860,6 +863,9 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   const renderStep3 = () => (
     <>
       <View style={styles.formContainer}>
+        {/* Subtítulo: Datos de contacto */}
+        <Text style={styles.sectionTitle}>{t('contactDataTitle', 'auth')}</Text>
+
         {/* Email */}
         <View style={styles.inputGroup}>
           <Text style={styles.inputLabel}>{t('email', 'auth')}</Text>
