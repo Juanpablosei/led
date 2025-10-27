@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   modal: {
+    flex: 1,
     backgroundColor: colors.white,
     borderRadius: 12,
     width: '100%',
@@ -35,6 +36,7 @@ export const styles = StyleSheet.create({
     padding: 4,
   },
   content: {
+    flex: 1,
     padding: 20,
   },
   fieldContainer: {
@@ -82,6 +84,26 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  attachmentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    gap: 8,
+  },
+  attachmentName: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+  },
+  buildingLink: {
+    fontSize: 16,
+    color: colors.primary,
+    textDecorationLine: 'underline',
+    fontWeight: '500',
   },
 });
 

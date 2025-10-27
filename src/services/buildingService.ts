@@ -293,7 +293,15 @@ export interface ComunicacionDetailData {
   remitent_nom: string;
   edifici_id?: number | null;
   edifici_nom?: string | null;
+  nom?: string | null;
   leido: string | null;
+  adjuntos?: {
+    id: number;
+    comunicacio_id: number;
+    comunicacio_destinatari_id: number | null;
+    ruta_adjunt: string;
+    nombre_adjunt: string;
+  }[];
 }
 
 export interface ComunicacionDetailResponse {

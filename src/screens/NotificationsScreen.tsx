@@ -154,19 +154,16 @@ export const NotificationsScreen: React.FC = () => {
         if (response.status && 'data' in response) {
           const comunicacion = response.data;
           
-          // Mapear a formato del modal
-          console.log('Comunicacion data:', comunicacion);
-          console.log('Message content:', comunicacion.message);
-          
           const notificationDetail: NotificationDetailData = {
             id: String(comunicacion.id),
             subject: comunicacion.assumpte,
             dateSent: comunicacion.data_enviada || null,
             sender: comunicacion.remitent_nom || null,
             message: comunicacion.message,
+            edifici_id: comunicacion.edifici_id || null,
+            edifici_nom: comunicacion.edifici_nom || comunicacion.nom || null,
+            adjuntos: comunicacion.adjuntos || [],
           };
-          
-          console.log('Notification detail:', notificationDetail);
           
           setSelectedNotification(notificationDetail);
           setCurrentNotificationId(String(comunicacion.id));
