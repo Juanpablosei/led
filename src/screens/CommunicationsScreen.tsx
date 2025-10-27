@@ -3,6 +3,8 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
+  Linking,
   Modal,
   ScrollView,
   Text,
@@ -11,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
+import { Pagination } from '../components/home/pagination/Pagination';
 import { colors } from '../constants/colors';
 import { useTranslation } from '../hooks/useTranslation';
 import { BuildingLayout } from '../layouts/BuildingLayout';
@@ -21,6 +24,21 @@ export const CommunicationsScreen: React.FC = () => {
   const { t } = useTranslation();
   const params = useLocalSearchParams();
   const buildingId = params.buildingId as string;
+
+  // Función para descargar archivos adjuntos
+  const handleDownloadAttachment = async (rutaAdjunt: string, nombreAdjunt: string) => {
+    try {
+      const canOpen = await Linking.canOpenURL(rutaAdjunt);
+      if (canOpen) {
+        await Linking.openURL(rutaAdjunt);
+      } else {
+        Alert.alert('Error', 'No se puede abrir este tipo de archivo');
+      }
+    } catch (error) {
+      console.error('Error al abrir el archivo adjunto:', error);
+      Alert.alert('Error', 'No se pudo abrir el archivo adjunto');
+    }
+  };
   
   const [buildingDetail, setBuildingDetail] = useState<BuildingDetailData | null>(null);
   const [isLoadingBuilding, setIsLoadingBuilding] = useState(true);
@@ -28,6 +46,7 @@ export const CommunicationsScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [selectedCommunication, setSelectedCommunication] = useState<Communication | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showRecipientsModal, setShowRecipientsModal] = useState(false);
@@ -61,6 +80,7 @@ export const CommunicationsScreen: React.FC = () => {
       if (response.status && 'data' in response) {
         setCommunications(response.data.data);
         setTotalPages(response.data.last_page);
+        setTotalItems(response.data.total);
       } else {
         console.error('Error al cargar comunicaciones');
       }
@@ -97,17 +117,6 @@ export const CommunicationsScreen: React.FC = () => {
     }
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   const handleViewDetails = (commId: number) => {
     const comm = communications.find(c => c.id === commId);
@@ -123,6 +132,10 @@ export const CommunicationsScreen: React.FC = () => {
       setSelectedCommunication(comm);
       setShowRecipientsModal(true);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const renderContent = () => {
@@ -198,8 +211,8 @@ export const CommunicationsScreen: React.FC = () => {
                     style={[styles.actionButton, styles.actionButtonSecondary]}
                     onPress={() => handleViewRecipients(comm.id)}
                   >
-                    <Ionicons name="people-outline" size={18} color="#FFFFFF" />
-                    <Text style={styles.actionButtonText}>{t('recipients', 'communications')}</Text>
+                    <Ionicons name="people-outline" size={18} color={colors.primary} />
+                    <Text style={styles.actionButtonTextSecondary}>{t('recipients', 'communications')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -207,34 +220,6 @@ export const CommunicationsScreen: React.FC = () => {
           ))}
         </View>
 
-        {/* Paginación */}
-        <View style={styles.paginationContainer}>
-          <TouchableOpacity
-            style={[
-              styles.paginationButton,
-              currentPage === 1 && styles.paginationButtonDisabled,
-            ]}
-            onPress={handlePreviousPage}
-            disabled={currentPage === 1}
-          >
-            <Text style={styles.paginationButtonText}>‹</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.paginationInfo}>
-            {currentPage} / {totalPages}
-          </Text>
-
-          <TouchableOpacity
-            style={[
-              styles.paginationButton,
-              currentPage === totalPages && styles.paginationButtonDisabled,
-            ]}
-            onPress={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            <Text style={styles.paginationButtonText}>›</Text>
-          </TouchableOpacity>
-        </View>
       </>
     );
   };
@@ -258,10 +243,18 @@ export const CommunicationsScreen: React.FC = () => {
         {renderContent()}
       </ScrollView>
 
+      {/* Paginación - Siempre en la parte inferior */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        onPageChange={handlePageChange}
+      />
+
       {/* Modal de detalles del mensaje */}
       <Modal
         visible={showDetailsModal}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setShowDetailsModal(false)}
       >
@@ -311,10 +304,16 @@ export const CommunicationsScreen: React.FC = () => {
                     <View style={styles.modalField}>
                       <Text style={styles.modalLabel}>{t('attachments', 'communications')}:</Text>
                       {selectedCommunication.adjuntos.map((adjunto, index) => (
-                        <View key={index} style={styles.attachmentItem}>
+                        <TouchableOpacity 
+                          key={index} 
+                          style={styles.attachmentItem}
+                          onPress={() => handleDownloadAttachment(adjunto.ruta_adjunt, adjunto.nombre_adjunt)}
+                          activeOpacity={0.7}
+                        >
                           <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
                           <Text style={styles.attachmentName}>{adjunto.nombre_adjunt}</Text>
-                        </View>
+                          <Ionicons name="download-outline" size={16} color={colors.primary} />
+                        </TouchableOpacity>
                       ))}
                     </View>
                   )}
@@ -328,7 +327,7 @@ export const CommunicationsScreen: React.FC = () => {
       {/* Modal de destinatarios */}
       <Modal
         visible={showRecipientsModal}
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         onRequestClose={() => setShowRecipientsModal(false)}
       >

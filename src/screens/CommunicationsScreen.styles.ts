@@ -102,10 +102,17 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   actionButtonSecondary: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
   actionButtonText: {
     color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  actionButtonTextSecondary: {
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '600',
   },
