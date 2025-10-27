@@ -36,5 +36,8 @@
   "noBuildingsAvailable": "No hi ha edificis disponibles",
   "faqs": "FAQs",
   "legalNotice": "Avís legal i Política de privacitat",
-  "terms": "Condicions de contractació"
+  "terms": "Condicions de contractació",
+  "accessDenied": "Accés denegat",
+  "buildingRejectedMessage": "Heu rebutjat l'accés a l'edifici",
+  "understood": "Entès"
 }

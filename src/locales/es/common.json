@@ -36,5 +36,8 @@
   "noBuildingsAvailable": "No hay edificios disponibles",
   "faqs": "FAQs",
   "legalNotice": "Aviso legal y Política de privacidad",
-  "terms": "Condiciones de contratación"
+  "terms": "Condiciones de contratación",
+  "accessDenied": "Acceso denegado",
+  "buildingRejectedMessage": "Ha rechazado el acceso al edificio",
+  "understood": "Entendido"
 }
