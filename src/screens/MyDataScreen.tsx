@@ -416,16 +416,7 @@ export const MyDataScreen: React.FC = () => {
   
   const handleTipoUsuarioChange = (tipo: 'propietario' | 'profesional') => {
     setTipoUsuario(tipo);
-    
-    // Limpiar campos profesionales si cambia a propietario
-    if (tipo === 'propietario') {
-      setProfession('');
-      setOtraProfesion('');
-      setComunidadAutonoma('');
-      setNumeroColegiado('');
-      setColegioProfesional('');
-      setAgreement('');
-    }
+    // NO limpiar los campos profesionales para que se conserven al cambiar entre tipos
   };
 
   const getProfessionName = () => {
