@@ -4,6 +4,7 @@ export const colors = {
   white: '#FFFFFF',
   black: '#000000',
   red: '#E53E3E',
+  primary: '#E95460',
   gray: '#999999',
   lightGray: '#F5F5F5',
   borderGray: '#E0E0E0',
@@ -139,9 +140,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 0,
     fontSize: 16,
     color: colors.black,
-  },
-  textInputError: {
-    borderBottomColor: colors.red,
   },
   readOnlyInput: {
     backgroundColor: colors.lightGray,
@@ -473,7 +471,7 @@ export const styles = StyleSheet.create({
   registrationSuccessTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#10B981',
+    color: colors.primary,
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -487,7 +485,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   registrationSuccessButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 14,
     paddingHorizontal: 20,
