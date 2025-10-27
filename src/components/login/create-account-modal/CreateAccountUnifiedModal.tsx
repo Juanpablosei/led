@@ -93,6 +93,9 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
   const [showComunidadAutonomaModal, setShowComunidadAutonomaModal] = useState(false);
   const [showColegioProfesionalModal, setShowColegioProfesionalModal] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+  
+  // Estado para errores de validación
+  const [emailError, setEmailError] = useState('');
 
   // Opciones desde la API
   const [professionOptions, setProfessionOptions] = useState<{ id: string; name: string }[]>([]);
@@ -276,6 +279,10 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
       }));
     } else if (step === 3) {
       setStep3Data(prev => ({ ...prev, [field]: value }));
+      // Limpiar error de email si el usuario está escribiendo
+      if (field === 'email') {
+        setEmailError('');
+      }
     }
   };
 
@@ -460,8 +467,16 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
           // Error en el registro
           if ('errors' in response && response.errors) {
             // Errores de validación
-            const errors = Object.values(response.errors).flat();
-            Alert.alert('', errors.join('\n'));
+            const errors: any = response.errors;
+            
+            // Si hay error en el email, mostrar en el campo
+            if (errors.email && Array.isArray(errors.email) && errors.email.length > 0) {
+              setEmailError(errors.email[0]);
+            } else {
+              // Si hay otros errores, mostrar en alert
+              const allErrors = Object.values(errors).flat();
+              Alert.alert('', (allErrors as string[]).join('\n'));
+            }
           } else {
             Alert.alert('', response.message || 'Error en el registro');
           }
@@ -868,9 +883,11 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
 
         {/* Email */}
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>{t('email', 'auth')}</Text>
+          <Text style={[styles.inputLabel, emailError && styles.inputLabelError]}>
+            {t('email', 'auth')}
+          </Text>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, emailError && styles.textInputError]}
             value={step3Data.email}
             onChangeText={(value) => handleInputChange(3, 'email', value)}
             placeholder={t('emailPlaceholder', 'auth')}
@@ -879,6 +896,9 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
             autoCapitalize="none"
             autoCorrect={false}
           />
+          {emailError && (
+            <Text style={styles.errorText}>{t('invalidField', 'auth')}</Text>
+          )}
         </View>
 
         {/* Contraseña */}

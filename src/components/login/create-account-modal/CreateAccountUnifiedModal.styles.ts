@@ -140,6 +140,9 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.black,
   },
+  textInputError: {
+    borderBottomColor: colors.red,
+  },
   readOnlyInput: {
     backgroundColor: colors.lightGray,
     color: colors.darkGray,
@@ -172,6 +175,14 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.black,
     marginBottom: 8,
+  },
+  inputLabelError: {
+    color: colors.red,
+  },
+  errorText: {
+    fontSize: 12,
+    color: colors.red,
+    marginTop: 4,
   },
   optionalLabel: {
     fontSize: 12,
@@ -384,12 +395,6 @@ export const styles = StyleSheet.create({
   textInputError: {
     borderBottomColor: colors.red,
     borderBottomWidth: 2,
-  },
-  errorText: {
-    fontSize: 12,
-    color: colors.red,
-    marginTop: 6,
-    fontWeight: '500',
   },
   successText: {
     fontSize: 12,
