@@ -37,7 +37,8 @@
   "selectAgreementTitle": "Seleccionar Conveni",
   "language": "Idioma",
   "languageSpanish": "Español",
-  "languageCatalan": "Català"
+  "languageCatalan": "Català",
+  "selectLanguage": "Seleccionar Idioma"
 },
   "userType": {
     "title": "Tipus d'usuari",

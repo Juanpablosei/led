@@ -222,5 +222,38 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontWeight: '600',
   },
+  // Estilos para dropdown inline de idioma
+  inlineDropdownList: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    marginTop: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  inlineDropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+  },
+  inlineDropdownItemActive: {
+    backgroundColor: '#FFF5F5',
+  },
+  inlineDropdownItemText: {
+    fontSize: 15,
+    color: colors.text,
+  },
+  inlineDropdownItemTextActive: {
+    color: colors.primary,
+    fontWeight: '600',
+  },
 });
 

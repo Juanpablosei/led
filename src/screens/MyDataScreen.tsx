@@ -56,6 +56,7 @@ export const MyDataScreen: React.FC = () => {
   const [showComunidadModal, setShowComunidadModal] = useState(false);
   const [showColegioModal, setShowColegioModal] = useState(false);
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
 
   const loadUserData = useCallback(async () => {
     setIsLoading(true);
@@ -419,6 +420,27 @@ export const MyDataScreen: React.FC = () => {
     // NO limpiar los campos profesionales para que se conserven al cambiar entre tipos
   };
 
+  const getLanguageName = () => {
+    const languages: { [key: string]: string } = {
+      es: 'Español',
+      ca: 'Català',
+      // Aquí se pueden agregar más idiomas fácilmente:
+      // en: 'English',
+      // fr: 'Français',
+      // de: 'Deutsch',
+    };
+    return languages[currentLanguage] || 'Español';
+  };
+
+  const availableLanguages = [
+    { code: 'es', name: 'Español' },
+    { code: 'ca', name: 'Català' },
+    // Aquí se pueden agregar más idiomas:
+    // { code: 'en', name: 'English' },
+    // { code: 'fr', name: 'Français' },
+    // { code: 'de', name: 'Deutsch' },
+  ];
+
   const getProfessionName = () => {
     const prof = professionOptions.find(p => p.id === profession);
     return prof?.name || t('myData.selectProfession', 'user');
@@ -680,38 +702,47 @@ export const MyDataScreen: React.FC = () => {
             ) : null}
           </View>
 
-          {/* Idioma */}
+          {/* Idioma - Dropdown inline */}
           <View style={styles.fieldContainer}>
             <Text style={styles.label}>{t('myData.language', 'user')}:</Text>
-            <View style={styles.languageToggleContainer}>
+            <View>
               <TouchableOpacity
-                style={[
-                  styles.languageToggle,
-                  currentLanguage === 'es' && styles.languageToggleActive
-                ]}
-                onPress={() => changeLanguage('es')}
+                style={styles.dropdown}
+                onPress={() => setShowLanguageDropdown(!showLanguageDropdown)}
               >
-                <Text style={[
-                  styles.languageToggleText,
-                  currentLanguage === 'es' && styles.languageToggleTextActive
-                ]}>
-                  {t('myData.languageSpanish', 'user')}
+                <Text style={styles.dropdownText}>
+                  {getLanguageName()}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.languageToggle,
-                  currentLanguage === 'ca' && styles.languageToggleActive
-                ]}
-                onPress={() => changeLanguage('ca')}
-              >
-                <Text style={[
-                  styles.languageToggleText,
-                  currentLanguage === 'ca' && styles.languageToggleTextActive
-                ]}>
-                  {t('myData.languageCatalan', 'user')}
-                </Text>
-              </TouchableOpacity>
+              
+              {/* Dropdown expandido */}
+              {showLanguageDropdown && (
+                <View style={styles.inlineDropdownList}>
+                  {availableLanguages.map((lang) => (
+                    <TouchableOpacity
+                      key={lang.code}
+                      style={[
+                        styles.inlineDropdownItem,
+                        currentLanguage === lang.code && styles.inlineDropdownItemActive
+                      ]}
+                      onPress={() => {
+                        changeLanguage(lang.code as 'es' | 'ca');
+                        setShowLanguageDropdown(false);
+                      }}
+                    >
+                      <Text style={[
+                        styles.inlineDropdownItemText,
+                        currentLanguage === lang.code && styles.inlineDropdownItemTextActive
+                      ]}>
+                        {lang.name}
+                      </Text>
+                      {currentLanguage === lang.code && (
+                        <Ionicons name="checkmark" size={20} color="#E95460" />
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </View>
           </View>
 
@@ -880,6 +911,7 @@ export const MyDataScreen: React.FC = () => {
           </View>
         </TouchableOpacity>
       </Modal>
+
     </View>
   );
 };
