@@ -719,7 +719,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               style={styles.checkboxContainer}
               onPress={() => handleInputChange(2, 'userType', 'propertyOwner')}
             >
-              <View style={[styles.checkbox, step2Data.userType === 'propertyOwner' && styles.checkboxChecked]}>
+              <View style={[styles.radioButton, step2Data.userType === 'propertyOwner' && styles.checkboxChecked]}>
                 {step2Data.userType === 'propertyOwner' && <View style={styles.radioDot} />}
               </View>
               <Text style={styles.checkboxText}>{t('propertyOwner', 'auth')}</Text>
@@ -728,7 +728,7 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               style={styles.checkboxContainer}
               onPress={() => handleInputChange(2, 'userType', 'professional')}
             >
-              <View style={[styles.checkbox, step2Data.userType === 'professional' && styles.checkboxChecked]}>
+              <View style={[styles.radioButton, step2Data.userType === 'professional' && styles.checkboxChecked]}>
                 {step2Data.userType === 'professional' && <View style={styles.radioDot} />}
               </View>
               <Text style={styles.checkboxText}>{t('professional', 'auth')}</Text>
