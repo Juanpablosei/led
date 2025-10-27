@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from 'react';
 import { Alert, Linking, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native';
 import RenderHTML from 'react-native-render-html';
@@ -41,8 +42,8 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
   };
 
   const handleBuildingPress = (edificiId: number) => {
-    // TODO: Navegar al detalle del edificio
-    console.log('Navegar al edificio:', edificiId);
+    onClose(); // Cerrar el modal antes de navegar
+    router.push(`/building-detail?buildingId=${edificiId}`);
   };
 
   return (
@@ -135,7 +136,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
                 )}
 
                 {/* Link al edificio */}
-                {notification.edifici_id && (
+                {notification.edifici_id && notification.edifici_nom && (
                   <>
                     <View style={styles.divider} />
                     <View style={styles.fieldContainer}>
@@ -145,7 +146,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
                         activeOpacity={0.7}
                       >
                         <Text style={styles.buildingLink}>
-                          {notification.edifici_nom || `Edificio ${notification.edifici_id}`}
+                          {notification.edifici_nom}
                         </Text>
                       </TouchableOpacity>
                     </View>
