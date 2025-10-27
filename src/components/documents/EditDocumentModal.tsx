@@ -1,14 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Alert,
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+  Alert,
+  Linking,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
@@ -27,6 +28,26 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
   isLoadingTypes = false,
 }) => {
   const { t } = useTranslation();
+  
+  // Función para descargar el documento
+  const handleDownloadDocument = async () => {
+    if (formData.ruta) {
+      try {
+        const canOpen = await Linking.canOpenURL(formData.ruta);
+        if (canOpen) {
+          await Linking.openURL(formData.ruta);
+        } else {
+          Alert.alert('Error', 'No se puede abrir este tipo de archivo');
+        }
+      } catch (error) {
+        console.error('Error al abrir el documento:', error);
+        Alert.alert('Error', 'No se pudo abrir el documento');
+      }
+    } else {
+      Alert.alert('Error', 'No hay archivo disponible para este documento');
+    }
+  };
+
   const [formData, setFormData] = useState<EditDocumentData>({
     id: '',
     name: '',
@@ -225,12 +246,17 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                     {/* Documento - SOLO LECTURA */}
                     <View style={styles.fieldContainer}>
                       <Text style={styles.label}>Documento:</Text>
-                      <View style={styles.fileContainerReadOnly}>
+                      <TouchableOpacity 
+                        style={styles.fileContainerReadOnly}
+                        onPress={handleDownloadDocument}
+                        activeOpacity={0.7}
+                      >
                         <Ionicons name="document-text" size={20} color={colors.primary} />
                         <Text style={styles.fileTextReadOnly}>
                           {formData.file || t('noFile', 'documents')}
                         </Text>
-                      </View>
+                        <Ionicons name="download-outline" size={16} color={colors.primary} />
+                      </TouchableOpacity>
                     </View>
 
                     {/* Fecha de validez */}

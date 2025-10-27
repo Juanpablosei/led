@@ -5,6 +5,7 @@ export interface DocumentData {
   validUntil: string;
   isExpired: boolean;
   isIncludedInBook: boolean;
+  ruta?: string;
 }
 
 export interface DocumentCardProps {

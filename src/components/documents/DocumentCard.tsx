@@ -16,12 +16,17 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({ document, onPress })
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       <Text style={styles.title}>{document.title}</Text>
       <Text style={styles.type}>{t('type', 'documents')}: {document.type}</Text>
-      <Text style={[
-        styles.validUntil,
-        document.isExpired && styles.validUntilExpired
-      ]}>
-        {t('validUntil', 'documents')}: {document.validUntil}
-      </Text>
+      {document.validUntil && 
+       document.validUntil.trim() !== '' && 
+       !document.validUntil.includes('Sin fecha') && 
+       !document.validUntil.includes('sense data') && (
+        <Text style={[
+          styles.validUntil,
+          document.isExpired && styles.validUntilExpired
+        ]}>
+          {t('validUntil', 'documents')}: {document.validUntil}
+        </Text>
+      )}
       
       {document.isIncludedInBook && (
         <View style={styles.includedInBook}>

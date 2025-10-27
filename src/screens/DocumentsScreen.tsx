@@ -90,30 +90,33 @@ export const DocumentsScreen: React.FC = () => {
       const response = await buildingService.getBuildingDocuments(Number(buildingId));
       
       if (response.status && 'data' in response) {
-        
         // Combinar todos los documentos de todas las categorías
         const allDocs: BuildingDocument[] = [];
         
-        if (response.data.edif_doc_tecnica) {
+        // Verificar que cada categoría existe y es un array antes de hacer push
+        if (response.data.edif_doc_tecnica && Array.isArray(response.data.edif_doc_tecnica)) {
           allDocs.push(...response.data.edif_doc_tecnica);
         }
-        if (response.data.edif_doc_admin) {
+        if (response.data.edif_doc_admin && Array.isArray(response.data.edif_doc_admin)) {
           allDocs.push(...response.data.edif_doc_admin);
         }
-        if (response.data.edif_doc_juridica) {
+        if (response.data.edif_doc_juridica && Array.isArray(response.data.edif_doc_juridica)) {
           allDocs.push(...response.data.edif_doc_juridica);
         }
-        if (response.data.edif_doc_otros) {
+        if (response.data.edif_doc_otros && Array.isArray(response.data.edif_doc_otros)) {
           allDocs.push(...response.data.edif_doc_otros);
         }
         
-        
         setDocuments(allDocs);
       } else {
-        console.error(' Error al cargar documentos:', response.message);
+        // Si no hay documentos o hay un error, establecer array vacío
+        console.log('No hay documentos disponibles o error en la respuesta:', response.message);
+        setDocuments([]);
       }
     } catch (error) {
-      console.error(' Error al cargar documentos:', error);
+      console.log('Error al cargar documentos (probablemente no hay documentos):', error);
+      // En caso de error, establecer array vacío en lugar de fallar
+      setDocuments([]);
     } finally {
       setIsLoadingDocuments(false);
     }
@@ -400,6 +403,7 @@ export const DocumentsScreen: React.FC = () => {
       validUntil: formatDate(document.data_validesa),
       isExpired: isExpired(document.data_validesa),
       isIncludedInBook: document.afegir_al_libre,
+      ruta: document.ruta,
     };
     
     return (

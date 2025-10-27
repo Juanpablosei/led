@@ -2,23 +2,23 @@ import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { colors } from "../../constants/colors";
 import { useTranslation } from "../../hooks/useTranslation";
 import { styles } from "./NewDocumentModal.styles";
 import {
-    NewDocumentData,
-    NewDocumentModalProps,
+  NewDocumentData,
+  NewDocumentModalProps,
 } from "./NewDocumentModal.types";
 
 export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
@@ -75,7 +75,6 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
       formData.name &&
       formData.type &&
       formData.file &&
-      formData.validUntil &&
       selectedFile
     ) {
       setIsSaving(true);
@@ -289,7 +288,9 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
 
                     {/* Válido hasta */}
                     <View style={styles.fieldContainer}>
-                      <Text style={styles.label}>{t('validUntil', 'documents')}:</Text>
+                      <Text style={styles.label}>
+                        {formData.validUntil ? `${t('validUntil', 'documents')}:` : t('selectDate', 'documents')}
+                      </Text>
                       <TouchableOpacity
                         style={styles.dateContainer}
                         onPress={() => {

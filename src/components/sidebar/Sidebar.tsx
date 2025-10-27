@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { colors } from '../../constants/colors';
 import { useTranslation } from '../../hooks/useTranslation';
-import { storageService } from '../../services/storageService';
 import { styles } from './Sidebar.styles';
 import { SidebarItem, SidebarProps } from './Sidebar.types';
 
