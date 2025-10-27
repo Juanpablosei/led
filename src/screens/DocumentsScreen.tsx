@@ -195,10 +195,13 @@ export const DocumentsScreen: React.FC = () => {
     imageUrl: buildingDetail.imagen?.ruta || undefined,
   };
 
+  // Determinar si mostrar el prefijo "Doc." basado en el ancho de pantalla
+  const showDocPrefix = screenWidth >= 380;
+  
   const tabs = [
-    { id: 'tecnica', label: t('technical', 'documents') },
-    { id: 'administrativa', label: t('administrative', 'documents') },
-    { id: 'juridica', label: t('legal', 'documents') },
+    { id: 'tecnica', label: showDocPrefix ? `Doc. ${t('technical', 'documents')}` : t('technical', 'documents') },
+    { id: 'administrativa', label: showDocPrefix ? `Doc. ${t('administrative', 'documents')}` : t('administrative', 'documents') },
+    { id: 'juridica', label: showDocPrefix ? `Doc. ${t('legal', 'documents')}` : t('legal', 'documents') },
   ];
 
   const handleNewDocument = () => {
