@@ -14,6 +14,7 @@
   "newType": "Nou tipus",
   "type": "Tipus",
   "includedInBook": "Inclòs al Llibre",
+  "includeInBook": "Inclòs al Llibre (Només per fitxers PDF)",
   "newDocument": "Nou document",
   "name": "Nom",
   "documentType": "Tipus document",

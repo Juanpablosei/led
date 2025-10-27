@@ -24,7 +24,7 @@
   "datePlaceholder": "dd/mm/aaaa",
   "loadingTypes": "Cargando tipos...",
   "selectType": "Seleccionar tipo",
-  "includeInBook": "Incluir en el Libro del edificio (Sólo se admiten documentos en formato pdf)",
+  "includeInBook": "Incluir en el Libro del edificio (Solo para archivos PDF)",
   "bookInfo": "Los documentos que se quieran incluir en el Libro del edificio no deben estar bloqueados ni protegidos con contraseña.",
   "saving": "GUARDANDO...",
   "save": "GUARDAR",

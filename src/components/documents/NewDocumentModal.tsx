@@ -46,6 +46,12 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showTypesDropdown, setShowTypesDropdown] = useState(false);
   const [internalSelectedTypeName, setInternalSelectedTypeName] = useState(selectedTypeName);
+  const [isPdfFile, setIsPdfFile] = useState(false);
+
+  // Función para verificar si el archivo es PDF
+  const isPdfFileType = (mimeType: string, fileName: string): boolean => {
+    return mimeType === 'application/pdf' || fileName.toLowerCase().endsWith('.pdf');
+  };
 
   // Actualizar formData.type cuando se selecciona un tipo
   useEffect(() => {
@@ -108,7 +114,7 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
   const handleSelectFile = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: "application/pdf",
+        type: "*/*", // Permitir todos los tipos de archivo
         copyToCacheDirectory: true,
       });
 
@@ -119,6 +125,15 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
         if (fileSizeMB > 10) {
           Alert.alert("Error", t('errors.fileTooBig', 'documents'));
           return;
+        }
+
+        // Verificar si es PDF
+        const isPdf = isPdfFileType(file.mimeType || '', file.name);
+        setIsPdfFile(isPdf);
+        
+        // Si no es PDF, desmarcar "incluir en libro"
+        if (!isPdf) {
+          handleInputChange("includeInBook", false);
         }
 
         // Guardar el archivo completo para enviar en el FormData
@@ -326,39 +341,43 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                       </TouchableOpacity>
                     </View>
 
-                    {/* Checkbox */}
-                    <View style={styles.checkboxContainer}>
-                      <TouchableOpacity
-                        style={styles.checkbox}
-                        onPress={() =>
-                          handleInputChange(
-                            "includeInBook",
-                            !formData.includeInBook
-                          )
-                        }
-                      >
-                        <Ionicons
-                          name={
-                            formData.includeInBook
-                              ? "checkbox"
-                              : "square-outline"
-                          }
-                          size={20}
-                          color={
-                            formData.includeInBook
-                              ? colors.primary
-                              : colors.text
-                          }
-                        />
-                      </TouchableOpacity>
-                      <Text style={styles.checkboxText}>
-                        {t('includeInBook', 'documents')}
-                      </Text>
-                    </View>
+                    {/* Checkbox - Solo para archivos PDF */}
+                    {isPdfFile && (
+                      <>
+                        <View style={styles.checkboxContainer}>
+                          <TouchableOpacity
+                            style={styles.checkbox}
+                            onPress={() =>
+                              handleInputChange(
+                                "includeInBook",
+                                !formData.includeInBook
+                              )
+                            }
+                          >
+                            <Ionicons
+                              name={
+                                formData.includeInBook
+                                  ? "checkbox"
+                                  : "square-outline"
+                              }
+                              size={20}
+                              color={
+                                formData.includeInBook
+                                  ? colors.primary
+                                  : colors.text
+                              }
+                            />
+                          </TouchableOpacity>
+                          <Text style={styles.checkboxText}>
+                            {t('includeInBook', 'documents')}
+                          </Text>
+                        </View>
 
-                    <Text style={styles.infoText}>
-                      {t('bookInfo', 'documents')}
-                    </Text>
+                        <Text style={styles.infoText}>
+                          {t('bookInfo', 'documents')}
+                        </Text>
+                      </>
+                    )}
                   </View>
                 </ScrollView>
 
