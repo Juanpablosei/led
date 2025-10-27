@@ -42,6 +42,14 @@ export const styles = StyleSheet.create({
   buildingInfo: {
     alignItems: 'flex-start',
   },
+  buildingName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 6,
+    lineHeight: 22,
+    textAlign: 'left',
+  },
   titleContainer: {
     marginBottom: 8,
     marginTop: 0,

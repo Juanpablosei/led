@@ -209,7 +209,7 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
 
       {/* Título + Menú - SIEMPRE */}
       <View style={styles.titleSection}>
-        <Text style={styles.buildingTitle}>{building?.title || 'Cargando...'}</Text>
+        <Text style={styles.buildingTitle}>{building?.title || t('loading', 'common')}</Text>
         <TouchableOpacity style={styles.menuButton} onPress={handleMenuPress} disabled={!building}>
           <Ionicons name="menu" size={32} color={building ? "#333333" : "#CCCCCC"} />
         </TouchableOpacity>

@@ -78,7 +78,7 @@ export const BuildingDetailScreen: React.FC = () => {
       <BuildingLayout building={null}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#E53E3E" />
-          <Text style={styles.loadingText}>Cargando edificio...</Text>
+          <Text style={styles.loadingText}>{t('loadingBuilding', 'common')}</Text>
         </View>
       </BuildingLayout>
     );
@@ -89,7 +89,7 @@ export const BuildingDetailScreen: React.FC = () => {
     return (
       <BuildingLayout building={null}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>No se pudo cargar el edificio</Text>
+          <Text style={styles.errorText}>{t('errorLoadingBuilding', 'common')}</Text>
         </View>
       </BuildingLayout>
     );
@@ -97,13 +97,8 @@ export const BuildingDetailScreen: React.FC = () => {
 
   // Función para determinar qué texto mostrar en el título
   const getTitleText = () => {
-    if (buildingDetail.versio_estesa) {
-      return buildingDetail.nom; // Texto actual
-    } else if (buildingDetail.estado === 'estado_activo') {
-      return t('ledLibroEdificio', 'common'); // "Led libro edificio"
-    } else {
-      return ''; // No mostrar nada
-    }
+    // Siempre mostrar el nombre del edificio como título principal
+    return buildingDetail.nom;
   };
 
   // Transformar a formato BuildingData para el Layout

@@ -28,7 +28,7 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
     if (building.versio_estesa) {
       return t('ledMaintenance', 'navigation'); // "LED Gestión del mantenimiento"
     } else if (building.estado === 'estado_activo') {
-      return t('ledLibroDiario', 'common'); // "LED libro diario"
+      return t('ledLibroDiario', 'common'); // "LED libro edificio"
     } else {
       return ''; // No mostrar nada
     }
@@ -58,6 +58,7 @@ export const BuildingCard: React.FC<BuildingCardProps> = ({
       {/* Contenido del edificio */}
       <View style={styles.contentContainer}>
         <View style={styles.buildingInfo}>
+          <Text style={styles.buildingName}>{building.title}</Text>
           <Text style={styles.type}>{building.type.replace(' (EXISTENTE)', '')}</Text>
           <Text style={styles.status}>(EXISTENTE)</Text>
           <Text style={styles.id}>

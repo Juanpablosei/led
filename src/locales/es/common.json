@@ -29,7 +29,9 @@
   "support": "Soporte",
   "accessArea": "Área de acceso",
   "ledLibroEdificio": "Led libro edificio",
-  "ledLibroDiario": "LED libro diario",
+  "ledLibroDiario": "LED libro edificio",
+  "loadingBuilding": "Cargando edificio...",
+  "errorLoadingBuilding": "No se pudo cargar el edificio",
   "faqs": "FAQs",
   "legalNotice": "Aviso legal y Política de privacidad",
   "terms": "Condiciones de contratación"

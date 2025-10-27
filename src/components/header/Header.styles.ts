@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
-export const colors = {
-  white: '#FFFFFF',
-  lightGray: '#CCCCCC',
-};
+import { colors } from '../../constants/colors';
+
+export { colors };
 
 export const typography = {
   title: {
@@ -79,8 +78,8 @@ export const styles = StyleSheet.create({
   languageDropdown: {
     backgroundColor: colors.white,
     borderRadius: 4,
-    paddingVertical: 4,
-    width: 100,
+    paddingVertical: 6,
+    width: 120,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -91,22 +90,22 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   languageOption: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
   languageOptionActive: {
-    backgroundColor: '#f8f9fa',
+    
   },
   languageOptionText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#333',
     textAlign: 'center',
     fontWeight: '500',
   },
   languageOptionTextActive: {
-    color: '#007AFF',
+    color: colors.primary,
     fontWeight: '600',
   },
 });
