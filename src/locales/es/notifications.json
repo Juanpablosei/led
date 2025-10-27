@@ -38,6 +38,7 @@
   "description": "Descripción",
   "duration": "Duración",
   "months": "meses",
-  "projectStatus": "Estado del Proyecto"
+  "projectStatus": "Estado del Proyecto",
+  "loadingNotifications": "Cargando notificaciones..."
 }
 

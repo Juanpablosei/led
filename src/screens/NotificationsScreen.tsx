@@ -313,7 +313,7 @@ export const NotificationsScreen: React.FC = () => {
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={{ marginTop: 12, color: colors.text }}>Cargando notificaciones...</Text>
+          <Text style={{ marginTop: 12, color: colors.text }}>{t('loadingNotifications', 'notifications')}</Text>
         </View>
       </View>
     );

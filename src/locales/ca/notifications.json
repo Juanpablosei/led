@@ -38,6 +38,7 @@
   "description": "Descripció",
   "duration": "Durada",
   "months": "mesos",
-  "projectStatus": "Estat del Projecte"
+  "projectStatus": "Estat del Projecte",
+  "loadingNotifications": "Carregant notificacions..."
 }
 
