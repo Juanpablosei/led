@@ -192,7 +192,7 @@ export const DocumentsScreen: React.FC = () => {
     type: buildingDetail.tipus_edifici,
     buildingId: String(buildingDetail.id),
     cadastralReference: buildingDetail.ref_cadastral,
-    imageUrl: buildingDetail.imagen || undefined,
+    imageUrl: buildingDetail.imagen?.ruta || undefined,
   };
 
   const tabs = [
