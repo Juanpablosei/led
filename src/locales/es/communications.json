@@ -17,5 +17,8 @@
   "sendDate": "Fecha de envío",
   "sentBy": "Enviado por",
   "message": "Mensaje",
-  "attachments": "Archivos adjuntos"
+  "attachments": "Archivos adjuntos",
+  "building": "Edificio",
+  "sent": "Enviado",
+  "read": "Leído"
 }

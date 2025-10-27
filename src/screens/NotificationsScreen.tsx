@@ -188,12 +188,12 @@ export const NotificationsScreen: React.FC = () => {
           if (activity) {
             // Crear mensaje HTML con la información de la actividad
             const message = `
-              <p><strong>Proyecto:</strong> ${activity.projecte_nom}</p>
-              <p><strong>Tipo de Intervención:</strong> ${activity.tipus_intervencio}</p>
-              <p><strong>Descripción:</strong> ${activity.descripcio}</p>
-              <p><strong>Duración:</strong> ${activity.durada_mesos} meses</p>
-              <p><strong>Estado del Proyecto:</strong> ${activity.projecte_estat}</p>
-              ${activity.edifici_nom ? `<p><strong>Edificio:</strong> ${activity.edifici_nom}</p>` : ''}
+              <p><strong>${t('project', 'notifications')}:</strong> ${activity.projecte_nom}</p>
+              <p><strong>${t('interventionType', 'notifications')}:</strong> ${activity.tipus_intervencio}</p>
+              <p><strong>${t('description', 'notifications')}:</strong> ${activity.descripcio}</p>
+              <p><strong>${t('duration', 'notifications')}:</strong> ${activity.durada_mesos} ${t('months', 'notifications')}</p>
+              <p><strong>${t('projectStatus', 'notifications')}:</strong> ${activity.projecte_estat}</p>
+              ${activity.edifici_nom ? `<p><strong>${t('building', 'communications')}:</strong> ${activity.edifici_nom}</p>` : ''}
             `;
             
             const notificationDetail: NotificationDetailData = {
@@ -224,10 +224,10 @@ export const NotificationsScreen: React.FC = () => {
           if (document) {
             // Crear mensaje HTML con la información del documento
             const message = `
-              <p><strong>Tipo:</strong> ${document.texto || document.tipus || document.tipus_document}</p>
-              <p><strong>Fecha de Validez:</strong> ${document.data_validesa}</p>
-              ${document.edifici_nom ? `<p><strong>Edificio:</strong> ${document.edifici_nom}</p>` : ''}
-              ${document.ruta ? `<p><a href="${document.ruta}">Descargar documento</a></p>` : ''}
+              <p><strong>${t('documentType', 'documents')}:</strong> ${document.texto || document.tipus || document.tipus_document}</p>
+              <p><strong>${t('validUntil', 'documents')}:</strong> ${document.data_validesa}</p>
+              ${document.edifici_nom ? `<p><strong>${t('building', 'communications')}:</strong> ${document.edifici_nom}</p>` : ''}
+              ${document.ruta ? `<p><a href="${document.ruta}">${t('downloadDocument', 'documents')}</a></p>` : ''}
             `;
             
             const notificationDetail: NotificationDetailData = {

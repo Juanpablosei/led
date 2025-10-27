@@ -32,6 +32,12 @@
     "sender": "Remitente",
     "message": "Mensaje",
     "close": "Cerrar"
-  }
+  },
+  "project": "Proyecto",
+  "interventionType": "Tipo de Intervención",
+  "description": "Descripción",
+  "duration": "Duración",
+  "months": "meses",
+  "projectStatus": "Estado del Proyecto"
 }
 

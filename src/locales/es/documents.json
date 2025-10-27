@@ -40,6 +40,7 @@
   "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar este documento?",
   "cancel": "Cancelar",
   "deleteButton": "Eliminar",
+  "downloadDocument": "Descargar documento",
   "errors": {
     "saveError": "No se pudo guardar el documento. Inténtalo de nuevo.",
     "missingFields": "Por favor completa todos los campos obligatorios",

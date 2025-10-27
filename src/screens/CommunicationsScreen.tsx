@@ -358,12 +358,12 @@ export const CommunicationsScreen: React.FC = () => {
                         styles.recipientStatusText,
                         { color: dest.estat === 'enviada' ? '#4CAF50' : '#FF9800' }
                       ]}>
-                        {dest.estat === 'enviada' ? 'Enviado' : dest.estat}
+                        {dest.estat === 'enviada' ? t('sent', 'communications') : dest.estat}
                       </Text>
                       {dest.leido && (
                         <>
                           <Ionicons name="eye" size={16} color="#2196F3" style={{ marginLeft: 8 }} />
-                          <Text style={[styles.recipientStatusText, { color: '#2196F3' }]}>Leído</Text>
+                          <Text style={[styles.recipientStatusText, { color: '#2196F3' }]}>{t('read', 'communications')}</Text>
                         </>
                       )}
                     </View>

@@ -17,5 +17,8 @@
   "sendDate": "Data d'enviament",
   "sentBy": "Enviat per",
   "message": "Missatge",
-  "attachments": "Fitxers adjunts"
+  "attachments": "Fitxers adjunts",
+  "building": "Edifici",
+  "sent": "Enviat",
+  "read": "Llegit"
 }

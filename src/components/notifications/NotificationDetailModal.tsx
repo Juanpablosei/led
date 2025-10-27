@@ -156,7 +156,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
                 {/* Botón Marcar como leída - Solo para edificios y actividades */}
                 {showMarkAsReadButton && (
                   <TouchableOpacity style={styles.markAsReadButton} onPress={handleMarkAsRead}>
-                    <Text style={styles.markAsReadButtonText}>Marcar como leída</Text>
+                    <Text style={styles.markAsReadButtonText}>{t('markAsRead', 'notifications')}</Text>
                   </TouchableOpacity>
                 )}
 

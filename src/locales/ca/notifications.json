@@ -32,6 +32,12 @@
     "sender": "Remitent",
     "message": "Missatge",
     "close": "Tancar"
-  }
+  },
+  "project": "Projecte",
+  "interventionType": "Tipus d'Intervenció",
+  "description": "Descripció",
+  "duration": "Durada",
+  "months": "mesos",
+  "projectStatus": "Estat del Projecte"
 }
 

@@ -41,6 +41,7 @@
   "confirmDeleteMessage": "Estàs segur que vols eliminar aquest document?",
   "cancel": "Cancel·lar",
   "deleteButton": "Eliminar",
+  "downloadDocument": "Descarregar document",
   "errors": {
     "saveError": "No s'ha pogut guardar el document. Torna-ho a intentar.",
     "missingFields": "Si us plau, completa tots els camps obligatoris",
