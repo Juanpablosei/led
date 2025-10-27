@@ -1,6 +1,7 @@
 {
   "menu": {
     "myData": "Mis datos",
+    "myBuildings": "Mis edificios",
     "userType": "Tipo de usuario",
     "alerts": "Alertas",
     "changePassword": "Cambiar contraseña",

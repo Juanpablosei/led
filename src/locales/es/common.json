@@ -32,6 +32,8 @@
   "ledLibroDiario": "LED libro edificio",
   "loadingBuilding": "Cargando edificio...",
   "errorLoadingBuilding": "No se pudo cargar el edificio",
+  "noBuildingsFound": "No se encontraron edificios con ese criterio de búsqueda",
+  "noBuildingsAvailable": "No hay edificios disponibles",
   "faqs": "FAQs",
   "legalNotice": "Aviso legal y Política de privacidad",
   "terms": "Condiciones de contratación"

@@ -101,6 +101,19 @@ export const BuildingDetailScreen: React.FC = () => {
     return buildingDetail.nom;
   };
 
+  // Función para determinar qué texto mostrar en el link (misma lógica que BuildingCard)
+  const getLinkText = () => {
+    if (buildingDetail.versio_estesa) {
+      return t('ledMaintenance', 'navigation'); // "LED Gestión del mantenimiento"
+    } else if (buildingDetail.estado === 'estado_activo') {
+      return t('ledLibroDiario', 'common'); // "LED libro edificio"
+    } else {
+      return ''; // No mostrar nada
+    }
+  };
+
+  const linkText = getLinkText();
+
   // Transformar a formato BuildingData para el Layout
   const building: BuildingData = {
     id: String(buildingDetail.id),
@@ -143,15 +156,17 @@ export const BuildingDetailScreen: React.FC = () => {
           </View>
 
           {/* Enlace a gestión de mantenimiento */}
-          <TouchableOpacity 
-            style={styles.maintenanceLink}
-            onPress={handleMaintenancePress}
-          >
-            <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
-            <Text style={styles.maintenanceText}>
-              {t('ledMaintenance', 'navigation')}
-            </Text>
-          </TouchableOpacity>
+          {linkText && (
+            <TouchableOpacity 
+              style={styles.maintenanceLink}
+              onPress={handleMaintenancePress}
+            >
+              <Ionicons name="pricetag" size={16} color="#E95460" style={styles.maintenanceIcon} />
+              <Text style={styles.maintenanceText}>
+                {linkText}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {/* Imagen del edificio DENTRO de la card */}
           <View style={styles.imageContainer}>

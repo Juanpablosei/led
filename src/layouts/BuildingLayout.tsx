@@ -164,6 +164,9 @@ export const BuildingLayout: React.FC<BuildingLayoutProps> = ({ building, childr
 
   const handleUserMenuOptionPress = (option: UserMenuOption) => {
     switch (option) {
+      case 'myBuildings':
+        router.push('/buildings');
+        break;
       case 'myData':
         router.push('/my-data');
         break;

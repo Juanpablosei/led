@@ -139,7 +139,9 @@ export const BuildingsScreen: React.FC = () => {
       case 'myData':
         router.push('/my-data');
         break;
-     
+      case 'myBuildings':
+        router.push('/buildings');
+        break;
       case 'logout':
         handleLogout();
         break;
@@ -167,7 +169,7 @@ export const BuildingsScreen: React.FC = () => {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyStateText}>
-        {searchText ? 'No se encontraron edificios con ese criterio de búsqueda' : 'No hay edificios disponibles'}
+        {searchText ? t('noBuildingsFound', 'common') : t('noBuildingsAvailable', 'common')}
       </Text>
     </View>
   );

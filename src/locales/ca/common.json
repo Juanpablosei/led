@@ -21,7 +21,7 @@
   "loading": "Carregant...",
   "loadingBuildings": "Carregant edificis...",
   "buildingId": "ID Edifici:",
-  "cadastralRef": "Ref. Catastral:",
+  "cadastralRef": "Ref. Cadastral:",
   "error": "Error",
   "success": "Èxit",
   "warning": "Advertència",
@@ -32,6 +32,8 @@
   "ledLibroDiario": "LED llibre edifici",
   "loadingBuilding": "Carregant edifici...",
   "errorLoadingBuilding": "No s'ha pogut carregar l'edifici",
+  "noBuildingsFound": "No s'han trobat edificis amb aquest criteri de cerca",
+  "noBuildingsAvailable": "No hi ha edificis disponibles",
   "faqs": "FAQs",
   "legalNotice": "Avís legal i Política de privacitat",
   "terms": "Condicions de contractació"

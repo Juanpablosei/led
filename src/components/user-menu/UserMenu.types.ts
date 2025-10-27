@@ -1,4 +1,4 @@
-export type UserMenuOption = 'myData' | 'alerts' | 'logout';
+export type UserMenuOption = 'myData' | 'myBuildings' | 'alerts' | 'logout';
 
 export interface UserMenuProps {
   visible: boolean;

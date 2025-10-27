@@ -14,7 +14,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleOptionPress = (option: 'myData' | 'alerts' | 'logout') => {
+  const handleOptionPress = (option: 'myData' | 'myBuildings' | 'alerts' | 'logout') => {
     onOptionPress(option);
     // No cerrar automáticamente para logout, que se cierre desde el componente padre
     if (option !== 'logout') {
@@ -36,12 +36,19 @@ export const UserMenu: React.FC<UserMenuProps> = ({
           <View style={[styles.menu, { top: position.top, right: position.right }]}>
             <TouchableOpacity
               style={styles.menuItem}
+              onPress={() => handleOptionPress('myBuildings')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.menuItemText}>{t('menu.myBuildings', 'user')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuItem}
               onPress={() => handleOptionPress('myData')}
               activeOpacity={0.7}
             >
               <Text style={styles.menuItemText}>{t('menu.myData', 'user')}</Text>
             </TouchableOpacity>
-
 
             {/* Temporarily hidden
             <TouchableOpacity

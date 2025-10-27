@@ -1,6 +1,7 @@
 {
   "menu": {
     "myData": "Les meves dades",
+    "myBuildings": "Els meus edificis",
     "userType": "Tipus d'usuari",
     "alerts": "Alertes",
     "changePassword": "Canviar contrasenya",
