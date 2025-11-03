@@ -472,19 +472,9 @@ export const DocumentsScreen: React.FC = () => {
             </Text>
           </View>
         ) : filteredDocuments.length > 0 ? (
-          <>
-            <View style={styles.documentsList}>
-              {filteredDocuments.map(renderDocumentCard)}
-            </View>
-
-            {/* Paginación */}
-            <Pagination
-              currentPage={1}
-              totalPages={Math.ceil(filteredDocuments.length / 10)}
-              totalItems={filteredDocuments.length}
-              onPageChange={(page) => console.log('Page changed:', page)}
-            />
-          </>
+          <View style={styles.documentsList}>
+            {filteredDocuments.map(renderDocumentCard)}
+          </View>
         ) : (
           <View style={{ padding: 40, alignItems: 'center' }}>
             <Text style={{ fontSize: 16, color: '#999' }}>
@@ -493,6 +483,14 @@ export const DocumentsScreen: React.FC = () => {
           </View>
         )}
       </ScrollView>
+
+      {/* Paginación - Siempre en la parte inferior */}
+      <Pagination
+        currentPage={1}
+        totalPages={Math.ceil(filteredDocuments.length / 10)}
+        totalItems={filteredDocuments.length}
+        onPageChange={(page) => console.log('Page changed:', page)}
+      />
 
       {/* Modal Nuevo Documento */}
       <NewDocumentModal
