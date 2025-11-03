@@ -130,7 +130,7 @@ export const DocumentsScreen: React.FC = () => {
 
   // Función para formatear la fecha
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Sin fecha';
+    if (!dateString) return t('noDate', 'common');
     
     try {
       const date = new Date(dateString);
@@ -178,7 +178,7 @@ export const DocumentsScreen: React.FC = () => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <ActivityIndicator size="large" color="#E53E3E" />
           <Text style={{ marginTop: 12, fontSize: 16, color: '#666' }}>
-            Cargando edificio...
+            {t('loadingBuilding', 'common')}
           </Text>
         </View>
       </BuildingLayout>

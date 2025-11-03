@@ -39,5 +39,7 @@
   "terms": "Condiciones de contratación",
   "accessDenied": "Acceso denegado",
   "buildingRejectedMessage": "Ha rechazado el acceso al edificio",
-  "understood": "Entendido"
+  "understood": "Entendido",
+  "noDate": "Sin fecha",
+  "unknownError": "Error desconocido"
 }

@@ -80,7 +80,7 @@ export const LoginScreen: React.FC = () => {
     };
 
     loadRememberedNif();
-  }, []);
+  }, [t]);
 
   // Detectar cuando la aplicación vuelve del navegador para resetear estado
   useEffect(() => {
@@ -220,7 +220,7 @@ export const LoginScreen: React.FC = () => {
           } else {
             // Error de credenciales (401) u otros errores - mostrar mensaje exacto
             const errorMessage =
-              "message" in response ? response.message : "Error desconocido";
+              "message" in response ? response.message : t('unknownError', 'common');
             Alert.alert("", errorMessage);
           }
         }
@@ -334,7 +334,7 @@ export const LoginScreen: React.FC = () => {
           } else {
             // Error de credenciales (401) u otros errores - mostrar mensaje exacto
             const errorMessage =
-              "message" in response ? response.message : "Error desconocido";
+              "message" in response ? response.message : t('unknownError', 'common');
             Alert.alert("", errorMessage);
           }
         }

@@ -39,5 +39,7 @@
   "terms": "Condicions de contractació",
   "accessDenied": "Accés denegat",
   "buildingRejectedMessage": "Heu rebutjat l'accés a l'edifici",
-  "understood": "Entès"
+  "understood": "Entès",
+  "noDate": "Sense data",
+  "unknownError": "Error desconegut"
 }

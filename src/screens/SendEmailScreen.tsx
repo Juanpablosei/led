@@ -99,7 +99,7 @@ export const SendEmailScreen: React.FC = () => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <ActivityIndicator size="large" color="#E53E3E" />
           <Text style={{ marginTop: 12, fontSize: 16, color: '#666' }}>
-            Cargando edificio...
+            {t('loadingBuilding', 'common')}
           </Text>
         </View>
       </BuildingLayout>
