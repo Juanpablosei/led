@@ -95,7 +95,7 @@ export const EmailForm: React.FC<EmailFormProps> = ({ onSubmit, isLoading = fals
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       
       if (status !== 'granted') {
-        Alert.alert('', 'Se necesitan permisos de cámara para tomar fotos');
+        Alert.alert('', t('email.cameraPermissionsNeeded', 'alerts'));
         return;
       }
 

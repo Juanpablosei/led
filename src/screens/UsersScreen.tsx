@@ -85,17 +85,17 @@ export const UsersScreen: React.FC = () => {
 
   const handleEditUser = (userId: string) => {
     console.log('Edit user:', userId);
-    Alert.alert('Editar usuario', `Editar usuario con ID: ${userId}`);
+    Alert.alert(t('users.editUser', 'alerts'), `${t('users.editUser', 'alerts')} con ID: ${userId}`);
   };
 
   const handleDeleteUser = (userId: string) => {
     Alert.alert(
-      'Eliminar usuario',
-      '¿Estás seguro de que quieres eliminar este usuario?',
+      t('users.deleteUser', 'alerts'),
+      t('users.confirmDeleteUser', 'alerts'),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('users.cancel', 'alerts'), style: 'cancel' },
         { 
-          text: 'Eliminar', 
+          text: t('users.delete', 'alerts'), 
           style: 'destructive',
           onPress: () => {
             console.log('Delete user:', userId);

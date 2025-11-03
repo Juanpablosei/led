@@ -478,21 +478,19 @@ export const CreateAccountUnifiedModal: React.FC<CreateAccountUnifiedModalProps>
               Alert.alert('', (allErrors as string[]).join('\n'));
             }
           } else {
-            Alert.alert('', response.message || 'Error en el registro');
+            Alert.alert('', response.message || t('auth.registrationError', 'alerts'));
           }
         }
       } catch (error) {
         console.error('Error en registro:', error);
-        Alert.alert('', 'Error de conexión. Inténtalo de nuevo.');
+        Alert.alert('', t('auth.connectionErrorRetry', 'alerts'));
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  const handleStep3Back = () => {
-    onStepChange(2);
-  };
+
 
   const handleClose = () => {
     // Reset all data

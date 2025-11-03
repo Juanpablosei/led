@@ -14,6 +14,7 @@ const translations: Record<Language, Translations> = {
     sidebar: require('../locales/es/sidebar.json'),
     communications: require('../locales/es/communications.json'),
     documents: require('../locales/es/documents.json'),
+    alerts: require('../locales/es/alerts.json'),
   },
   ca: {
     common: require('../locales/ca/common.json'),
@@ -25,6 +26,7 @@ const translations: Record<Language, Translations> = {
     sidebar: require('../locales/ca/sidebar.json'),
     communications: require('../locales/ca/communications.json'),
     documents: require('../locales/ca/documents.json'),
+    alerts: require('../locales/ca/alerts.json'),
   },
 };
 

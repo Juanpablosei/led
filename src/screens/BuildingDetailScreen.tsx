@@ -57,15 +57,15 @@ export const BuildingDetailScreen: React.FC = () => {
         setBuildingDetail(response.data);
       } else {
         // Error al cargar detalle
-        Alert.alert('', response.message || 'Error al cargar el edificio');
+        Alert.alert('', response.message || t('buildings.errorLoadingBuilding', 'alerts'));
       }
     } catch {
       // Error al cargar detalle del edificio
-      Alert.alert('', 'Error de conexión al cargar el edificio');
+      Alert.alert('', t('buildings.connectionErrorLoadingBuilding', 'alerts'));
     } finally {
       setIsLoading(false);
     }
-  }, [buildingId]);
+  }, [buildingId, t]);
 
   // Cargar detalles del edificio desde el API
   useEffect(() => {

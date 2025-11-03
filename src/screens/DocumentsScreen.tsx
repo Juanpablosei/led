@@ -1,13 +1,13 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    Dimensions,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { DocumentCard, EditDocumentModal, NewDocumentModal } from '../components/documents';
 import { EditDocumentData } from '../components/documents/EditDocumentModal.types';
@@ -287,7 +287,7 @@ export const DocumentsScreen: React.FC = () => {
       console.log('Respuesta del servidor:', response);
 
       if (response.status) {
-        Alert.alert('Éxito', 'Documento creado correctamente');
+        Alert.alert(t('documents.success', 'alerts'), t('documents.documentCreated', 'alerts'));
         // Recargar documentos
         await loadDocuments();
         // Resetear selecciones
@@ -296,13 +296,13 @@ export const DocumentsScreen: React.FC = () => {
         // Cerrar modal solo si fue exitoso
         setIsNewDocumentModalVisible(false);
       } else {
-        Alert.alert('Error', response.message || 'No se pudo crear el documento');
+        Alert.alert(t('documents.error', 'alerts'), response.message || t('documents.couldNotCreateDocument', 'alerts'));
         // Lanzar error para que el modal no se cierre
-        throw new Error(response.message || 'No se pudo crear el documento');
+        throw new Error(response.message || t('documents.couldNotCreateDocument', 'alerts'));
       }
     } catch (error: any) {
       console.error('Error al guardar documento:', error);
-      Alert.alert('Error', `No se pudo guardar el documento: ${error.message || 'Error desconocido'}`);
+      Alert.alert(t('documents.error', 'alerts'), `${t('documents.couldNotSaveDocument', 'alerts')}: ${error.message || t('documents.unknownError', 'alerts')}`);
       // Re-lanzar el error para que el modal no se cierre
       throw error;
     }
@@ -360,15 +360,15 @@ export const DocumentsScreen: React.FC = () => {
       );
 
       if (response.status) {
-        Alert.alert('Éxito', 'Documento actualizado correctamente');
+        Alert.alert(t('documents.success', 'alerts'), t('documents.documentUpdated', 'alerts'));
         // Recargar documentos
         await loadDocuments();
       } else {
-        Alert.alert('Error', response.message || 'No se pudo actualizar el documento');
+        Alert.alert(t('documents.error', 'alerts'), response.message || t('documents.couldNotUpdateDocument', 'alerts'));
       }
     } catch (error: any) {
       console.error(' Error al guardar documento:', error);
-      Alert.alert('Error', 'No se pudo guardar el documento');
+      Alert.alert(t('documents.error', 'alerts'), t('documents.couldNotSaveDocument', 'alerts'));
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);
@@ -382,15 +382,15 @@ export const DocumentsScreen: React.FC = () => {
       const response = await buildingService.deleteBuildingDocument(Number(documentId));
 
       if (response.status) {
-        Alert.alert('Éxito', 'Documento eliminado correctamente');
+        Alert.alert(t('documents.success', 'alerts'), t('documents.documentDeleted', 'alerts'));
         // Recargar documentos
         await loadDocuments();
       } else {
-        Alert.alert('Error', response.message || 'No se pudo eliminar el documento');
+        Alert.alert(t('documents.error', 'alerts'), response.message || t('documents.couldNotDeleteDocument', 'alerts'));
       }
     } catch (error: any) {
       console.error(' Error al eliminar documento:', error);
-      Alert.alert('Error', 'No se pudo eliminar el documento');
+      Alert.alert(t('documents.error', 'alerts'), t('documents.couldNotDeleteDocument', 'alerts'));
     } finally {
       setIsEditDocumentModalVisible(false);
       setSelectedDocument(null);

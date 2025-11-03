@@ -84,7 +84,7 @@ export const BuildingsScreen: React.FC = () => {
       }
     } catch {
       // Error al cargar edificios
-      Alert.alert('', 'Error de conexión al cargar edificios');
+      Alert.alert('', t('buildings.connectionErrorLoadingBuildings', 'alerts'));
     } finally {
       setIsLoadingBuildings(false);
     }

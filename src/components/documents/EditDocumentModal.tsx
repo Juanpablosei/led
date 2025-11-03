@@ -37,14 +37,14 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
         if (canOpen) {
           await Linking.openURL(formData.ruta);
         } else {
-          Alert.alert('Error', 'No se puede abrir este tipo de archivo');
+          Alert.alert(t('documents.error', 'alerts'), t('communications.cannotOpenFileType', 'alerts'));
         }
       } catch (error) {
         console.error('Error al abrir el documento:', error);
-        Alert.alert('Error', 'No se pudo abrir el documento');
+        Alert.alert(t('documents.error', 'alerts'), t('communications.couldNotOpenAttachment', 'alerts'));
       }
     } else {
-      Alert.alert('Error', 'No hay archivo disponible para este documento');
+      Alert.alert(t('documents.error', 'alerts'), t('communications.couldNotOpenAttachment', 'alerts'));
     }
   };
 

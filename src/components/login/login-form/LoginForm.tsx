@@ -110,7 +110,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   const handleBiometricLogin = async () => {
     if (!isBiometricAvailable || !formData.nif || !isBiometricEnabled) {
-      Alert.alert('Error', 'Autenticación biométrica no disponible o NIF requerido');
+      Alert.alert(t('auth.error', 'alerts'), t('auth.biometricNotAvailableOrNifRequired', 'alerts'));
       return;
     }
 
@@ -132,11 +132,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         
         onLogin(biometricLoginData, activeTab);
       } else {
-        Alert.alert('Error', result.error || 'Error en la autenticación biométrica');
+        Alert.alert(t('auth.error', 'alerts'), result.error || t('auth.biometricAuthError', 'alerts'));
       }
     } catch {
       // Error en la autenticación biométrica
-      Alert.alert('Error', 'Error en la autenticación biométrica');
+      Alert.alert(t('auth.error', 'alerts'), t('auth.biometricAuthError', 'alerts'));
     }
   };
 

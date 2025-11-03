@@ -33,11 +33,11 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
       if (canOpen) {
         await Linking.openURL(rutaAdjunt);
       } else {
-        Alert.alert('Error', 'No se puede abrir este tipo de archivo');
+        Alert.alert(t('notifications.error', 'alerts'), t('notifications.cannotOpenFileType', 'alerts'));
       }
     } catch (error) {
       console.error('Error al abrir el archivo adjunto:', error);
-      Alert.alert('Error', 'No se pudo abrir el archivo adjunto');
+      Alert.alert(t('notifications.error', 'alerts'), t('notifications.couldNotOpenAttachment', 'alerts'));
     }
   };
 

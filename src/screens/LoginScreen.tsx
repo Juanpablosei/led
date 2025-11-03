@@ -75,7 +75,7 @@ export const LoginScreen: React.FC = () => {
         setRememberedNif(nif);
       } catch (error) {
         // Error loading remembered NIF
-        Alert.alert("", `Error al cargar datos guardados: ${error}`);
+        Alert.alert("", `${t('auth.errorLoadingSavedData', 'alerts')}: ${error}`);
       }
     };
 
@@ -118,7 +118,7 @@ export const LoginScreen: React.FC = () => {
       }
     } catch (error) {
       // Error configuring notifications
-      Alert.alert("", `Error al configurar notificaciones: ${error}`);
+      Alert.alert("", `${t('auth.errorSettingUpNotifications', 'alerts')}: ${error}`);
     }
   };
 
@@ -281,7 +281,7 @@ export const LoginScreen: React.FC = () => {
             }
           } catch (error) {
             // Error obtaining user data
-            Alert.alert("", `Error al obtener datos del usuario: ${error}`);
+            Alert.alert("", `${t('auth.errorGettingUserData', 'alerts')}: ${error}`);
           }
 
           // Verificar si necesita completar datos profesionales
@@ -301,7 +301,7 @@ export const LoginScreen: React.FC = () => {
               }
             } catch (error) {
               // Error loading buildings
-              Alert.alert("", `Error al cargar edificios: ${error}`);
+              Alert.alert("", `${t('auth.errorLoadingBuildings', 'alerts')}: ${error}`);
             }
 
             // Verificar si debe mostrar modal de Face ID (solo para login normal, no biométrico)
@@ -342,7 +342,7 @@ export const LoginScreen: React.FC = () => {
     } catch (error) {
       // Error in login
       // Mostrar mensaje de error de conexión sin título
-      Alert.alert("", `Error de conexión: ${error}`);
+      Alert.alert("", `${t('auth.connectionError', 'alerts')}: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -371,14 +371,14 @@ export const LoginScreen: React.FC = () => {
       if (supported) {
         await Linking.openURL(`${config.WEB_BASE_URL}/faqs`);
       } else {
-        Alert.alert("Error", "No se puede abrir la página de FAQs en este dispositivo.");
+        Alert.alert(t('auth.error', 'alerts'), t('auth.cannotOpenFaqs', 'alerts'));
       }
       
       setIsLoading(false);
     } catch {
       setShowSupportModal(false);
       setIsLoading(false);
-      Alert.alert("Error", "No se pudo abrir la página de FAQs.");
+      Alert.alert(t('auth.error', 'alerts'), t('auth.couldNotOpenFaqs', 'alerts'));
     }
   };
 
@@ -391,14 +391,14 @@ export const LoginScreen: React.FC = () => {
       if (supported) {
         await Linking.openURL(`${config.WEB_BASE_URL}/aviso-legal`);
       } else {
-        Alert.alert("Error", "No se puede abrir el Aviso Legal en este dispositivo.");
+        Alert.alert(t('auth.error', 'alerts'), t('auth.cannotOpenLegalNotice', 'alerts'));
       }
       
       setIsLoading(false);
     } catch {
       setShowSupportModal(false);
       setIsLoading(false);
-      Alert.alert("Error", "No se pudo abrir el Aviso Legal.");
+      Alert.alert(t('auth.error', 'alerts'), t('auth.couldNotOpenLegalNotice', 'alerts'));
     }
   };
 
@@ -411,14 +411,14 @@ export const LoginScreen: React.FC = () => {
       if (supported) {
         await Linking.openURL(`${config.WEB_BASE_URL}/condiciones-contratacion`);
       } else {
-        Alert.alert("Error", "No se pueden abrir las Condiciones en este dispositivo.");
+        Alert.alert(t('auth.error', 'alerts'), t('auth.cannotOpenTerms', 'alerts'));
       }
       
       setIsLoading(false);
     } catch {
       setShowSupportModal(false);
       setIsLoading(false);
-      Alert.alert("Error", "No se pudo abrir las Condiciones de Contratación.");
+      Alert.alert(t('auth.error', 'alerts'), t('auth.couldNotOpenTerms', 'alerts'));
     }
   };
 
@@ -453,7 +453,7 @@ export const LoginScreen: React.FC = () => {
       }
       } catch (error) {
         // Error in forgot password
-        Alert.alert("", `Error de conexión: ${error}`);
+        Alert.alert("", `${t('auth.connectionError', 'alerts')}: ${error}`);
       } finally {
       setIsLoading(false);
     }
@@ -471,14 +471,14 @@ export const LoginScreen: React.FC = () => {
       const response = await authService.sendCodeToBuilding(edificioId);
 
       if ("success" in response && response.success) {
-        Alert.alert("", response.message || "Código enviado exitosamente");
+        Alert.alert("", response.message || t('auth.codeSentSuccessfully', 'alerts'));
         setShowResetCodeModal(false);
       } else {
-        Alert.alert("", response.message || "Error al enviar el código");
+        Alert.alert("", response.message || t('auth.errorSendingCode', 'alerts'));
       }
       } catch (error) {
         // Error sending code
-        Alert.alert("", `Error de conexión: ${error}`);
+        Alert.alert("", `${t('auth.connectionError', 'alerts')}: ${error}`);
       } finally {
       setIsResettingCode(false);
     }
@@ -506,15 +506,15 @@ export const LoginScreen: React.FC = () => {
             setShowBuildingAcceptanceModal(false);
             router.replace(`/building-detail?buildingId=${buildingData.id}`);
           } else {
-            Alert.alert("", response.message || "Error al aprobar el edificio");
+            Alert.alert("", response.message || t('auth.errorApprovingBuilding', 'alerts'));
           }
         }
       } else {
-        Alert.alert("", "Error: datos de autenticación no disponibles");
+        Alert.alert("", t('auth.authDataNotAvailable', 'alerts'));
       }
       } catch (error) {
         // Error in building approval
-        Alert.alert("", `Error de conexión: ${error}`);
+        Alert.alert("", `${t('auth.connectionError', 'alerts')}: ${error}`);
       } finally {
       setIsLoading(false);
     }
@@ -535,14 +535,14 @@ export const LoginScreen: React.FC = () => {
           // Limpiar datos de autenticación y volver al login
           await storageService.clearAuthData();
         } else {
-          Alert.alert("", response.message || "Error al rechazar el edificio");
+          Alert.alert("", response.message || t('auth.errorRejectingBuilding', 'alerts'));
         }
       } else {
-        Alert.alert("", "Error: datos de autenticación no disponibles");
+        Alert.alert("", t('auth.authDataNotAvailable', 'alerts'));
       }
       } catch (error) {
         // Error in building rejection
-        Alert.alert("", `Error de conexión: ${error}`);
+        Alert.alert("", `${t('auth.connectionError', 'alerts')}: ${error}`);
       } finally {
       setIsLoading(false);
     }
@@ -685,7 +685,7 @@ export const LoginScreen: React.FC = () => {
       }
     } catch (error) {
       // Error checking biometric setup
-      Alert.alert("", `Error al configurar autenticación biométrica: ${error}`);
+      Alert.alert("", `${t('auth.errorSettingUpBiometric', 'alerts')}: ${error}`);
       // En caso de error, navegar directamente
       if (navigationTarget.params) {
         const params = new URLSearchParams(navigationTarget.params).toString();

@@ -14,6 +14,7 @@ export interface Translations {
   sidebar: TranslationData;
   communications: TranslationData;
   documents: TranslationData;
+  alerts: TranslationData;
 }
 
 export interface TranslationContextType {

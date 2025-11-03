@@ -1,0 +1,66 @@
+{
+  "documents": {
+    "success": "Èxit",
+    "error": "Error",
+    "documentCreated": "Document creat correctament",
+    "documentUpdated": "Document actualitzat correctament",
+    "documentDeleted": "Document eliminat correctament",
+    "couldNotCreateDocument": "No s'ha pogut crear el document",
+    "couldNotUpdateDocument": "No s'ha pogut actualitzar el document",
+    "couldNotDeleteDocument": "No s'ha pogut eliminar el document",
+    "couldNotSaveDocument": "No s'ha pogut desar el document",
+    "unknownError": "Error desconegut"
+  },
+  "communications": {
+    "error": "Error",
+    "cannotOpenFileType": "No es pot obrir aquest tipus de fitxer",
+    "couldNotOpenAttachment": "No s'ha pogut obrir el fitxer adjunt"
+  },
+  "auth": {
+    "error": "Error",
+    "errorLoadingSavedData": "Error en carregar dades desades",
+    "errorSettingUpNotifications": "Error en configurar notificacions",
+    "errorGettingUserData": "Error en obtenir dades de l'usuari",
+    "errorLoadingBuildings": "Error en carregar edificis",
+    "connectionError": "Error de connexió",
+    "cannotOpenFaqs": "No es pot obrir la pàgina de FAQs en aquest dispositiu",
+    "couldNotOpenFaqs": "No s'ha pogut obrir la pàgina de FAQs",
+    "cannotOpenLegalNotice": "No es pot obrir l'Avís Legal en aquest dispositiu",
+    "couldNotOpenLegalNotice": "No s'ha pogut obrir l'Avís Legal",
+    "cannotOpenTerms": "No es poden obrir les Condicions en aquest dispositiu",
+    "couldNotOpenTerms": "No s'han pogut obrir les Condicions de Contractació",
+    "codeSentSuccessfully": "Codi enviat amb èxit",
+    "errorSendingCode": "Error en enviar el codi",
+    "errorApprovingBuilding": "Error en aprovar l'edifici",
+    "errorRejectingBuilding": "Error en rebutjar l'edifici",
+    "authDataNotAvailable": "Error: dades d'autenticació no disponibles",
+    "errorSettingUpBiometric": "Error en configurar autenticació biomètrica",
+    "biometricNotAvailableOrNifRequired": "Autenticació biomètrica no disponible o NIF requerit",
+    "biometricAuthError": "Error en l'autenticació biomètrica",
+    "registrationError": "Error en el registre",
+    "connectionErrorRetry": "Error de connexió. Torna-ho a intentar"
+  },
+  "buildings": {
+    "error": "Error",
+    "connectionErrorLoadingBuildings": "Error de connexió en carregar edificis",
+    "errorLoadingBuilding": "Error en carregar l'edifici",
+    "connectionErrorLoadingBuilding": "Error de connexió en carregar l'edifici"
+  },
+  "email": {
+    "error": "Error",
+    "cameraPermissionsNeeded": "Es necessiten permisos de càmera per fer fotos"
+  },
+  "users": {
+    "editUser": "Editar usuari",
+    "deleteUser": "Eliminar usuari",
+    "confirmDeleteUser": "Estàs segur que vols eliminar aquest usuari?",
+    "cancel": "Cancel·lar",
+    "delete": "Eliminar"
+  },
+  "notifications": {
+    "error": "Error",
+    "cannotOpenFileType": "No es pot obrir aquest tipus de fitxer",
+    "couldNotOpenAttachment": "No s'ha pogut obrir el fitxer adjunt"
+  }
+}
+

@@ -2,15 +2,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Linking,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
+    ActivityIndicator,
+    Alert,
+    Linking,
+    Modal,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    useWindowDimensions,
+    View,
 } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { Pagination } from '../components/home/pagination/Pagination';
@@ -32,11 +32,11 @@ export const CommunicationsScreen: React.FC = () => {
       if (canOpen) {
         await Linking.openURL(rutaAdjunt);
       } else {
-        Alert.alert('Error', 'No se puede abrir este tipo de archivo');
+        Alert.alert(t('communications.error', 'alerts'), t('communications.cannotOpenFileType', 'alerts'));
       }
     } catch (error) {
       console.error('Error al abrir el archivo adjunto:', error);
-      Alert.alert('Error', 'No se pudo abrir el archivo adjunto');
+      Alert.alert(t('communications.error', 'alerts'), t('communications.couldNotOpenAttachment', 'alerts'));
     }
   };
   
