@@ -1,15 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Alert,
-  Linking,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
+    Alert,
+    Linking,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { colors } from '../../constants/colors';
@@ -213,7 +213,11 @@ export const EditDocumentModal: React.FC<EditDocumentModalProps> = ({
                         onPress={isReadOnly ? undefined : showTypesPicker}
                         disabled={isReadOnly}
                       >
-                        <Text style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}>
+                        <Text 
+                          style={[styles.dropdownText, isReadOnly && styles.dropdownTextReadOnly]}
+                          numberOfLines={2}
+                          ellipsizeMode="tail"
+                        >
                           {isLoadingTypes
                             ? t('loadingTypes', 'documents')
                             : selectedTypeName || t('selectType', 'documents')}

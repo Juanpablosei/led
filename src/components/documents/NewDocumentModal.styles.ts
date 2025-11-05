@@ -77,6 +77,8 @@ export const styles = StyleSheet.create({
   dropdownText: {
     fontSize: 16,
     color: colors.text,
+    flex: 1,
+    marginRight: 8,
   },
   dropdownList: {
     marginTop: 8,

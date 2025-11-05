@@ -15,7 +15,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     width: '100%',
     maxWidth: 500,
-    maxHeight: '80%',
+    maxHeight: '90%',
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',

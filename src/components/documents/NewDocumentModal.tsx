@@ -246,7 +246,11 @@ export const NewDocumentModal: React.FC<NewDocumentModalProps> = ({
                         style={styles.dropdown}
                         onPress={showTypesPicker}
                       >
-                        <Text style={styles.dropdownText}>
+                        <Text 
+                          style={styles.dropdownText}
+                          numberOfLines={2}
+                          ellipsizeMode="tail"
+                        >
                           {isLoadingTypes
                             ? t('loadingTypes', 'documents')
                             : internalSelectedTypeName || t('selectType', 'documents')}

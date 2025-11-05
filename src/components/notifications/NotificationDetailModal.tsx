@@ -68,7 +68,12 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
               </View>
 
               {/* Content */}
-              <ScrollView style={styles.content} showsVerticalScrollIndicator={true} bounces={true} alwaysBounceVertical={false}>
+              <ScrollView 
+                style={styles.content} 
+                showsVerticalScrollIndicator={true}
+                bounces={true}
+                nestedScrollEnabled={true}
+              >
                 {/* Asunto */}
                 <View style={styles.fieldContainer}>
                   <Text style={styles.label}>{t('detail.subject', 'notifications')}:</Text>
